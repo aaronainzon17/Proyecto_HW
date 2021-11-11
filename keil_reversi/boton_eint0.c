@@ -8,6 +8,8 @@ static volatile unsigned int eint2_count = 0;
 // variable que se activa al detectar una nueva pulsación
 static volatile int eint1_nueva_pulsacion = 0;
 static volatile int eint2_nueva_pulsacion = 0;
+static volatile int BIT_EINT1 = 15;
+static volatile int BIT_EINT2 = 16;
 
 void eint1_ISR (void) __irq;
 void eint2_ISR (void) __irq;
@@ -19,8 +21,8 @@ void eint1_ISR (void) __irq {
 	VICVectAddr = 1;             // Acknowledge Interrupt
 	eint1_nueva_pulsacion = 1;
 	cola_guardar_eventos(1,0);
-	VICIntEnClr |= (1<< 15);			// Inhabilitamos las interrupciones
-	VICIntEnable &= ~(1<< 15);			// Inhabilitamos las interrupciones
+	VICIntEnClr |= (1<< BIT_EINT1);			// Inhabilitamos las interrupciones
+	VICIntEnable &= ~(1<< BIT_EINT1);			// Inhabilitamos las interrupciones
 }
 void eint2_ISR (void) __irq {
 	eint2_count++;
@@ -28,21 +30,21 @@ void eint2_ISR (void) __irq {
 	VICVectAddr = 1;             // Acknowledge Interrupt
 	eint2_nueva_pulsacion = 1;
 	cola_guardar_eventos(2,0);
-	VICIntEnClr |= (1<< 16);			// Inhabilitamos las interrupciones
-	VICIntEnable &= ~(1<< 16);
+	VICIntEnClr |= (1<< BIT_EINT2);			// Inhabilitamos las interrupciones
+	VICIntEnable &= ~(1<< BIT_EINT2);
 }
 
 void eint1_clear_nueva_pulsacion(void){
 	eint1_nueva_pulsacion = 0;
 	EXTINT |= 0x2;        // clear interrupt flag
-	VICIntEnClr &= ~(1<< 15);			// habilitamos las interrupciones
+	VICIntEnClr &= ~(1<< BIT_EINT1);			// habilitamos las interrupciones
 	VICIntEnable = VICIntEnable | 0x00008000;                  // Enable EXTINT0 Interrupt
 };
 
 void eint2_clear_nueva_pulsacion(void){
 	eint2_nueva_pulsacion = 0;
 	EXTINT |= 0x4;        // clear interrupt flag   
-	VICIntEnClr &= ~(1<< 16);			// habilitamos las interrupciones
+	VICIntEnClr &= ~(1<< BIT_EINT2);			// habilitamos las interrupciones
 	VICIntEnable = VICIntEnable | 0x00010000;                  // Enable EXTINT0 Interrupt
 };
 
