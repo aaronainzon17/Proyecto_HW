@@ -1,0 +1,36 @@
+;EXPORT f_actualizar_c_arm
+;f_actualizar_c_arm    
+
+		STMDB R13!,{R4-R9,R14}
+		MOV R6,R0							; MOVEMOS A R6 CUADRICULA
+		MOV R7,#0x00000000					; R7 ES CELDAS VACÍAS = 0
+		MOV R8,#0x00000000					; R8 ES i
+INI_I
+		CMP R8,#0x00000009					
+		BGT FUERA_I
+		MOV R9,#0x00000000					; R9 ES j
+INI_J
+		CMP R9,#0x00000009
+		BGT FUERA_J
+											; INLINE FUNCION establecer_todos_candidatos
+		ADD R9,R9,#0x00000001				; j++
+		B INI_J
+FUERA_J
+		ADD R8,R8,#0x00000001				; i++
+		B INI_I
+FUERA_I
+		MOV R8,#0x00000000					; R8 ES i
+INI_I_2
+		CMP R8,#0x00000009					
+		BGT FUERA_I_2
+		MOV R9,#0x00000000					; R9 ES j
+INI_J_2
+		CMP R9,#0x00000009
+		BGT FUERA_J_2
+											; 
+		ADD R9,R9,#0x00000001				; j++
+		B INI_J_2
+FUERA_J_2
+		ADD R8,R8,#0x00000001				; i++
+		B INI_I_2
+FUERA_I_2

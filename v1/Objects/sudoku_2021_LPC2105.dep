@@ -1,0 +1,39 @@
+Dependencies for Project 'sudoku_2021', Target 'LPC2105': (DO NOT MODIFY !)
+F (.\Startup.s)(0x559D2F20)(--cpu ARM7TDMI --pd "__EVAL SETA 1" -g --apcs=interwork -IC:\Keil_v5\ARM\RV31\INC-IC:\Keil_v5\ARM\CMSIS\Include-IC:\Keil_v5\ARM\INC\Philips--pd "__UVISION_VERSION SETA 526"--list .\listings\startup.lst --xref -o .\objects\startup.o --depend .\objects\startup.d)
+F (.\Actualizar.s)(0x6167F127)(--cpu ARM7TDMI --pd "__EVAL SETA 1" -g --apcs=interwork -IC:\Keil_v5\ARM\RV31\INC-IC:\Keil_v5\ARM\CMSIS\Include-IC:\Keil_v5\ARM\INC\Philips--pd "__UVISION_VERSION SETA 526"--list .\listings\actualizar.lst --xref -o .\objects\actualizar.o --depend .\objects\actualizar.d)
+F (.\propagar.s)(0x616DBE12)(--cpu ARM7TDMI --pd "__EVAL SETA 1" -g --apcs=interwork -IC:\Keil_v5\ARM\RV31\INC-IC:\Keil_v5\ARM\CMSIS\Include-IC:\Keil_v5\ARM\INC\Philips--pd "__UVISION_VERSION SETA 526"--list .\listings\propagar.lst --xref -o .\objects\propagar.o --depend .\objects\propagar.d)
+F (.\Actualizar_Propagar.s)(0x6167F147)(--cpu ARM7TDMI --pd "__EVAL SETA 1" -g --apcs=interwork -IC:\Keil_v5\ARM\RV31\INC-IC:\Keil_v5\ARM\CMSIS\Include-IC:\Keil_v5\ARM\INC\Philips--pd "__UVISION_VERSION SETA 526"--list .\listings\actualizar_propagar.lst --xref -o .\objects\actualizar_propagar.o --depend .\objects\actualizar_propagar.d)
+F (.\celda.h)(0x6155E32F)()
+F (.\tableros.h)(0x6142FEA6)()
+F (.\temporizador.h)(0x6181848E)()
+F (.\cola.h)(0x61818610)()
+F (.\eventos.h)(0x6181828C)()
+F (.\gpio.h)(0x618182B6)()
+F (.\sudoku_2021.c)(0x6181882A)(--c99 --gnu -c --cpu ARM7TDMI -D__EVAL -g -O3 -Otime --apcs=interwork --split_sections-IC:\Keil_v5\ARM\RV31\INC-IC:\Keil_v5\ARM\CMSIS\Include-IC:\Keil_v5\ARM\INC\Philips-D__UVISION_VERSION="526"-o .\objects\sudoku_2021.o --omf_browse .\objects\sudoku_2021.crf --depend .\objects\sudoku_2021.d)
+I (C:\Keil_v5\ARM\ARMCC\include\stddef.h)(0x599F2F9C)
+I (sudoku_2021.h)(0x6142F89C)
+I (C:\Keil_v5\ARM\ARMCC\include\inttypes.h)(0x599F2F9E)
+I (C:\Keil_v5\ARM\ARMCC\include\stdint.h)(0x599F2F9E)
+I (celda.h)(0x6155E32F)
+I (temporizador.h)(0x6181848E)
+I (tableros.h)(0x6142FEA6)
+F (.\temporizador.c)(0x61818714)(--c99 --gnu -c --cpu ARM7TDMI -D__EVAL -g -O3 -Otime --apcs=interwork --split_sections-IC:\Keil_v5\ARM\RV31\INC-IC:\Keil_v5\ARM\CMSIS\Include-IC:\Keil_v5\ARM\INC\Philips-D__UVISION_VERSION="526"-o .\objects\temporizador.o --omf_browse .\objects\temporizador.crf --depend .\objects\temporizador.d)
+I (C:\Keil_v5\ARM\INC\Philips\LPC210X.H)(0x559D2F68)
+I (temporizador.h)(0x6181848E)
+I (eventos.h)(0x6181828C)
+I (C:\Keil_v5\ARM\ARMCC\include\inttypes.h)(0x599F2F9E)
+I (C:\Keil_v5\ARM\ARMCC\include\stdint.h)(0x599F2F9E)
+F (.\cola.c)(0x618184DC)(--c99 --gnu -c --cpu ARM7TDMI -D__EVAL -g -O3 -Otime --apcs=interwork --split_sections-IC:\Keil_v5\ARM\RV31\INC-IC:\Keil_v5\ARM\CMSIS\Include-IC:\Keil_v5\ARM\INC\Philips-D__UVISION_VERSION="526"-o .\objects\cola.o --omf_browse .\objects\cola.crf --depend .\objects\cola.d)
+I (C:\Keil_v5\ARM\INC\Philips\LPC210x.H)(0x559D2F68)
+I (C:\Keil_v5\ARM\ARMCC\include\inttypes.h)(0x599F2F9E)
+I (C:\Keil_v5\ARM\ARMCC\include\stdint.h)(0x599F2F9E)
+I (cola.h)(0x61818610)
+I (eventos.h)(0x6181828C)
+I (temporizador.h)(0x6181848E)
+I (gpio.h)(0x618182B6)
+F (.\gpio.c)(0x618184A5)(--c99 --gnu -c --cpu ARM7TDMI -D__EVAL -g -O3 -Otime --apcs=interwork --split_sections-IC:\Keil_v5\ARM\RV31\INC-IC:\Keil_v5\ARM\CMSIS\Include-IC:\Keil_v5\ARM\INC\Philips-D__UVISION_VERSION="526"-o .\objects\gpio.o --omf_browse .\objects\gpio.crf --depend .\objects\gpio.d)
+I (C:\Keil_v5\ARM\INC\Philips\LPC210x.H)(0x559D2F68)
+I (C:\Keil_v5\ARM\ARMCC\include\inttypes.h)(0x599F2F9E)
+I (C:\Keil_v5\ARM\ARMCC\include\stdint.h)(0x599F2F9E)
+I (gpio.h)(0x618182B6)
+I (eventos.h)(0x6181828C)
