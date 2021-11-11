@@ -1,3 +1,5 @@
+#include <LPC210x.H>                      
+#include <inttypes.h>
 #include <stddef.h>
 #include "Gestor_Alarmas.h"
 #include "cola.h"
@@ -39,7 +41,11 @@ void gestor_alarmas_control_alarma(void){
 		if(bit_activa[i] != 0){
 			periodo[i] --;
 			if(periodo[i] == 0){
+					// Deshabilitas interr.
+					/*VICIntEnClr |= 0xFFFFFFFF			// Inhabilitamos las interrupciones
+					VICIntEnable &= ~255;*/
 					cola_guardar_eventos(alarm_queue[i].idEvento, alarm_queue[i].auxData);
+					//Habilitas interr.
 					if(bit_perio[i] != 1){
 						bit_activa[i] = 0;
 					}

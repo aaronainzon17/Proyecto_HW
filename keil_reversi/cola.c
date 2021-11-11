@@ -12,6 +12,7 @@ void cola_ini(void){
 }
 
 void cola_guardar_eventos(uint8_t  ID_evento,  uint32_t  auxData){
+		// Lock mutex
     cola.elementos[cola.ult].idEvento = ID_evento;
     cola.elementos[cola.ult].auxData = auxData;
     //cola.elementos[cola.sig].timeStamp = temporizador_leer();
