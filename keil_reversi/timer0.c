@@ -17,7 +17,7 @@ void timer1_ISR (void) __irq;    // Generate Interrupt
 void temporizador_iniciar(void){
 		timer0_int_count = 0;
 		// configuration of Timer 0
-		T0MR0 = 1499999;                        		// Interrumpe cada 1 s = 1.500.000-1 counts
+		T0MR0 = 1499;                        		// Interrumpe cada 0,1 ms = 1.500-1 counts
     T0MCR = 3;                     							// Generates an interrupt and resets the count when the value of MR0 is reached
 
     // configuration of the IRQ slot number 0 of the VIC for Timer 0 Interrupt
@@ -29,7 +29,7 @@ void temporizador_iniciar(void){
 	
 		timer1_int_count = 0;	
 	// configuration of Timer 0
-		T1MR0 = 1499;                        		// Interrumpe cada 0,1 ms = 1500-1 counts
+		T1MR0 = 14999;                        		// Interrumpe cada 0,1 ms = 1.500-1 counts
     T1MCR = 3;                     // Generates an interrupt and resets the count when the value of MR0 is reached
 
     // configuration of the IRQ slot number 0 of the VIC for Timer 0 Interrupt

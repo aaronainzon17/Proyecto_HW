@@ -22,8 +22,8 @@ void Gestor_Pulsacion_Control(uint32_t Id_Evento){
 				Pulsacion_alarma.idEvento = 0;
 				Pulsacion_alarma.timeStamp = temporizador_leer();
 				aux = (Id_Evento & 0xFF000000);
-				//1(0x1) porque es periodico y 1000(0X0003E8) de periodo -> (0X8003E8): 24 bits y quedan los 8 de id 
-				Pulsacion_alarma.auxData = (aux | 0x00800005); // 8 bits de mas peso id de evento, bit 9 si es periodica o no y 23 bits el tiempo de periodo
+				//1(0x1) porque es periodico y 100(0X000064) de periodo -> (0X800064): 24 bits y quedan los 8 de id 
+				Pulsacion_alarma.auxData = (aux | 0x00800064); // 8 bits de mas peso id de evento, bit 9 si es periodica o no y 23 bits el tiempo de periodo
 				gestor_alarmas_control_cola(Pulsacion_alarma); //prepara alarma
 			}
 		break;
