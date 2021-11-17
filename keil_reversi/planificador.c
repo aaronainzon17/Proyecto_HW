@@ -9,6 +9,8 @@
 #include "boton_eint0.h"
 #include "gpio.h"
 
+extern int gestor_SC_in(void);
+extern int gestor_SC_out(void);
 
 void Planificador_Control(void){
 	struct EventInfo Evento;
@@ -19,6 +21,8 @@ void Planificador_Control(void){
 	GPIO_iniciar();
 	cola_ini();
 	while(1){
+		gestor_SC_in();
+		gestor_SC_out();
 		/*alarma_PD.idEvento = 3;
 		alarma_PD.timeStamp = temporizador_leer();
 		aux = (3 & 0xFF000000);

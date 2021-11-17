@@ -561,6 +561,11 @@
               <FileType>5</FileType>
               <FilePath>.\planificador.h</FilePath>
             </File>
+            <File>
+              <FileName>gestor_SC.s</FileName>
+              <FileType>2</FileType>
+              <FilePath>.\gestor_SC.s</FilePath>
+            </File>
           </Files>
         </Group>
         <Group>
