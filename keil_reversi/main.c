@@ -9,11 +9,22 @@
 #include "gestor_alarmas.h"
 #include "cola.h"
 #include "planificador.h"
+#include "gestor_pulsacion.h"
+#include "eventos.h"
+#include "gestor_IO.h"
 
 // Nota: wait es una espera activa. Se puede eliminar poniendo el procesador en modo iddle. Probad a hacerlo
 
 extern int candidatos_actualizar_arm_c(CELDA cuadricula[NUM_FILAS][NUM_COLUMNAS]);
 extern int candidatos_actualizar_arm_arm(CELDA cuadricula[NUM_FILAS][NUM_COLUMNAS]);
+
+static volatile struct EventInfo alarma_visualizacion;
+
+static volatile int entradas_anterior = 0x00000000;
+static volatile int entradas_nuevo;
+
+extern int gestor_SC_in(void);
+extern int gestor_SC_out(void);
 
 
 /* *****************************************************************************
@@ -180,8 +191,61 @@ sudoku9x9(CELDA cuadricula_C_C[NUM_FILAS][NUM_COLUMNAS],
 
 // MAIN
 int main (void) {
-    #include "tableros.h"
-		int correcto = sudoku9x9(cuadricula_C_C, cuadricula_C_ARM, cuadricula_ARM_ARM, cuadricula_ARM_C, solucion);
+	#include "tableros.h"
+
+	struct EventInfo Evento;
+	int fila;
+	int columna;
+	int valor_celda;
+	//uint32_t aux;
+	//static volatile struct EventInfo alarma_PD;
+	temporizador_iniciar();
+	eint0_init();
+	gestor_IO_init();
+	cola_ini();
+	alarma_visualizacion.idEvento = 3;
+	alarma_visualizacion.timeStamp = temporizador_leer();
+	alarma_visualizacion.auxData = 0x00800014;
+	gestor_alarmas_control_cola(alarma_visualizacion);
+	while(1){
+		//gestor_SC_in();
+		//gestor_SC_out();
+		/*alarma_PD.idEvento = 3;
+		alarma_PD.timeStamp = temporizador_leer();
+		aux = (3 & 0xFF000000);
+		//1(0x1) porque es periodico y 1000(0X0003E8) de periodo -> (0X8003E8): 24 bits y quedan los 8 de id 
+		alarma_PD.auxData = (aux | 0x00000010); // 8 bits de mas peso id de evento, bit 9 si es periodica o no y 23 bits el tiempo de periodo
+		gestor_alarmas_control_cola(alarma_PD);*/		
+		PM_idle();
+		temporizador_periodo(1);
+		if(cola_nuevos_eventos()){
+				cola_leer_evevento_antiguo(&Evento);
+				switch(Evento.idEvento){
+					case 0:	// Alarma pulsación
+						Gestor_Pulsacion_Control(Evento.idEvento);
+					break;						
+					case 1:	// Nueva pulsación EINT1
+						Gestor_Pulsacion_Control(Evento.idEvento);
+					break;
+					case 2:	// Nueva pulsación EINT2
+						Gestor_Pulsacion_Control(Evento.idEvento);
+					break;
+					case 3:	// Alarma Visualización
+						entradas_nuevo = GPIO_leer(16,12);
+						if (entradas_anterior != entradas_nuevo){
+							fila = GPIO_leer(16,4);
+							columna = GPIO_leer(20,4);
+							valor_celda = celda_leer_valor(cuadricula_C_C[fila][columna]);
+							GPIO_escribir(0,4,valor_celda);
+						}	//Sino no haces nada
+					break;
+				}
+		}
+	}
+	
+	
+	
+		//int correcto = sudoku9x9(cuadricula_C_C, cuadricula_C_ARM, cuadricula_ARM_ARM, cuadricula_ARM_C, solucion);
 		//int i = 0;
 		//struct EventInfo Pulsacion_alarma;
 		//temporizador_iniciar();
@@ -199,7 +263,7 @@ int main (void) {
 		for(i = 0; i< 35; i++){
 				cola_guardar_eventos(1,i);
 		}*/
-		Planificador_Control();
+		//Planificador_Control();
 		/*Pulsacion_alarma.idEvento = 1;
 		Pulsacion_alarma.timeStamp = temporizador_leer();
 		Pulsacion_alarma.auxData = 0x0000210;

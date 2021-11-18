@@ -352,7 +352,7 @@
           <Cads>
             <interw>0</interw>
             <Optim>1</Optim>
-            <oTime>0</oTime>
+            <oTime>1</oTime>
             <SplitLS>0</SplitLS>
             <OneElfS>0</OneElfS>
             <Strict>0</Strict>
@@ -497,11 +497,6 @@
               <FilePath>..\v1\Actualizar.s</FilePath>
             </File>
             <File>
-              <FileName>tableros.h</FileName>
-              <FileType>5</FileType>
-              <FilePath>..\v1\tableros.h</FilePath>
-            </File>
-            <File>
               <FileName>eventos.h</FileName>
               <FileType>5</FileType>
               <FilePath>..\v1\eventos.h</FilePath>
@@ -552,11 +547,6 @@
               <FilePath>.\cola.h</FilePath>
             </File>
             <File>
-              <FileName>planificador.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>.\planificador.c</FilePath>
-            </File>
-            <File>
               <FileName>planificador.h</FileName>
               <FileType>5</FileType>
               <FilePath>.\planificador.h</FilePath>
@@ -565,6 +555,21 @@
               <FileName>gestor_SC.s</FileName>
               <FileType>2</FileType>
               <FilePath>.\gestor_SC.s</FilePath>
+            </File>
+            <File>
+              <FileName>gestor_IO.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\gestor_IO.c</FilePath>
+            </File>
+            <File>
+              <FileName>gestor_IO.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>.\gestor_IO.h</FilePath>
+            </File>
+            <File>
+              <FileName>tableros.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>.\tableros.h</FilePath>
             </File>
           </Files>
         </Group>

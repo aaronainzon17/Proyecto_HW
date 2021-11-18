@@ -13,10 +13,10 @@ void GPIO_iniciar(void){
 */
 int GPIO_leer(int bit_inicial, int num_bits){
 	int res = 0;
-	int j = 1;
-	int i = bit_inicial ;
+	int j = 1, i,value;
 	for (i = bit_inicial; i < (bit_inicial+num_bits); i++){
-		if ((IOPIN & (1<<i)) == 1){
+		value = (IOPIN & (1<<i));
+		if (value != 0){
 				res += j;
 		}
 		j*=2;

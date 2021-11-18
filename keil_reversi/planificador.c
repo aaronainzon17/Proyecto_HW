@@ -8,6 +8,12 @@
 #include "timer0.h"
 #include "boton_eint0.h"
 #include "gpio.h"
+#include "gestor_IO.h"
+
+static volatile struct EventInfo alarma_visualizacion;
+
+static volatile int entradas_anterior = 0x00000000;
+static volatile int entradas_nuevo;
 
 extern int gestor_SC_in(void);
 extern int gestor_SC_out(void);
@@ -18,11 +24,15 @@ void Planificador_Control(void){
 	//static volatile struct EventInfo alarma_PD;
 	temporizador_iniciar();
 	eint0_init();
-	GPIO_iniciar();
+	gestor_IO_init();
 	cola_ini();
+	alarma_visualizacion.idEvento = 3;
+	alarma_visualizacion.timeStamp = temporizador_leer();
+	alarma_visualizacion.auxData = 0x00800014;
+	gestor_alarmas_control_cola(alarma_visualizacion);
 	while(1){
-		gestor_SC_in();
-		gestor_SC_out();
+		//gestor_SC_in();
+		//gestor_SC_out();
 		/*alarma_PD.idEvento = 3;
 		alarma_PD.timeStamp = temporizador_leer();
 		aux = (3 & 0xFF000000);
@@ -34,14 +44,21 @@ void Planificador_Control(void){
 		if(cola_nuevos_eventos()){
 				cola_leer_evevento_antiguo(&Evento);
 				switch(Evento.idEvento){
-					case 0:
+					case 0:	// Alarma pulsación
 						Gestor_Pulsacion_Control(Evento.idEvento);
 					break;						
-					case 1:
+					case 1:	// Nueva pulsación EINT1
 						Gestor_Pulsacion_Control(Evento.idEvento);
 					break;
-					case 2:
+					case 2:	// Nueva pulsación EINT2
 						Gestor_Pulsacion_Control(Evento.idEvento);
+					break;
+					case 3:	// Alarma Visualización
+						
+						entradas_nuevo = GPIO_leer(16,12);
+						if (entradas_anterior != entradas_nuevo){
+							// Nueva visualización
+						}	//Sino no haces nada
 					break;
 				}
 		}	
