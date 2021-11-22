@@ -27,6 +27,9 @@ void cola_guardar_eventos(uint8_t  ID_evento,  uint32_t  auxData){
 	if (cola.ult == cola.sig){
 		GPIO_marcar_salida(30,1);
 		GPIO_escribir(30,1,1);
+	}else{
+		GPIO_marcar_salida(30,1);
+		GPIO_escribir(30,1,0);
 	}
 }
 // Funcion que comprueba si la cola tiene nuevos eventos 
@@ -47,5 +50,13 @@ void cola_leer_evevento_antiguo(struct EventInfo* elemento) {
 			cola.sig ++;
 	}else {
 		cola.sig = 0; 
+	}
+	
+	if (cola.ult == cola.sig){
+		GPIO_marcar_salida(30,1);
+		GPIO_escribir(30,1,1);
+	}else{
+		GPIO_marcar_salida(30,1);
+		GPIO_escribir(30,1,0);
 	}
 }

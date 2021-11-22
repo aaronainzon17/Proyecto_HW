@@ -73,6 +73,7 @@ void timer0_ISR (void) __irq {
     timer0_int_count++;
 		if (timer0_int_count != 0 && timer0_int_count == siguiente_periodo){	// Cuando llega al final controlamos las alarmas
 				gestor_alarmas_control_alarma();
+				siguiente_periodo = timer0_int_count + periodo_alarm;
 		}
     T0IR = 1;                              			// Clear interrupt flag
     VICVectAddr = 0;                            // Acknowledge Interrupt

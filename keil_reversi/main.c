@@ -13,6 +13,20 @@
 #include "eventos.h"
 #include "gestor_IO.h"
 
+static volatile CELDA
+cuadricula[NUM_FILAS][NUM_COLUMNAS] =
+{
+0x0015, 0x0000, 0x0000, 0x0013, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0, 0, 0, 0, 0, 0, 0,
+0x0000, 0x0000, 0x0000, 0x0000, 0x0019, 0x0000, 0x0000, 0x0000, 0x0015, 0, 0, 0, 0, 0, 0, 0,
+0x0000, 0x0019, 0x0016, 0x0017, 0x0000, 0x0015, 0x0000, 0x0013, 0x0000, 0, 0, 0, 0, 0, 0, 0,
+0x0000, 0x0018, 0x0000, 0x0019, 0x0000, 0x0000, 0x0016, 0x0000, 0x0000, 0, 0, 0, 0, 0, 0, 0,
+0x0000, 0x0000, 0x0015, 0x0018, 0x0016, 0x0011, 0x0014, 0x0000, 0x0000, 0, 0, 0, 0, 0, 0, 0,
+0x0000, 0x0000, 0x0014, 0x0012, 0x0000, 0x0013, 0x0000, 0x0017, 0x0000, 0, 0, 0, 0, 0, 0, 0,
+0x0000, 0x0017, 0x0000, 0x0015, 0x0000, 0x0019, 0x0012, 0x0016, 0x0000, 0, 0, 0, 0, 0, 0, 0,
+0x0016, 0x0000, 0x0000, 0x0000, 0x0018, 0x0000, 0x0000, 0x0000, 0x0000, 0, 0, 0, 0, 0, 0, 0,
+0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0012, 0x0000, 0x0000, 0x0011, 0, 0, 0, 0, 0, 0, 0
+};
+
 // Nota: wait es una espera activa. Se puede eliminar poniendo el procesador en modo iddle. Probad a hacerlo
 
 extern int candidatos_actualizar_arm_c(CELDA cuadricula[NUM_FILAS][NUM_COLUMNAS]);
@@ -20,7 +34,7 @@ extern int candidatos_actualizar_arm_arm(CELDA cuadricula[NUM_FILAS][NUM_COLUMNA
 
 static volatile struct EventInfo alarma_visualizacion;
 
-static volatile int entradas_anterior = 0x00000000;
+static volatile int entradas_anterior = 0x0000FC0;
 static volatile int entradas_nuevo;
 
 extern int gestor_SC_in(void);
@@ -189,35 +203,41 @@ sudoku9x9(CELDA cuadricula_C_C[NUM_FILAS][NUM_COLUMNAS],
     return correcto;
 }
 
+void introducir_alarma_power(void){
+	struct EventInfo Power_down;
+	Power_down.idEvento = 7;
+	Power_down.timeStamp = temporizador_leer();
+	Power_down.auxData = 0x0000AFC8;	// Ponemos la alarma 5 veces por segundo periódica para la visualización
+	gestor_alarmas_control_cola(Power_down);
+}
+
 // MAIN
 int main (void) {
 	#include "tableros.h"
 
 	struct EventInfo Evento;
+	struct EventInfo Most_Vis;
+	struct EventInfo led_val;
+	struct EventInfo led_alrm;
 	int fila;
 	int columna;
 	int valor_celda;
-	//uint32_t aux;
-	//static volatile struct EventInfo alarma_PD;
+	int nuevo_valor;
+	int candidatos;
+	int j,k;
 	temporizador_iniciar();
 	eint0_init();
 	gestor_IO_init();
 	cola_ini();
+	candidatos_actualizar_c(cuadricula_C_C);
+	temporizador_periodo(1);
 	alarma_visualizacion.idEvento = 3;
 	alarma_visualizacion.timeStamp = temporizador_leer();
-	alarma_visualizacion.auxData = 0x00800014;
+	alarma_visualizacion.auxData = 0x00800014;	// Ponemos la alarma 5 veces por segundo periódica para la visualización
 	gestor_alarmas_control_cola(alarma_visualizacion);
-	while(1){
-		//gestor_SC_in();
-		//gestor_SC_out();
-		/*alarma_PD.idEvento = 3;
-		alarma_PD.timeStamp = temporizador_leer();
-		aux = (3 & 0xFF000000);
-		//1(0x1) porque es periodico y 1000(0X0003E8) de periodo -> (0X8003E8): 24 bits y quedan los 8 de id 
-		alarma_PD.auxData = (aux | 0x00000010); // 8 bits de mas peso id de evento, bit 9 si es periodica o no y 23 bits el tiempo de periodo
-		gestor_alarmas_control_cola(alarma_PD);*/		
+	introducir_alarma_power();
+	while(1){	
 		PM_idle();
-		temporizador_periodo(1);
 		if(cola_nuevos_eventos()){
 				cola_leer_evevento_antiguo(&Evento);
 				switch(Evento.idEvento){
@@ -225,51 +245,82 @@ int main (void) {
 						Gestor_Pulsacion_Control(Evento.idEvento);
 					break;						
 					case 1:	// Nueva pulsación EINT1
+						introducir_alarma_power();
 						Gestor_Pulsacion_Control(Evento.idEvento);
+						fila = GPIO_leer(16,4);
+						columna = GPIO_leer(20,4);
+						if((((cuadricula_C_C[fila][columna] >> 7) & 0x00000001) != 0x00000001) || (fila == 0 && columna == 0 && nuevo_valor ==0)){
+							nuevo_valor = GPIO_leer(24,4);
+							if(fila == 0 && columna == 0 && nuevo_valor ==0){
+								//Reiniciamos el juego
+								for(j=0;j<9;j++){
+									for(k=0;k<16;k++){
+										cuadricula_C_C[j][k] = cuadricula[j][k];
+									}
+								}
+								candidatos_actualizar_c(cuadricula_C_C);
+								//Poner en modo iddle
+							}else{
+								cuadricula_C_C[fila][columna]&= 0xFFFFFFF0;
+								cuadricula_C_C[fila][columna] += nuevo_valor;	//
+								//Iniciar tiempo
+								candidatos_propagar_c(cuadricula_C_C,fila,columna);
+								//Parar tiempo
+							}
+						}			
 					break;
 					case 2:	// Nueva pulsación EINT2
+						introducir_alarma_power();
 						Gestor_Pulsacion_Control(Evento.idEvento);
+						fila = GPIO_leer(16,4);
+						columna = GPIO_leer(20,4);
+						if(((cuadricula_C_C[fila][columna] >> 7) & 0x00000001) != 0x00000001){
+							cuadricula_C_C[fila][columna] = 0x00000000;	//
+							candidatos_actualizar_c(cuadricula_C_C);
+						}
 					break;
 					case 3:	// Alarma Visualización
 						entradas_nuevo = GPIO_leer(16,12);
 						if (entradas_anterior != entradas_nuevo){
+							introducir_alarma_power();
+							Most_Vis.idEvento = 4;
+							Most_Vis.auxData = entradas_nuevo;	
+							cola_guardar_eventos(Most_Vis.idEvento,Most_Vis.auxData);						
+						}	//Sino no haces nada
+					break;
+					case 4:	// Mostrar visualización
 							fila = GPIO_leer(16,4);
 							columna = GPIO_leer(20,4);
+							if(((cuadricula_C_C[fila][columna] >> 4) & 0x00000001) == 0x00000001){
+								GPIO_escribir(13,1,1); //Bit de validar permanente
+							}else{
+								GPIO_escribir(13,1,0);
+								led_val.idEvento = 5;
+								cola_guardar_eventos(led_val.idEvento,led_val.auxData);
+							}
 							valor_celda = celda_leer_valor(cuadricula_C_C[fila][columna]);
 							GPIO_escribir(0,4,valor_celda);
-						}	//Sino no haces nada
+							candidatos = ((cuadricula_C_C[fila][columna] >> 7));	//
+							candidatos = ~candidatos;
+							candidatos = candidatos & 0x1FF;
+							GPIO_escribir(4,9,candidatos);
+							entradas_anterior = Evento.auxData;
+					break;
+					case 5:
+						//Ponemos alarma de 1 s para bit de validar
+						GPIO_escribir(13,1,1);
+						led_alrm.idEvento = 6;
+						led_alrm.timeStamp = temporizador_leer();
+						led_alrm.auxData = 0x00000064;	// Ponemos la alarma 5 veces por segundo periódica para la visualización
+						gestor_alarmas_control_cola(led_alrm);
+					break;
+					case 6:	//Acaba la alarma de 1s y ponemos validar a 0 otra vez
+						GPIO_escribir(13,1,0);
+					break;
+					case 7:	// Acaba la alarma y entra en powerdown
+						PM_power_down();
 					break;
 				}
 		}
 	}
-	
-	
-	
-		//int correcto = sudoku9x9(cuadricula_C_C, cuadricula_C_ARM, cuadricula_ARM_ARM, cuadricula_ARM_C, solucion);
-		//int i = 0;
-		//struct EventInfo Pulsacion_alarma;
-		//temporizador_iniciar();
-		//temporizador_empezar();
-		//eint0_init();
-		//GPIO_iniciar();
-		//GPIO_marcar_entrada(1,20);
-		//GPIO_escribir(8,12,0);
-		
-		
-		/*GPIO_marcar_salida(4,4);
-		GPIO_escribir(8,12,10);*/
-		
-		/*cola_ini();
-		for(i = 0; i< 35; i++){
-				cola_guardar_eventos(1,i);
-		}*/
-		//Planificador_Control();
-		/*Pulsacion_alarma.idEvento = 1;
-		Pulsacion_alarma.timeStamp = temporizador_leer();
-		Pulsacion_alarma.auxData = 0x0000210;
-		gestor_alarmas_control_cola(Pulsacion_alarma);*/
-		/*while(1){
-			//eint1_clear_nueva_pulsacion();
-			//temporizador_periodo(1);
-		}*/
 }
