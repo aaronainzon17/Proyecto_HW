@@ -52,6 +52,7 @@ int temporizador_leer(void){
 
 int temporizador_parar(void){
 	T1TCR = 0;
+	T0TCR = 0;
 	return T1TC - TC_init;
 }
 

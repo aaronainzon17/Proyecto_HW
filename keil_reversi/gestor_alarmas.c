@@ -12,6 +12,14 @@ static volatile uint8_t bit_perio[8];
 static volatile uint32_t periodo[8];
 static volatile uint32_t periodicas_restaurar[8];
 
+void iniciar_alarmas(void){
+	int i=0;
+	while (i<8){
+		bit_activa[i] = 0;
+		i++;
+	}
+}
+
 void gestor_alarmas_control_cola(struct EventInfo nueva_alarma){
 	uint32_t periodo_alarma = nueva_alarma.auxData  & 0x007FFFFF; // Campo en el que se almacena el periodo de la alarma
 	if(bit_activa[nueva_alarma.idEvento] == 0){
