@@ -7,12 +7,11 @@
 volatile struct Cola cola;
 
 void cola_ini(void){
-	cola.sig = 0;				// Último evento tratado
-	cola.ult = 0;				// Siguiente posición en la que se introduce un evento
+	cola.sig = 0;				// ultimo evento tratado
+	cola.ult = 0;				// Siguiente posicion en la que se introduce un evento
 }
 
 void cola_guardar_eventos(uint8_t  ID_evento,  uint32_t  auxData){
-		// Lock mutex
     cola.elementos[cola.ult].idEvento = ID_evento;
     cola.elementos[cola.ult].auxData = auxData;
     //cola.elementos[cola.sig].timeStamp = temporizador_leer();
@@ -33,7 +32,6 @@ void cola_guardar_eventos(uint8_t  ID_evento,  uint32_t  auxData){
 	}
 }
 // Funcion que comprueba si la cola tiene nuevos eventos 
-// Como c no tiene datos de tipo bool: 0 -> false, 1 -> true
 int cola_nuevos_eventos (void) {
     if (cola.sig != cola.ult){
         return 1;

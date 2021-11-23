@@ -10,10 +10,10 @@ static volatile unsigned int ESTADO = no_pulsado;
 static volatile unsigned int Boton;
 static volatile struct EventInfo Pulsacion_alarma;
 
-//void Gestor_Pulsacion_Maquina_Estados(struct Elemento E){
+//Maquina de estados de las pulsaciones
 void Gestor_Pulsacion_Control(uint32_t Id_Evento){
 	uint32_t aux;
-	switch(ESTADO){ //Dos eventos posibles; Alarma o pulsaci�n
+	switch(ESTADO){ //Dos eventos posibles; Alarma o pulsaci�n
 		case no_pulsado:
 			if(Id_Evento == 1 || Id_Evento == 2){//Se ha pulsado un bot?n
 				ESTADO = pulsado;
@@ -28,27 +28,27 @@ void Gestor_Pulsacion_Control(uint32_t Id_Evento){
 			}
 		break;
 		case pulsado:
-			if(Id_Evento == 0){//LLega alarma
-				switch(Boton){ //Eint 0
+			if(Id_Evento == 0){//LLega alarma para ver si sigue pulsado el botón
+				switch(Boton){ 
 					case 1:
 						EXTINT |= 0x2;
-						if((EXTINT & 0x00000002)!= 2){//DONE
+						if((EXTINT & 0x00000002)!= 2){// El botón ya no sigue pulsado
 							eint1_clear_nueva_pulsacion();
 							Pulsacion_alarma.idEvento = 0;
 							Pulsacion_alarma.timeStamp = temporizador_leer();
 							Pulsacion_alarma.auxData = 0x01000000;
-							gestor_alarmas_control_cola(Pulsacion_alarma); //parar alarma
+							gestor_alarmas_control_cola(Pulsacion_alarma); //parar la alarma
 							ESTADO = no_pulsado;
 						}
 					break;
 					case 2:
 						EXTINT |= 0x4;
-						if((EXTINT & 0x00000004)!= 4){
+						if((EXTINT & 0x00000004)!= 4){// El botón ya no sigue pulsado
 							eint2_clear_nueva_pulsacion();
 							Pulsacion_alarma.idEvento = 0;
 							Pulsacion_alarma.timeStamp = temporizador_leer();
 							Pulsacion_alarma.auxData = 0x02000000;
-							gestor_alarmas_control_cola(Pulsacion_alarma); //parar alarma
+							gestor_alarmas_control_cola(Pulsacion_alarma); //parar la alarma
 							ESTADO = no_pulsado;
 						}
 					break;

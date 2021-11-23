@@ -45,7 +45,7 @@ extern int gestor_SC_out(void);
 /* *****************************************************************************
  * propaga el valor de una determinada celda en C
  * para actualizar las listas de candidatos
- * de las celdas en su su fila, columna y regi髇 */
+ * de las celdas en su su fila, columna y regi锟絥 */
 /* Recibe como parametro la cuadricula, y la fila y columna de
  * la celda a propagar; no devuelve nada
  */
@@ -67,7 +67,7 @@ void candidatos_propagar_c(CELDA cuadricula[NUM_FILAS][NUM_COLUMNAS],
     for (i=0;i<NUM_FILAS;i++)
 	celda_eliminar_candidato(&cuadricula[i][columna],valor);
 
-    /* determinar fronteras regi髇 */
+    /* determinar fronteras regi锟絥 */
     init_i = init_region[fila];
     init_j = init_region[columna];
     end_i = init_i + 3;
@@ -114,7 +114,7 @@ static int candidatos_actualizar_c(CELDA cuadricula[NUM_FILAS][NUM_COLUMNAS])
     }
 
 	//retornar el numero de celdas vacias
-	return celdas_vacias; // por favor eliminar una vez completada la funci髇
+	return celdas_vacias; // por favor eliminar una vez completada la funci锟絥
 }
 
 /* Init del sudoku en codigo C invocando a propagar en arm
@@ -145,9 +145,9 @@ static int candidatos_actualizar_c_arm(CELDA cuadricula[NUM_FILAS][NUM_COLUMNAS]
     }
 
 	//retornar el numero de celdas vacias
-	return celdas_vacias; // por favor eliminar una vez completada la funci髇
+	return celdas_vacias; // por favor eliminar una vez completada la funci锟絥
 	
-	//return candidatos_actualizar_arm_c(cuadricula); // por favor eliminar una vez completada la funci髇
+	//return candidatos_actualizar_arm_c(cuadricula); // por favor eliminar una vez completada la funci锟絥
 }
 
 static int cuadricula_candidatos_verificar(CELDA cuadricula[NUM_FILAS][NUM_COLUMNAS],
@@ -208,148 +208,146 @@ void introducir_alarma_power(void){
 	struct EventInfo Power_down;
 	Power_down.idEvento = 7;
 	Power_down.timeStamp = temporizador_leer();
-	Power_down.auxData = 0x0000AFC8;	// Ponemos la alarma 5 veces por segundo peri骴ica para la visualizaci髇
+	Power_down.auxData = 0x0000AFC8;				// Ponemos la alarma 15 segundos para el powerdown
 	gestor_alarmas_control_cola(Power_down);
 }
 
 void iniciar(void){
-	temporizador_iniciar();
-	eint0_init();
-	gestor_IO_init();
-	cola_ini();
-	candidatos_actualizar_c(cuadricula_C_C);
-	temporizador_periodo(1);
+	temporizador_iniciar();									// Inicializamos timers
+	eint0_init();											// Inicializamos botones
+	gestor_IO_init();										// Inicializamos GPIO
+	cola_ini();												// Inicializamos cola
+	candidatos_actualizar_c(cuadricula_C_C); 				// Se actualizan los candidatos de cada celda
+	temporizador_periodo(1);								// Se configura el timer para que salte cada 1ms
 	alarma_visualizacion.idEvento = 3;
 	alarma_visualizacion.timeStamp = temporizador_leer();
-	alarma_visualizacion.auxData = 0x00800014;	// Ponemos la alarma 5 veces por segundo peri骴ica para la visualizaci髇
-	gestor_alarmas_control_cola(alarma_visualizacion);
-	introducir_alarma_power();
-}
+	alarma_visualizacion.auxData = 0x00800014;				// Ponemos la alarma 5 veces por segundo periodica para la visualizacion
+	gestor_alarmas_control_cola(alarma_visualizacion);		// La introducimos al gestor de alarmas
+	introducir_alarma_power();								// Introducimos la alarma de 15 s para el powerdown
+} 
 
-// MAIN
+// MAIN 
 int main (void) {
 	struct EventInfo Evento;
-	struct EventInfo Most_Vis;
-	struct EventInfo led_val;
-	struct EventInfo led_alrm;
+	struct EventInfo Most_Vis;	// Evento que se genera para mostrarla visualizaci贸n una vez a habido cambios en la entrada
+	struct EventInfo led_val;	// Evento que se genera cuando se ha introducido una entrada que corresponde a una pista y se activa el bit 13 de la GPIO
+	struct EventInfo led_alrm;	// Evento que se genera cuando se ha introducido una entradavalida y se activa el bit 13 de la GPIO durante 1 s
 	int fila;
 	int columna;
 	int valor_celda;
 	int nuevo_valor;
 	int candidatos;
 	int j,k, guarda;
-	int t1,t2,tot;
-	int SD=0;
+	int t1,t2,tot;				// Variables de medici贸n de tiempo
+	int SD = 0;					// Flag para salir de power down
 	iniciar();
 	while(1){		
 		if(cola_nuevos_eventos()){
 				cola_leer_evevento_antiguo(&Evento);
 				switch(Evento.idEvento){
-					case 0:	// Alarma pulsaci髇
+					case 0:	// Alarma pulsacion para comprobar si el boton pulsado lo sigue estando
 						Gestor_Pulsacion_Control(Evento.idEvento);
 					break;						
-					case 1:	// Nueva pulsaci髇 EINT1
-						introducir_alarma_power();
+					case 1:	// Nueva pulsacion EINT1
+						introducir_alarma_power();		// Se resetea la alarma de power down
 						fila = GPIO_leer(16,4);
 						columna = GPIO_leer(20,4);
 						nuevo_valor = GPIO_leer(24,4);
-					  Gestor_Pulsacion_Control(Evento.idEvento);
-						if((((cuadricula_C_C[fila][columna] >> 4) & 0x00000001) != 0x00000001) || (fila == 0 && columna == 0 && nuevo_valor ==0)){
-							if(fila == 0 && columna == 0 && nuevo_valor ==0){
-								//Reiniciamos el juego
-								for(j=0;j<9;j++){
-									for(k=0;k<16;k++){
-										cuadricula_C_C[j][k] = cuadricula[j][k];
+					  	Gestor_Pulsacion_Control(Evento.idEvento);	//Pasa a pulsado y pone la alarma
+						if(SD == 1){					// Si vienes de power down no haces nada
+							SD = 0;						// SD se pone a 0 para indicar que no estamos en power down
+						} else {
+							// La casilla introducida no es pista y no se ha introducido fila = 0, columna = 0, valor = 0
+							if((((cuadricula_C_C[fila][columna] >> 4) & 0x00000001) != 0x00000001) || (fila == 0 && columna == 0 && nuevo_valor ==0)){	
+								if(fila == 0 && columna == 0 && nuevo_valor ==0){
+									//Reiniciamos el juego
+									for(j=0;j<9;j++){
+										for(k=0;k<16;k++){
+											cuadricula_C_C[j][k] = cuadricula[j][k];	// Reiniciamos cada casilla
+										}
 									}
-								}
-								candidatos_actualizar_c(cuadricula_C_C);
-								//Reiniciamos
-								/*temporizador_parar();
-								iniciar_alarmas();
-								iniciar();*/
-							}else{
-								if(SD == 1){
-									SD=0;
-								}else{
-									guarda= (cuadricula_C_C[fila][columna] >> 6);
-									guarda = guarda >> nuevo_valor;
-									if( (guarda & 0x00000001) == 0 ){
+									candidatos_actualizar_c(cuadricula_C_C);	// Actualizamos candidatos
+								}else{	// Se puede escribir en esa casilla porque no es pista
+									guarda = (cuadricula_C_C[fila][columna] >> 6);	
+									guarda = guarda >> nuevo_valor;	// Compruebas que el valor a introducir esta como candidato
+									if( (guarda & 0x00000001) == 0 ){	// Si el bit esta a uno puedes escribir
 										cuadricula_C_C[fila][columna]&= 0xFFFFFFF0;
-										cuadricula_C_C[fila][columna] += nuevo_valor;	//
+										cuadricula_C_C[fila][columna] += nuevo_valor;	// Escribes el nuevo valor
 										//Iniciar tiempo
 										t1 = temporizador_leer();
-										candidatos_propagar_c(cuadricula_C_C,fila,columna);
+										candidatos_propagar_c(cuadricula_C_C,fila,columna);	// Propagas el nuevo valor
 										//Parar tiempo
 										t2 = temporizador_leer();
 										tot = t2-t1;	//Tiempo total
-										led_val.idEvento = 5;
+										led_val.idEvento = 5;	// Poner el bit de validaci贸n a 1 durante 1 segundo mediante la generaci贸n de 1 evento
 										cola_guardar_eventos(led_val.idEvento,led_val.auxData);
 									}
 								}
 							}
 						}
+						
 					break;
-					case 2:	// Nueva pulsaci髇 EINT2
-						introducir_alarma_power();
-						Gestor_Pulsacion_Control(Evento.idEvento);
+					case 2:																			// Nueva pulsacion EINT2
+						introducir_alarma_power();													// Se resetea la alarma de power down
+						Gestor_Pulsacion_Control(Evento.idEvento);									//Cambias a pulsado y pones la alarma de comprobaci贸n de pulsaci贸n
 						fila = GPIO_leer(16,4);
 						columna = GPIO_leer(20,4);
-						if(((cuadricula_C_C[fila][columna] >> 4) & 0x00000001) != 0x00000001){
-							if(SD==1){
-									SD =0;
-							}else{
-								cuadricula_C_C[fila][columna] = 0x00000000;	//
-								candidatos_actualizar_c(cuadricula_C_C);
-								led_val.idEvento = 5;
+						if(SD == 1){																// Si vienes de power down no haces nada
+							SD = 0;
+						}else {
+							if(((cuadricula_C_C[fila][columna] >> 4) & 0x00000001) != 0x00000001){	// Comprobamos que la casilla no es pista por lo que no se podr铆a borrar
+								cuadricula_C_C[fila][columna] = 0x00000000;							// Eliminamos el valor de la casilla
+								candidatos_actualizar_c(cuadricula_C_C);							// Actualizamos los candidatos
+								led_val.idEvento = 5;												// Poner el bit de validaci贸n a 1 durante 1 segundo mediante la generaci贸n de 1 evento
 								cola_guardar_eventos(led_val.idEvento,led_val.auxData);
 							}
 						}
+						
 					break;
-					case 3:	// Alarma Visualizaci髇
-						entradas_nuevo = GPIO_leer(16,12);
-						if (entradas_anterior != entradas_nuevo){
-							introducir_alarma_power();
-							Most_Vis.idEvento = 4;
+					case 3:											// Alarma Visualizacion
+						entradas_nuevo = GPIO_leer(16,12);			// Lees las entradas de la GPIO
+						if (entradas_anterior != entradas_nuevo){	// Si la entrada ha cambiado
+							introducir_alarma_power();				// Reseteas la alarma de power_down
+							Most_Vis.idEvento = 4;					// Generamos evento de visualizaci贸n si ha cambiado la entrada para actualizar los candidatos y el valor
 							Most_Vis.auxData = entradas_nuevo;	
 							cola_guardar_eventos(Most_Vis.idEvento,Most_Vis.auxData);						
 						}	//Sino no haces nada
 					break;
-					case 4:	// Mostrar visualizaci髇
-							fila = GPIO_leer(16,4);
-							columna = GPIO_leer(20,4);
-							if(((cuadricula_C_C[fila][columna] >> 4) & 0x00000001) == 0x00000001){
-								GPIO_escribir(13,1,1); //Bit de validar permanente
+					case 4:																			// Mostrar visualizacion
+							fila = GPIO_leer(16,4); 												// Se lee la fila de la GPIO
+							columna = GPIO_leer(20,4);												// Se lee la fila de la GPIO
+							if(((cuadricula_C_C[fila][columna] >> 4) & 0x00000001) == 0x00000001){	// Si la casilla es una pista enciende el bit de validar hasta que se deselecciona
+								GPIO_escribir(13,1,1); 												//Bit de validar permanente
 							}else{
-								GPIO_escribir(13,1,0);
+								GPIO_escribir(13,1,0);												// Sino quitamos el bit de validar permanente
 							}
-							valor_celda = celda_leer_valor(cuadricula_C_C[fila][columna]);
-							GPIO_escribir(0,4,valor_celda);
-							candidatos = ((cuadricula_C_C[fila][columna] >> 7));	//
+							valor_celda = celda_leer_valor(cuadricula_C_C[fila][columna]);			// Sacamos el valor de la celda
+							GPIO_escribir(0,4,valor_celda);											// Escribimos el valor de la celda
+							candidatos = ((cuadricula_C_C[fila][columna] >> 7));					// calculamos los candidatos
 							candidatos = ~candidatos;
 							candidatos = candidatos & 0x1FF;
-							GPIO_escribir(4,9,candidatos);
-							entradas_anterior = Evento.auxData;
+							GPIO_escribir(4,9,candidatos);											// Escribimos los candidatos
+							entradas_anterior = Evento.auxData;										// Actualizamos la entrada para la siguiente pasada
 					break;
-					case 5:
-						//Ponemos alarma de 1 s para bit de validar
+					case 5:											// Poner el bit de validaci贸n a 1 durante 1 segundo
 						GPIO_escribir(13,1,1);
-						led_alrm.idEvento = 6;
+						led_alrm.idEvento = 6;						
 						led_alrm.timeStamp = temporizador_leer();
-						led_alrm.auxData = 0x00000064;	// Ponemos la alarma 5 veces por segundo peri骴ica para la visualizaci髇
+						led_alrm.auxData = 0x00000064;				// Ponemos la alarma  de 1 segundo
 						gestor_alarmas_control_cola(led_alrm);
 					break;
-					case 6:	//Acaba la alarma de 1s y ponemos validar a 0 otra vez
-						GPIO_escribir(13,1,0);
+					case 6:						//Acaba la alarma de 1s y ponemos validar a 0 otra vez
+						GPIO_escribir(13,1,0);	// Cuando llega la alarma quitas el bit de validar
 					break;
-					case 7:	// Acaba la alarma y entra en powerdown
-						GPIO_escribir(31,1,1);
-						SD=1;
+					case 7:							// Acaba la alarma y entra en powerdown
+						GPIO_escribir(31,1,1);		// ponemos a 1 el bit 31 de la GPIO para indicar que estamos en power down
+						SD = 1;						// Actualizamos el flag de powerdown 
 						PM_power_down();
-						GPIO_escribir(31,1,0);
+						GPIO_escribir(31,1,0);		// Cuando salimos de powerdawn quitamos el bit 
 					break;
 				}
 		}else{
-			PM_idle();
+			PM_idle();	
 		}
 	}
 }

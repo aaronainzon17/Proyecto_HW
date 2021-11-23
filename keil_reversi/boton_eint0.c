@@ -2,10 +2,10 @@
 #include "cola.h"
 #include <LPC210X.H>                            // LPC21XX Peripheral Registers
 
-// variable para comprobar que se hacen las interrupciones que deberían hacerse
+// variable para comprobar que se hacen las interrupciones que deberï¿½an hacerse
 static volatile unsigned int eint1_count = 0;
 static volatile unsigned int eint2_count = 0;
-// variable que se activa al detectar una nueva pulsación
+// variable que se activa al detectar una nueva pulsaciï¿½n
 static volatile int eint1_nueva_pulsacion = 0;
 static volatile int eint2_nueva_pulsacion = 0;
 static volatile int BIT_EINT1 = 15;
@@ -19,8 +19,8 @@ void eint1_ISR (void) __irq {
 	eint1_count++;
 	EXTINT |= 0x2;        // clear interrupt flag        
 	VICVectAddr = 1;             // Acknowledge Interrupt
-	eint1_nueva_pulsacion = 1;
-	cola_guardar_eventos(1,0);
+	eint1_nueva_pulsacion = 1;		//Ponemos a 1 el flag de pulsaciÃ³n
+	cola_guardar_eventos(1,0);			//Encolamos el evento de pulsaciÃ³n en EINT1
 	VICIntEnClr |= (1<< BIT_EINT1);			// Inhabilitamos las interrupciones
 	VICIntEnable &= ~(1<< BIT_EINT1);			// Inhabilitamos las interrupciones
 }
@@ -65,9 +65,9 @@ unsigned int eint2_read_count(void){
 };
 
 void eint0_init (void) {
-// NOTA: según el manual se puede configurar cómo se activan las interrupciones: por flanco o nivel, alta o baja. 
-// Se usarían los registros EXTMODE y EXTPOLAR. 
-// Sin embargo parece que el simulador los ignora y no aparecen en la ventana de ocnfiguración de EXT Interrupts
+// NOTA: segï¿½n el manual se puede configurar cï¿½mo se activan las interrupciones: por flanco o nivel, alta o baja. 
+// Se usarï¿½an los registros EXTMODE y EXTPOLAR. 
+// Sin embargo parece que el simulador los ignora y no aparecen en la ventana de ocnfiguraciï¿½n de EXT Interrupts
 // configure EXTINT0 active if a rising-edge is detected
 //	EXTMODE 	=	1; //1 edge, 0 level
 //	EXTPOLAR	=	1; // 1 high, rising-edge; 0 low, falling-edge
@@ -79,11 +79,11 @@ void eint0_init (void) {
 	VICVectAddr2 = (unsigned long)eint1_ISR;          // set interrupt vector in 0
 	VICVectCntl2 = 0x20 | 15;    
     // 0x20 bit 5 enables vectored IRQs. 
-		// 14 is the number of the interrupt assigned. Number 14 is the EINT0 (see table 40 of the LPC2105 user manual  
+		// 15 is the number of the interrupt assigned. Number 15 is the EINT1 (see table 40 of the LPC2105 user manual  
 	PINSEL0 		= PINSEL0 & 0xCfffffff;	//Sets bits 0 and 1 to 0
-	PINSEL0 		= PINSEL0 | 0x20000000;					//Enable the EXTINT1 interrupt
+	PINSEL0 		= PINSEL0 | 0x20000000;					
 	               
-  VICIntEnable = VICIntEnable | 0x00008000;                 // Enable EXTINT0 Interrupt
+  VICIntEnable = VICIntEnable | 0x00008000;                 // Enable EXTINT1 Interrupt
 	
 	eint2_nueva_pulsacion = 0;
 	eint2_count = 0;
@@ -92,9 +92,9 @@ void eint0_init (void) {
 	VICVectAddr3 = (unsigned long)eint2_ISR;          // set interrupt vector in 0
 	VICVectCntl3 = 0x20 | 16;   
     // 0x20 bit 5 enables vectored IRQs. 
-		// 14 is the number of the interrupt assigned. Number 14 is the EINT0 (see table 40 of the LPC2105 user manual  
+		// 16 is the number of the interrupt assigned. Number 16 is the EINT2 (see table 40 of the LPC2105 user manual  
 	PINSEL0 		= PINSEL0 & 0x3fffffff;	//Sets bits 0 and 1 to 0
-	PINSEL0 		= PINSEL0 | 0x80000000;					//Enable the EXTINT2 interrupt
+	PINSEL0 		= PINSEL0 | 0x80000000;					
 	VICVectCntl3 = 0x20 | 16;                   
-  VICIntEnable = VICIntEnable | 0x00010000;                  // Enable EXTINT0 Interrupt
+  VICIntEnable = VICIntEnable | 0x00010000;                  // Enable EXTINT2 Interrupt
 }
