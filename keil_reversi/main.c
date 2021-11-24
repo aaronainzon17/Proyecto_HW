@@ -238,7 +238,7 @@ int main (void) {
 	int nuevo_valor;
 	int candidatos;
 	int j,k, guarda;
-	int t1,t2,tot;				// Variables de medición de tiempo
+	//int t1,t2,tot;				// Variables de medición de tiempo
 	int SD = 0;					// Flag para salir de power down
 	iniciar();
 	while(1){		
@@ -274,12 +274,13 @@ int main (void) {
 										cuadricula_C_C[fila][columna]&= 0xFFFFFFF0;
 										cuadricula_C_C[fila][columna] += nuevo_valor;	// Escribes el nuevo valor
 										//Iniciar tiempo
-										t1 = temporizador_leer();
+										//t1 = temporizador_leer();
 										candidatos_propagar_c(cuadricula_C_C,fila,columna);	// Propagas el nuevo valor
 										//Parar tiempo
-										t2 = temporizador_leer();
-										tot = t2-t1;	//Tiempo total
+										//t2 = temporizador_leer();
+										//tot = t2-t1;	//Tiempo total
 										led_val.idEvento = 5;	// Poner el bit de validación a 1 durante 1 segundo mediante la generación de 1 evento
+										//Antes de encolar habría que inhabilitar las interrupciones pero lo haremos en la 3 con softirq
 										cola_guardar_eventos(led_val.idEvento,led_val.auxData);
 									}
 								}
@@ -299,6 +300,7 @@ int main (void) {
 								cuadricula_C_C[fila][columna] = 0x00000000;							// Eliminamos el valor de la casilla
 								candidatos_actualizar_c(cuadricula_C_C);							// Actualizamos los candidatos
 								led_val.idEvento = 5;												// Poner el bit de validación a 1 durante 1 segundo mediante la generación de 1 evento
+								//Antes de encolar habría que inhabilitar las interrupciones pero lo haremos en la 3 con softirq
 								cola_guardar_eventos(led_val.idEvento,led_val.auxData);
 							}
 						}
@@ -310,6 +312,7 @@ int main (void) {
 							introducir_alarma_power();				// Reseteas la alarma de power_down
 							Most_Vis.idEvento = 4;					// Generamos evento de visualización si ha cambiado la entrada para actualizar los candidatos y el valor
 							Most_Vis.auxData = entradas_nuevo;	
+							//Antes de encolar habría que inhabilitar las interrupciones pero lo haremos en la 3 con softirq
 							cola_guardar_eventos(Most_Vis.idEvento,Most_Vis.auxData);						
 						}	//Sino no haces nada
 					break;
