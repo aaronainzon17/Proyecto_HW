@@ -13,7 +13,7 @@ static volatile struct EventInfo Pulsacion_alarma;
 //Maquina de estados de las pulsaciones
 void Gestor_Pulsacion_Control(uint32_t Id_Evento){
 	uint32_t aux;
-	switch(ESTADO){ //Dos eventos posibles; Alarma o pulsaci�n
+	switch(ESTADO){ //Dos eventos posibles; Alarma o pulsacion
 		case no_pulsado:
 			if(Id_Evento == 1 || Id_Evento == 2){//Se ha pulsado un bot?n
 				ESTADO = pulsado;
@@ -33,11 +33,11 @@ void Gestor_Pulsacion_Control(uint32_t Id_Evento){
 					case 1:
 						EXTINT |= 0x2;
 						if((EXTINT & 0x00000002)!= 2){// El botón ya no sigue pulsado
-							eint1_clear_nueva_pulsacion();
+							eint1_clear_nueva_pulsacion();	// Reseteamos la pulsacion
 							Pulsacion_alarma.idEvento = 0;
 							Pulsacion_alarma.timeStamp = temporizador_leer();
 							Pulsacion_alarma.auxData = 0x01000000;
-							gestor_alarmas_control_cola(Pulsacion_alarma); //parar la alarma
+							gestor_alarmas_control_cola(Pulsacion_alarma); //parar la alarma introduciendo 0 en el retardo
 							ESTADO = no_pulsado;
 						}
 					break;
@@ -48,7 +48,7 @@ void Gestor_Pulsacion_Control(uint32_t Id_Evento){
 							Pulsacion_alarma.idEvento = 0;
 							Pulsacion_alarma.timeStamp = temporizador_leer();
 							Pulsacion_alarma.auxData = 0x02000000;
-							gestor_alarmas_control_cola(Pulsacion_alarma); //parar la alarma
+							gestor_alarmas_control_cola(Pulsacion_alarma); //parar la alarma introduciendo 0 en el retardo
 							ESTADO = no_pulsado;
 						}
 					break;
