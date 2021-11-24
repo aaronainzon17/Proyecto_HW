@@ -447,11 +447,6 @@
               <FilePath>.\main.c</FilePath>
             </File>
             <File>
-              <FileName>sudoku_2021.h</FileName>
-              <FileType>5</FileType>
-              <FilePath>..\v1\sudoku_2021.h</FilePath>
-            </File>
-            <File>
               <FileName>Power_management.c</FileName>
               <FileType>1</FileType>
               <FilePath>.\Power_management.c</FilePath>
@@ -480,41 +475,6 @@
               <FileName>timer0.h</FileName>
               <FileType>5</FileType>
               <FilePath>.\timer0.h</FilePath>
-            </File>
-            <File>
-              <FileName>propagar.s</FileName>
-              <FileType>2</FileType>
-              <FilePath>..\v1\propagar.s</FilePath>
-            </File>
-            <File>
-              <FileName>Actualizar_Propagar.s</FileName>
-              <FileType>2</FileType>
-              <FilePath>..\v1\Actualizar_Propagar.s</FilePath>
-            </File>
-            <File>
-              <FileName>Actualizar.s</FileName>
-              <FileType>2</FileType>
-              <FilePath>..\v1\Actualizar.s</FilePath>
-            </File>
-            <File>
-              <FileName>eventos.h</FileName>
-              <FileType>5</FileType>
-              <FilePath>..\v1\eventos.h</FilePath>
-            </File>
-            <File>
-              <FileName>celda.h</FileName>
-              <FileType>5</FileType>
-              <FilePath>..\v1\celda.h</FilePath>
-            </File>
-            <File>
-              <FileName>gpio.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\v1\gpio.c</FilePath>
-            </File>
-            <File>
-              <FileName>gpio.h</FileName>
-              <FileType>5</FileType>
-              <FilePath>..\v1\gpio.h</FilePath>
             </File>
             <File>
               <FileName>gestor_pulsacion.c</FileName>
@@ -570,6 +530,46 @@
               <FileName>tableros.h</FileName>
               <FileType>5</FileType>
               <FilePath>.\tableros.h</FilePath>
+            </File>
+            <File>
+              <FileName>sudoku_2021.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>.\sudoku_2021.h</FilePath>
+            </File>
+            <File>
+              <FileName>Actualizar.s</FileName>
+              <FileType>2</FileType>
+              <FilePath>.\Actualizar.s</FilePath>
+            </File>
+            <File>
+              <FileName>Actualizar_Propagar.s</FileName>
+              <FileType>2</FileType>
+              <FilePath>.\Actualizar_Propagar.s</FilePath>
+            </File>
+            <File>
+              <FileName>propagar.s</FileName>
+              <FileType>2</FileType>
+              <FilePath>.\propagar.s</FilePath>
+            </File>
+            <File>
+              <FileName>celda.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>.\celda.h</FilePath>
+            </File>
+            <File>
+              <FileName>eventos.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>.\eventos.h</FilePath>
+            </File>
+            <File>
+              <FileName>gpio.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\gpio.c</FilePath>
+            </File>
+            <File>
+              <FileName>gpio.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>.\gpio.h</FilePath>
             </File>
           </Files>
         </Group>

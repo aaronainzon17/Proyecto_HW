@@ -8,4 +8,10 @@ struct EventInfo {
 	uint32_t timeStamp;
 };
 
+enum {
+	ID_Alarma,
+	ID_EINT1,
+	ID_EINT2
+};
+
 #endif // EVENTOS_H

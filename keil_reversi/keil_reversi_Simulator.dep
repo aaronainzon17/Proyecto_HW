@@ -22,7 +22,6 @@ I (planificador.h)(0x618CE42A)
 I (gestor_pulsacion.h)(0x618CE42A)
 I (gestor_IO.h)(0x6196286A)
 I (tableros.h)(0x619BCB44)
-F (..\v1\sudoku_2021.h)(0x618CE42A)()
 F (.\Power_management.c)(0x619D27B7)(-c --cpu ARM7TDMI -D__EVAL -g -O3 -Otime-IC:\Keil_v5\ARM\RV31\INC-IC:\Keil_v5\ARM\CMSIS\Include-IC:\Keil_v5\ARM\INC\Philips-D__UVISION_VERSION="526"-o .\power_management.o --omf_browse .\power_management.crf --depend .\power_management.d)
 I (C:\Keil_v5\ARM\INC\Philips\LPC210x.H)(0x559D2F68)
 F (.\Power_management.h)(0x619D27AC)()
@@ -43,18 +42,6 @@ I (eventos.h)(0x618CE42A)
 I (C:\Keil_v5\ARM\ARMCC\include\inttypes.h)(0x599F2F9E)
 I (C:\Keil_v5\ARM\ARMCC\include\stdint.h)(0x599F2F9E)
 F (.\timer0.h)(0x618CE42A)()
-F (..\v1\propagar.s)(0x618CE42A)(--cpu ARM7TDMI --pd "__EVAL SETA 1" -g-IC:\Keil_v5\ARM\RV31\INC-IC:\Keil_v5\ARM\CMSIS\Include-IC:\Keil_v5\ARM\INC\Philips--pd "__UVISION_VERSION SETA 526"-o .\propagar.o --depend .\propagar.d)
-F (..\v1\Actualizar_Propagar.s)(0x618CE42A)(--cpu ARM7TDMI --pd "__EVAL SETA 1" -g-IC:\Keil_v5\ARM\RV31\INC-IC:\Keil_v5\ARM\CMSIS\Include-IC:\Keil_v5\ARM\INC\Philips--pd "__UVISION_VERSION SETA 526"-o .\actualizar_propagar.o --depend .\actualizar_propagar.d)
-F (..\v1\Actualizar.s)(0x618CE42A)(--cpu ARM7TDMI --pd "__EVAL SETA 1" -g-IC:\Keil_v5\ARM\RV31\INC-IC:\Keil_v5\ARM\CMSIS\Include-IC:\Keil_v5\ARM\INC\Philips--pd "__UVISION_VERSION SETA 526"-o .\actualizar.o --depend .\actualizar.d)
-F (..\v1\eventos.h)(0x618CE42A)()
-F (..\v1\celda.h)(0x618CE42A)()
-F (..\v1\gpio.c)(0x619CABC4)(-c --cpu ARM7TDMI -D__EVAL -g -O3 -Otime-IC:\Keil_v5\ARM\RV31\INC-IC:\Keil_v5\ARM\CMSIS\Include-IC:\Keil_v5\ARM\INC\Philips-D__UVISION_VERSION="526"-o .\gpio.o --omf_browse .\gpio.crf --depend .\gpio.d)
-I (C:\Keil_v5\ARM\INC\Philips\LPC210x.H)(0x559D2F68)
-I (C:\Keil_v5\ARM\ARMCC\include\inttypes.h)(0x599F2F9E)
-I (C:\Keil_v5\ARM\ARMCC\include\stdint.h)(0x599F2F9E)
-I (..\v1\gpio.h)(0x618CE42A)
-I (..\v1\eventos.h)(0x618CE42A)
-F (..\v1\gpio.h)(0x618CE42A)()
 F (.\gestor_pulsacion.c)(0x619D70A6)(-c --cpu ARM7TDMI -D__EVAL -g -O3 -Otime-IC:\Keil_v5\ARM\RV31\INC-IC:\Keil_v5\ARM\CMSIS\Include-IC:\Keil_v5\ARM\INC\Philips-D__UVISION_VERSION="526"-o .\gestor_pulsacion.o --omf_browse .\gestor_pulsacion.crf --depend .\gestor_pulsacion.d)
 I (C:\Keil_v5\ARM\INC\Philips\LPC210X.H)(0x559D2F68)
 I (boton_eint0.h)(0x618CE42A)
@@ -94,3 +81,16 @@ I (C:\Keil_v5\ARM\ARMCC\include\stdint.h)(0x599F2F9E)
 I (eventos.h)(0x618CE42A)
 F (.\gestor_IO.h)(0x6196286A)()
 F (.\tableros.h)(0x619BCB44)()
+F (.\sudoku_2021.h)(0x618CE42A)()
+F (.\Actualizar.s)(0x618CE42A)(--cpu ARM7TDMI --pd "__EVAL SETA 1" -g-IC:\Keil_v5\ARM\RV31\INC-IC:\Keil_v5\ARM\CMSIS\Include-IC:\Keil_v5\ARM\INC\Philips--pd "__UVISION_VERSION SETA 526"-o .\actualizar.o --depend .\actualizar.d)
+F (.\Actualizar_Propagar.s)(0x618CE42A)(--cpu ARM7TDMI --pd "__EVAL SETA 1" -g-IC:\Keil_v5\ARM\RV31\INC-IC:\Keil_v5\ARM\CMSIS\Include-IC:\Keil_v5\ARM\INC\Philips--pd "__UVISION_VERSION SETA 526"-o .\actualizar_propagar.o --depend .\actualizar_propagar.d)
+F (.\propagar.s)(0x618CE42A)(--cpu ARM7TDMI --pd "__EVAL SETA 1" -g-IC:\Keil_v5\ARM\RV31\INC-IC:\Keil_v5\ARM\CMSIS\Include-IC:\Keil_v5\ARM\INC\Philips--pd "__UVISION_VERSION SETA 526"-o .\propagar.o --depend .\propagar.d)
+F (.\celda.h)(0x618CE42A)()
+F (.\eventos.h)(0x618CE42A)()
+F (.\gpio.c)(0x619CABC4)(-c --cpu ARM7TDMI -D__EVAL -g -O3 -Otime-IC:\Keil_v5\ARM\RV31\INC-IC:\Keil_v5\ARM\CMSIS\Include-IC:\Keil_v5\ARM\INC\Philips-D__UVISION_VERSION="526"-o .\gpio.o --omf_browse .\gpio.crf --depend .\gpio.d)
+I (C:\Keil_v5\ARM\INC\Philips\LPC210x.H)(0x559D2F68)
+I (C:\Keil_v5\ARM\ARMCC\include\inttypes.h)(0x599F2F9E)
+I (C:\Keil_v5\ARM\ARMCC\include\stdint.h)(0x599F2F9E)
+I (gpio.h)(0x618CE42A)
+I (eventos.h)(0x618CE42A)
+F (.\gpio.h)(0x618CE42A)()
