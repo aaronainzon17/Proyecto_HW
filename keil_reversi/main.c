@@ -253,7 +253,7 @@ int main (void) {
 						fila = GPIO_leer(16,4);
 						columna = GPIO_leer(20,4);
 						nuevo_valor = GPIO_leer(24,4);
-					  	Gestor_Pulsacion_Control(Evento.idEvento);	//Pasa a pulsado y pone la alarma
+					  Gestor_Pulsacion_Control(Evento.idEvento);	//Pasa a pulsado y pone la alarma
 						if(SD == 1){					// Si vienes de power down no haces nada
 							SD = 0;						// SD se pone a 0 para indicar que no estamos en power down
 						} else {

@@ -1,0 +1,74 @@
+<?xml version='1.0'?>
+<!DOCTYPE qfsmproject SYSTEM 'qfsm.dtd'>
+<qfsmproject version="0.54" author="Qfsm">
+  <machine nummooreout="0" transfontitalic="0" draw_it="1" statefontsize="8" transfont="Helvetica" statefontitalic="0" author="" description="" version="" name="FSM" arrowtype="3" numbits="4" statefontweight="50" statefont="Helvetica" numin="0" transfontsize="8" transfontweight="50" type="2" numout="0" initialstate="0">
+    <outputnames_moore></outputnames_moore>
+    <inputnames></inputnames>
+    <outputnames></outputnames>
+    <itransition ypos="347.5" endx="605.8333333333333" xpos="565.8333333333333" endy="347.5"/>
+    <state pencolor="0" exit_actions="" radius="70" description="" finalstate="0" entry_actions="ALARMA_SD; ALARMA_VISUALIZACION" moore_outputs="" ypos="347.5" code="0" xpos="675.8333333333333" linewidth="1">INICIO</state>
+    <state pencolor="0" exit_actions="" radius="50" description="" finalstate="0" entry_actions="" moore_outputs="" ypos="535" code="1" xpos="367.5" linewidth="1">IDLE</state>
+    <state pencolor="0" exit_actions="" radius="70" description="" finalstate="0" entry_actions="GESTOR_PULSACION(0)" moore_outputs="" ypos="100.8333333333333" code="2" xpos="630" linewidth="1">EVENTO_ALARMA_PULSACIÓN</state>
+    <state pencolor="0" exit_actions="" radius="105" description="" finalstate="0" entry_actions="RESET_SD; GESTOR_PULSACION(1); SD=0(No_Pista|No_Reset &amp; valor{candidato} => Introducir_valor, Propagar;  Reset => Reiniciar_juego) SD=1(SD=0)" moore_outputs="" ypos="152.5" code="3" xpos="909.1666666666666" linewidth="1">EVENTO_EINT1</state>
+    <state pencolor="0" exit_actions="" radius="90" description="" finalstate="0" entry_actions="RESET_SD; GESTOR_PULSACION(2)SD=0(No_Pista=>Borrar_valor, Actualizar) SD=1(SD=0)" moore_outputs="" ypos="605" code="4" xpos="579.1666666666666" linewidth="1">EVENTO_EINT2</state>
+    <state pencolor="0" exit_actions="" radius="90" description="" finalstate="0" entry_actions="Cambio_Entrada => Encolar_Visualizacion " moore_outputs="" ypos="335" code="5" xpos="995.8333333333334" linewidth="1">Evento_ALARMA_Visualizacion</state>
+    <state pencolor="0" exit_actions="" radius="90" description="" finalstate="0" entry_actions="GPIO_ESCRIBIR; CASILLA=PISTA => BIT_VAL(1)" moore_outputs="" ypos="585.8333333333334" code="6" xpos="770.8333333333333" linewidth="1">EVENTO_VISULALIZACION</state>
+    <state pencolor="0" exit_actions="" radius="90" description="" finalstate="0" entry_actions="BIT_VAL(1),PONER_ALARMA(1s)" moore_outputs="" ypos="529.1666666666666" code="7" xpos="998.3333333333331" linewidth="1">EVENTO_ALARMA_BIT_VALIDAR</state>
+    <state pencolor="0" exit_actions="" radius="65" description="" finalstate="0" entry_actions="BIT_VAL(0)" moore_outputs="" ypos="162.5" code="8" xpos="469.1666666666667" linewidth="1">EVENTO_FIN_ALARMA_VAL</state>
+    <state pencolor="0" exit_actions="BIT_PD(0)" radius="70" description="" finalstate="0" entry_actions="BIT_PD(1);SD=1;Power_Down()" moore_outputs="" ypos="299.1666666666666" code="9" xpos="391.6666666666667" linewidth="1">POWER_DOWN</state>
+    <transition c1x="547.4789982042704" c2y="468.5520255179791" c1y="425.7151216617293" description="" straight="1" type="2" ypos="382.8782178054793" endx="411.5739985014392" xpos="615.4314980556858" endy="511.3889293742291" c2x="479.5264983528548">
+      <from>0</from>
+      <to>1</to>
+      <inputs default="0" any="0" invert="0">!hay_eventos</inputs>
+      <outputs></outputs>
+    </transition>
+    <transition c1x="797.5800128157561" c2y="336.8111775582307" c1y="352.1048392649811" description="" straight="1" type="2" ypos="367.3985009717313" endx="906.8489379531044" xpos="742.9455502470817" endy="321.5175158514805" c2x="852.2144753844302">
+      <from>0</from>
+      <to>5</to>
+      <inputs default="0" any="0" invert="0">ID_EVENTO = 3</inputs>
+      <outputs></outputs>
+    </transition>
+    <transition c1x="610.1266284408911" c2y="480.9645888477945" c1y="443.5959394698653" description="" straight="1" type="2" ypos="406.2272900919361" endx="554.8999733698694" xpos="637.7399559764018" endy="518.3332382257236" c2x="582.5133009053801">
+      <from>0</from>
+      <to>4</to>
+      <inputs default="0" any="0" invert="0">ID_EVENTO = 2</inputs>
+      <outputs></outputs>
+    </transition>
+    <transition c1x="698.9758858049204" c2y="477.9601199175147" c1y="447.3496651372132" description="" straight="1" type="2" ypos="416.7392103569117" endx="724.6763606419856" xpos="686.1256483863878" endy="508.5705746978162" c2x="711.826123223453">
+      <from>0</from>
+      <to>6</to>
+      <inputs default="0" any="0" invert="0">ID_EVENTO = 4</inputs>
+      <outputs></outputs>
+    </transition>
+    <transition c1x="743.7247484767507" c2y="222.1618583616648" c1y="254.2932186225922" description="" straight="1" type="2" ypos="286.4245788835196" endx="811.1031071131274" xpos="710.0355691585623" endy="190.0304981007375" c2x="777.413927794939">
+      <from>0</from>
+      <to>3</to>
+      <inputs default="0" any="0" invert="0">ID_EVENTO = 1</inputs>
+      <outputs></outputs>
+    </transition>
+    <transition c1x="796.6811671636077" c2y="462.3827762097645" c1y="419.8182940696989" description="" straight="1" type="2" ypos="377.2538119296333" endx="911.6533456730758" xpos="739.1950779088736" endy="504.9472583498302" c2x="854.1672564183417">
+      <from>0</from>
+      <to>7</to>
+      <inputs default="0" any="0" invert="0">ID_EVENTO = 5</inputs>
+      <outputs></outputs>
+    </transition>
+    <transition c1x="656.3141240286429" c2y="205.0982151356993" c1y="242.2655519985315" description="" straight="1" type="2" ypos="279.4328888613637" endx="649.9479187658073" xpos="659.4972266600607" endy="167.9308782728671" c2x="653.1310213972251">
+      <from>0</from>
+      <to>2</to>
+      <inputs default="0" any="0" invert="0">ID_EVENTO = 0</inputs>
+      <outputs></outputs>
+    </transition>
+    <transition c1x="590.8346675348071" c2y="224.5710144395822" c1y="264.1711805553862" description="" straight="1" type="2" ypos="303.7713466711903" endx="530.1589692597788" xpos="621.1725166723212" endy="184.9708483237781" c2x="560.4968183972929">
+      <from>0</from>
+      <to>8</to>
+      <inputs default="0" any="0" invert="0">ID_EVENTO = 6</inputs>
+      <outputs></outputs>
+    </transition>
+    <transition c1x="558.140799990111" c2y="303.9344022430163" c1y="319.8484085370893" description="" straight="1" type="2" ypos="335.7624148311622" endx="460.773545116552" xpos="606.8244274268905" endy="288.0203959489433" c2x="509.4571725533315">
+      <from>0</from>
+      <to>9</to>
+      <inputs default="0" any="0" invert="0">ID_EVENTO = 7</inputs>
+      <outputs></outputs>
+    </transition>
+  </machine>
+</qfsmproject>

@@ -487,11 +487,6 @@
               <FilePath>.\gestor_pulsacion.h</FilePath>
             </File>
             <File>
-              <FileName>gestor_alarmas.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>.\gestor_alarmas.c</FilePath>
-            </File>
-            <File>
               <FileName>gestor_alarmas.h</FileName>
               <FileType>5</FileType>
               <FilePath>.\gestor_alarmas.h</FilePath>
@@ -510,6 +505,11 @@
               <FileName>planificador.h</FileName>
               <FileType>5</FileType>
               <FilePath>.\planificador.h</FilePath>
+            </File>
+            <File>
+              <FileName>gestor_alarmas.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\gestor_alarmas.c</FilePath>
             </File>
             <File>
               <FileName>gestor_SC.s</FileName>
