@@ -3,7 +3,7 @@
 #include "cola.h"
 //#include "temporizador.h"
 #include "gpio.h"
-
+//static
 volatile struct Cola cola;
 
 void cola_ini(void){

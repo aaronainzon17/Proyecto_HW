@@ -11,7 +11,12 @@ struct EventInfo {
 enum {
 	ID_Alarma,
 	ID_EINT1,
-	ID_EINT2
+	ID_EINT2,
+	Alarma_visualizacion,
+	mostrar_vis,
+	bit_val,
+	fin_val,
+	power_down
 };
 
 #endif // EVENTOS_H
