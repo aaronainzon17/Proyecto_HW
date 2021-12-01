@@ -35,6 +35,7 @@ void
 candidatos_propagar_c(CELDA cuadricula[NUM_FILAS][NUM_COLUMNAS],
                              uint8_t fila, uint8_t columna);
 
+
 /* declaracion de funciones ARM a implementar */
 int
 candidatos_actualizar_arm(CELDA cuadricula[NUM_FILAS][NUM_COLUMNAS]);

@@ -6,11 +6,11 @@
 #include "timer.h"
 #include "eventos.h"
 
-static volatile struct EventInfo alarm_queue[8];  	// Vector de alarmas de eventos; cada índice corresponde a un tipo de alarma
-static volatile uint8_t bit_activa[8];				// Vector que indica si la alarma de cada tipo esta activa o no
-static volatile uint8_t bit_perio[8]; 				// Vector que indica si la alarma de cada tipo es periódica o no
-static volatile uint32_t periodo[8]; 				// Vector que indica el periodo de cada tipo de alarma
-static volatile uint32_t periodicas_restaurar[8];	// Vector que almacena el periodo original de cada alarma
+static volatile struct EventInfo alarm_queue[9];  	// Vector de alarmas de eventos; cada índice corresponde a un tipo de alarma
+static volatile uint8_t bit_activa[9];				// Vector que indica si la alarma de cada tipo esta activa o no
+static volatile uint8_t bit_perio[9]; 				// Vector que indica si la alarma de cada tipo es periódica o no
+static volatile uint32_t periodo[9]; 				// Vector que indica el periodo de cada tipo de alarma
+static volatile uint32_t periodicas_restaurar[9];	// Vector que almacena el periodo original de cada alarma
 
 // Inicializar las alarmas
 void iniciar_alarmas(void){

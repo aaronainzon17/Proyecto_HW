@@ -3,6 +3,8 @@
 #include "timer0.h"
 #include "pulsacion.h"
 #include "gestor_alarmas.h"
+#include "eventos.h"
+#include "cola.h"
 // variable para contabilizar el número de interrupciones
 static volatile unsigned int timer0_int_count = 0;
 static volatile unsigned int timer1_int_count = 0;
@@ -73,7 +75,10 @@ void temporizador_periodo(int periodo){
 void timer0_ISR (void) __irq {
     timer0_int_count++;
 		if (timer0_int_count != 0 && timer0_int_count == siguiente_periodo){	// Cuando llega al final controlamos las alarmas
-				gestor_alarmas_control_alarma();
+				//gestor_alarmas_control_alarma();
+				struct EventInfo timer_event;
+				timer_event.idEvento = 8;
+				cola_guardar_eventos(timer_event.idEvento,timer_event.auxData);
 				siguiente_periodo = timer0_int_count + periodo_alarm;
 		}
     T0IR = 1;                              			// Clear interrupt flag

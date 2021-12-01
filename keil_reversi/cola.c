@@ -4,32 +4,36 @@
 //#include "temporizador.h"
 #include "gpio.h"
 //static
-volatile struct Cola cola;
+struct Cola cola;
 
 void cola_ini(void){
-	cola.sig = 0;				// ultimo evento tratado
-	cola.ult = 0;				// Siguiente posicion en la que se introduce un evento
+	cola.sig = -1;				// siguiente evento a ser tratado
+	cola.ult = -1;				// Siguiente posicion en la que se introduce un evento
 }
 
-void cola_guardar_eventos(uint8_t  ID_evento,  uint32_t  auxData){
-    cola.elementos[cola.ult].idEvento = ID_evento;
-    cola.elementos[cola.ult].auxData = auxData;
-    //cola.elementos[cola.sig].timeStamp = temporizador_leer();
-    
-    //Implementacion de la circularidad
-    if (cola.ult < SIZE - 1){
-		cola.ult++;
-	}else{
-		cola.ult = 0;
-	}
-    //Overflow 
-	if (cola.ult == cola.sig){
+int cola_llena(void){
+	if((cola.sig == 0 && cola.ult == SIZE - 1) || (cola.sig == cola.ult + 1)){
 		GPIO_marcar_salida(30,1);
 		GPIO_escribir(30,1,1);
+		return 1;
 	}else{
 		GPIO_marcar_salida(30,1);
 		GPIO_escribir(30,1,0);
+		return 0;
 	}
+}
+
+void cola_guardar_eventos(uint8_t  ID_evento,  uint32_t  auxData){
+		while(cola_llena() != 0){}
+		//Implementacion de la circularidad
+		if (cola.ult < SIZE - 1){
+			cola.ult++;
+		}else{
+			cola.ult = 0;
+		}
+		cola.elementos[cola.ult].idEvento = ID_evento;
+		cola.elementos[cola.ult].auxData = auxData;
+		//cola.elementos[cola.sig].timeStamp = temporizador_leer();
 }
 // Funcion que comprueba si la cola tiene nuevos eventos 
 int cola_nuevos_eventos (void) {
@@ -41,20 +45,12 @@ int cola_nuevos_eventos (void) {
 }
 // Funcion que lee el evento mas antiguo sin procesar de la cola 
 void cola_leer_evevento_antiguo(struct EventInfo* elemento) {
+		if (cola.sig < SIZE - 1) {
+				cola.sig ++;
+		}else {
+			cola.sig = 0; 
+		}
     elemento->idEvento = cola.elementos[cola.sig].idEvento;
     elemento->auxData = cola.elementos[cola.sig].auxData;
     elemento->timeStamp = cola.elementos[cola.sig].timeStamp;
-    if (cola.sig < SIZE - 1) {
-			cola.sig ++;
-	}else {
-		cola.sig = 0; 
-	}
-	
-	if (cola.ult == cola.sig){
-		GPIO_marcar_salida(30,1);
-		GPIO_escribir(30,1,1);
-	}else{
-		GPIO_marcar_salida(30,1);
-		GPIO_escribir(30,1,0);
-	}
 }

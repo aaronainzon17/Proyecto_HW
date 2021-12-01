@@ -351,7 +351,7 @@
           </ArmAdsMisc>
           <Cads>
             <interw>0</interw>
-            <Optim>4</Optim>
+            <Optim>1</Optim>
             <oTime>1</oTime>
             <SplitLS>0</SplitLS>
             <OneElfS>0</OneElfS>
@@ -532,11 +532,6 @@
               <FilePath>.\tableros.h</FilePath>
             </File>
             <File>
-              <FileName>sudoku_2021.h</FileName>
-              <FileType>5</FileType>
-              <FilePath>.\sudoku_2021.h</FilePath>
-            </File>
-            <File>
               <FileName>Actualizar.s</FileName>
               <FileType>2</FileType>
               <FilePath>.\Actualizar.s</FilePath>
@@ -570,6 +565,16 @@
               <FileName>gpio.h</FileName>
               <FileType>5</FileType>
               <FilePath>.\gpio.h</FilePath>
+            </File>
+            <File>
+              <FileName>sudoku_2021.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>.\sudoku_2021.h</FilePath>
+            </File>
+            <File>
+              <FileName>sudoku_2021.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\sudoku_2021.c</FilePath>
             </File>
           </Files>
         </Group>
