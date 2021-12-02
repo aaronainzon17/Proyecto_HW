@@ -20,7 +20,7 @@ void eint1_ISR (void) __irq {
 	EXTINT |= 0x2;        // clear interrupt flag        
 	VICVectAddr = 1;             // Acknowledge Interrupt
 	eint1_nueva_pulsacion = 1;		//Ponemos a 1 el flag de pulsación
-	cola_guardar_eventos(1,0);			//Encolamos el evento de pulsación en EINT1
+	cola_guardar_eventos(ID_EINT1,0);			//Encolamos el evento de pulsación en EINT1
 	VICIntEnClr |= (1<< BIT_EINT1);			// Inhabilitamos las interrupciones
 	VICIntEnable &= ~(1<< BIT_EINT1);			// Inhabilitamos las interrupciones
 }
@@ -29,7 +29,7 @@ void eint2_ISR (void) __irq {
 	EXTINT |= 0x4;        // clear interrupt flag        
 	VICVectAddr = 1;             // Acknowledge Interrupt
 	eint2_nueva_pulsacion = 1;
-	cola_guardar_eventos(2,0);
+	cola_guardar_eventos(ID_EINT2,0);
 	VICIntEnClr |= (1<< BIT_EINT2);			// Inhabilitamos las interrupciones
 	VICIntEnable &= ~(1<< BIT_EINT2);
 }

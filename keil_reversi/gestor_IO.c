@@ -58,15 +58,6 @@ static int candidatos_actualizar_c(CELDA cuadricula[NUM_FILAS][NUM_COLUMNAS])
 	return celdas_vacias; // por favor eliminar una vez completada la función
 }
 
-
-void introducir_alarma_power(void){
-	struct EventInfo Power_down;
-	Power_down.idEvento = 7;
-	Power_down.timeStamp = temporizador_leer();
-	Power_down.auxData = 0x0000AFC8;				// Ponemos la alarma 15 segundos para el powerdown
-	gestor_alarmas_control_cola(Power_down);
-}
-
 void gestor_IO_init(void){	// Inicia la GPIO y marca los pines que van a ser entradas 
 	GPIO_iniciar();
 	GPIO_marcar_entrada(14,14);
@@ -104,7 +95,7 @@ void gestor_IO_nueva_jugada(void){
 				//Parar tiempo
 				//t2 = temporizador_leer();
 				//tot = t2-t1;	//Tiempo total
-				led_val.idEvento = 5;	// Poner el bit de validación a 1 durante 1 segundo mediante la generación de 1 evento
+				led_val.idEvento = ID_bit_val;	// Poner el bit de validación a 1 durante 1 segundo mediante la generación de 1 evento
 				//Antes de encolar habría que inhabilitar las interrupciones pero lo haremos en la 3 con softirq
 				cola_guardar_eventos(led_val.idEvento,led_val.auxData);
 			}
@@ -113,7 +104,7 @@ void gestor_IO_nueva_jugada(void){
 }
 
 void gestor_IO_jugada_de_borrar(void){
-	struct EventInfo led_val;	// Evento que se genera cuando se ha introducido una entrada que corresponde a una pista y se activa el bit 13 de la GPIO
+	struct EventInfo led_val2;	// Evento que se genera cuando se ha introducido una entrada que corresponde a una pista y se activa el bit 13 de la GPIO
 	int fila;
 	int columna;
 	fila = GPIO_leer(16,4);
@@ -121,9 +112,9 @@ void gestor_IO_jugada_de_borrar(void){
 	if(((cuadricula_C_C[fila][columna] >> 4) & 0x00000001) != 0x00000001){	// Comprobamos que la casilla no es pista por lo que no se podría borrar
 		cuadricula_C_C[fila][columna] = 0x00000000;							// Eliminamos el valor de la casilla
 		candidatos_actualizar_c(cuadricula_C_C);							// Actualizamos los candidatos
-		led_val.idEvento = 5;												// Poner el bit de validación a 1 durante 1 segundo mediante la generación de 1 evento
+		led_val2.idEvento = ID_bit_val;												// Poner el bit de validación a 1 durante 1 segundo mediante la generación de 1 evento
 		//Antes de encolar habría que inhabilitar las interrupciones pero lo haremos en la 3 con softirq
-		cola_guardar_eventos(led_val.idEvento,led_val.auxData);
+		cola_guardar_eventos(led_val2.idEvento,led_val2.auxData);
 	}
 }
 
@@ -132,7 +123,7 @@ void gestor_IO_visualizacion(void){
 	entradas_nuevo = GPIO_leer(16,12);			// Lees las entradas de la GPIO
 	if (entradas_anterior != entradas_nuevo){	// Si la entrada ha cambiado
 		introducir_alarma_power();				// Reseteas la alarma de power_down
-		Most_Vis.idEvento = 4;					// Generamos evento de visualización si ha cambiado la entrada para actualizar los candidatos y el valor
+		Most_Vis.idEvento = ID_mostrar_vis;					// Generamos evento de visualización si ha cambiado la entrada para actualizar los candidatos y el valor
 		Most_Vis.auxData = entradas_nuevo;	
 		//Antes de encolar habría que inhabilitar las interrupciones pero lo haremos en la 3 con softirq
 		cola_guardar_eventos(Most_Vis.idEvento,Most_Vis.auxData);						
@@ -161,25 +152,22 @@ void gestor_IO_mostrar_visualizacion(struct EventInfo Evento){
 }
 
 void iniciar(void){
-	struct EventInfo alarma_visualizacion;
 	temporizador_iniciar();									// Inicializamos timers
 	temporizador_empezar();
 	eint0_init();											// Inicializamos botones
 	gestor_IO_init();										// Inicializamos GPIO
 	cola_ini();												// Inicializamos cola
+	sudoku_iniciar_tablero();
 	candidatos_actualizar_c(cuadricula_C_C); 				// Se actualizan los candidatos de cada celda
 	temporizador_periodo(1);								// Se configura el timer para que salte cada 1ms
-	alarma_visualizacion.idEvento = 3;
-	alarma_visualizacion.timeStamp = temporizador_leer();
-	alarma_visualizacion.auxData = 0x00800014;				// Ponemos la alarma 5 veces por segundo periodica para la visualizacion
-	gestor_alarmas_control_cola(alarma_visualizacion);		// La introducimos al gestor de alarmas
+	introducir_alarma_viualizacion();
 	introducir_alarma_power();								// Introducimos la alarma de 15 s para el powerdown
 } 
 
 void gestor_IO_validacion_1s(void){
 		struct EventInfo led_alrm;	// Evento que se genera cuando se ha introducido una entradavalida y se activa el bit 13 de la GPIO durante 1 s
 		GPIO_escribir(13,1,1);
-		led_alrm.idEvento = 6;						
+		led_alrm.idEvento = ID_fin_val;						
 		led_alrm.timeStamp = temporizador_leer();
 		led_alrm.auxData = 0x00000064;				// Ponemos la alarma  de 1 segundo
 		gestor_alarmas_control_cola(led_alrm);
@@ -195,5 +183,9 @@ void gestor_IO_escribir_bit_powerdown(void){
 
 void gestor_IO_apagar_bit_powerdown(void){
 	GPIO_escribir(31,1,0);		// ponemos a 1 el bit 31 de la GPIO para indicar que estamos en power down
+}
+
+int gestor_IO_leer_de_gpio(int inicio, int fin){
+	return GPIO_leer(inicio,fin);
 }
 

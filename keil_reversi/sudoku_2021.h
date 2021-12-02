@@ -1,9 +1,9 @@
-/* guarda para evitar inclusiones m�ltiples ("include guard") */
-#ifndef SUDOKU_H_2021
-#define SUDOKU_H_2021
-
+#include <LPC210x.H>                      
 #include <inttypes.h>
 #include "celda.h"
+#include "eventos.h"
+
+void sudoku (int Evento);
 
 /* Tama�os de la cuadricula */
 /* Se utilizan 16 columnas para facilitar la visualizaci�n */
@@ -47,5 +47,6 @@ int
 candidatos_propagar_arm(CELDA cuadricula[NUM_FILAS][NUM_COLUMNAS],
                                uint8_t fila, uint8_t columna);
 
-#endif /* SUDOKU_H_2021 */
+void sudoku_mostrar_visualizacion(struct EventInfo Evento);
 
+void sudoku_iniciar_tablero(void);

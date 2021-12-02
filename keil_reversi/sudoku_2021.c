@@ -1,9 +1,40 @@
+#include <LPC210x.H>                      
+#include <inttypes.h>
+#include <stddef.h>
+#include "eventos.h"
+#include "gestor_IO.h"
+#include "timer0.h"
+#include "Power_management.h"
+#include "boton_eint0.h"
 #include <stddef.h>
 #include "sudoku_2021.h"
-//#include "temporizador.h"
+#include "gpio.h"
+#include "boton_eint0.h"
+#include "gestor_alarmas.h"
+#include "cola.h"
+#include "planificador.h"
+#include "gestor_pulsacion.h"
+#include "eventos.h"
+#include "tableros.h"
+
+
 
 extern int candidatos_actualizar_arm_c(CELDA cuadricula[NUM_FILAS][NUM_COLUMNAS]);
 extern int candidatos_actualizar_arm_arm(CELDA cuadricula[NUM_FILAS][NUM_COLUMNAS]);
+
+static volatile CELDA
+cuadricula[NUM_FILAS][NUM_COLUMNAS] =
+{
+0x0015, 0x0000, 0x0000, 0x0013, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0, 0, 0, 0, 0, 0, 0,
+0x0000, 0x0000, 0x0000, 0x0000, 0x0019, 0x0000, 0x0000, 0x0000, 0x0015, 0, 0, 0, 0, 0, 0, 0,
+0x0000, 0x0019, 0x0016, 0x0017, 0x0000, 0x0015, 0x0000, 0x0013, 0x0000, 0, 0, 0, 0, 0, 0, 0,
+0x0000, 0x0018, 0x0000, 0x0019, 0x0000, 0x0000, 0x0016, 0x0000, 0x0000, 0, 0, 0, 0, 0, 0, 0,
+0x0000, 0x0000, 0x0015, 0x0018, 0x0016, 0x0011, 0x0014, 0x0000, 0x0000, 0, 0, 0, 0, 0, 0, 0,
+0x0000, 0x0000, 0x0014, 0x0012, 0x0000, 0x0013, 0x0000, 0x0017, 0x0000, 0, 0, 0, 0, 0, 0, 0,
+0x0000, 0x0017, 0x0000, 0x0015, 0x0000, 0x0019, 0x0012, 0x0016, 0x0000, 0, 0, 0, 0, 0, 0, 0,
+0x0016, 0x0000, 0x0000, 0x0000, 0x0018, 0x0000, 0x0000, 0x0000, 0x0000, 0, 0, 0, 0, 0, 0, 0,
+0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0012, 0x0000, 0x0000, 0x0011, 0, 0, 0, 0, 0, 0, 0
+};
 
 
 /* *****************************************************************************
@@ -167,13 +198,92 @@ sudoku9x9(CELDA cuadricula_C_C[NUM_FILAS][NUM_COLUMNAS],
     correcto += cuadricula_candidatos_verificar(cuadricula_ARM_C,solucion);
     return correcto;
 }
-/*
-// MAIN
-int main (void) {
-    #include "tableros.h"
-		int correcto = sudoku9x9(cuadricula_C_C, cuadricula_C_ARM, cuadricula_ARM_ARM, cuadricula_ARM_C, solucion);
-		//temporizador_iniciar();
-		//temporizador_empezar();
-		while(1){}
-}*/
+
+void sudoku_jugada (void){
+		struct EventInfo led_val;	// Evento que se genera cuando se ha introducido una entrada que corresponde a una pista y se activa el bit 13 de la GPIO
+		int fila;
+		int columna;
+		int nuevo_valor;
+		int j,k, guarda;
+		fila = gestor_IO_leer_de_gpio(16,4);
+		columna = gestor_IO_leer_de_gpio(20,4);
+		nuevo_valor = gestor_IO_leer_de_gpio(24,4);
+		// La casilla introducida no es pista y no se ha introducido fila = 0, columna = 0, valor = 0
+		if((((cuadricula_C_C[fila][columna] >> 4) & 0x00000001) != 0x00000001) || (fila == 0 && columna == 0 && nuevo_valor ==0)){	
+			if(fila == 0 && columna == 0 && nuevo_valor ==0){
+				//Reiniciamos el juego
+				for(j=0;j<9;j++){
+					for(k=0;k<16;k++){
+						cuadricula_C_C[j][k] = cuadricula[j][k];	// Reiniciamos cada casilla
+					}
+				}
+				candidatos_actualizar_c(cuadricula_C_C);	// Actualizamos candidatos
+			}else{	// Se puede escribir en esa casilla porque no es pista
+				guarda = (cuadricula_C_C[fila][columna] >> 6);	
+				guarda = guarda >> nuevo_valor;	// Compruebas que el valor a introducir esta como candidato
+				if( (guarda & 0x00000001) == 0 ){	// Si el bit esta a uno puedes escribir
+					cuadricula_C_C[fila][columna]&= 0xFFFFFFF0;
+					cuadricula_C_C[fila][columna] += nuevo_valor;	// Escribes el nuevo valor
+					//Iniciar tiempo
+					//t1 = temporizador_leer();
+					candidatos_propagar_c(cuadricula_C_C,fila,columna);	// Propagas el nuevo valor
+					//Parar tiempo
+					//t2 = temporizador_leer();
+					//tot = t2-t1;	//Tiempo total
+					led_val.idEvento = ID_bit_val;	// Poner el bit de validación a 1 durante 1 segundo mediante la generación de 1 evento
+					//Antes de encolar habría que inhabilitar las interrupciones pero lo haremos en la 3 con softirq
+					cola_guardar_eventos(led_val.idEvento,led_val.auxData);
+				}
+			}
+		}
+}
+
+void sudoku_jugada_borrar(void){
+	struct EventInfo led_val2;	// Evento que se genera cuando se ha introducido una entrada que corresponde a una pista y se activa el bit 13 de la GPIO
+	int fila;
+	int columna;
+	fila = GPIO_leer(16,4);
+	columna = GPIO_leer(20,4);
+	if(((cuadricula_C_C[fila][columna] >> 4) & 0x00000001) != 0x00000001){	// Comprobamos que la casilla no es pista por lo que no se podría borrar
+		cuadricula_C_C[fila][columna] = 0x00000000;							// Eliminamos el valor de la casilla
+		candidatos_actualizar_c(cuadricula_C_C);							// Actualizamos los candidatos
+		led_val2.idEvento = ID_bit_val;												// Poner el bit de validación a 1 durante 1 segundo mediante la generación de 1 evento
+		//Antes de encolar habría que inhabilitar las interrupciones pero lo haremos en la 3 con softirq
+		cola_guardar_eventos(led_val2.idEvento,led_val2.auxData);
+	}
+}
+
+
+void sudoku (int Evento){
+    switch(Evento){
+					case ID_Alarma:	
+						Gestor_Pulsacion_Control(Evento);
+					break;
+					case ID_EINT1:						
+						//sudoku_jugada();
+						gestor_IO_nueva_jugada();
+					break;
+					case ID_EINT2:							
+						gestor_IO_jugada_de_borrar();	//Nueva jugada de borrar
+					break;
+					case ID_Alarma_visualizacion:	
+						gestor_IO_visualizacion();
+					break;
+					case ID_bit_val:	
+						gestor_IO_validacion_1s();
+					break;
+					case ID_fin_val:	
+						gestor_IO_escribir_bit_validar();
+					break;
+		}		
+}
+
+void sudoku_mostrar_visualizacion(struct EventInfo Evento){
+	gestor_IO_mostrar_visualizacion(Evento);
+}
+
+void sudoku_iniciar_tablero(void){
+	candidatos_actualizar_c(cuadricula_C_C);
+}
+
 

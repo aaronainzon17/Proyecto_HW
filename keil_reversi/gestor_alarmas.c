@@ -15,7 +15,7 @@ static volatile uint32_t periodicas_restaurar[9];	// Vector que almacena el peri
 // Inicializar las alarmas
 void iniciar_alarmas(void){
 	int i=0;
-	while (i<8){
+	while (i<9){
 		bit_activa[i] = 0;
 		i++;
 	}
@@ -53,7 +53,7 @@ void gestor_alarmas_control_cola(struct EventInfo nueva_alarma){
 */
 void gestor_alarmas_control_alarma(void){
 	int i = 0;
-	while (i<8){
+	while (i<9){
 		if(bit_activa[i] != 0){	// Si la alarma esta activa
 			periodo[i] --;
 			if(periodo[i] == 0){ // Si el periodo es 0 significa que ha acabado la alarma 
@@ -71,6 +71,20 @@ void gestor_alarmas_control_alarma(void){
 	}
 }
 
+void introducir_alarma_power(void){
+	struct EventInfo Power_down;
+	Power_down.idEvento = ID_power_down;
+	//Power_down.timeStamp = temporizador_leer();
+	Power_down.auxData = 0x0000AFC8;				// Ponemos la alarma 15 segundos para el powerdown
+	gestor_alarmas_control_cola(Power_down);
+}
 
+void introducir_alarma_viualizacion(void){
+	struct EventInfo alarma_visualizacion;
+	alarma_visualizacion.idEvento = ID_Alarma_visualizacion;
+	//alarma_visualizacion.timeStamp = temporizador_leer();
+	alarma_visualizacion.auxData = 0x00800014;				// Ponemos la alarma 5 veces por segundo periodica para la visualizacion
+	gestor_alarmas_control_cola(alarma_visualizacion);		// La introducimos al gestor de alarmas
+}
 
 

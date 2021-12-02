@@ -15,11 +15,11 @@ void Gestor_Pulsacion_Control(uint32_t Id_Evento){
 	uint32_t aux;
 	switch(ESTADO){ //Dos eventos posibles; Alarma o pulsacion
 		case no_pulsado:
-			if(Id_Evento == 1 || Id_Evento == 2){//Se ha pulsado un bot?n
+			if(Id_Evento == ID_EINT1 || Id_Evento == ID_EINT2){//Se ha pulsado un bot?n
 				ESTADO = pulsado;
 				Boton = Id_Evento;
 				// Meter los campos de la alarma
-				Pulsacion_alarma.idEvento = 0;
+				Pulsacion_alarma.idEvento = ID_Alarma;
 				Pulsacion_alarma.timeStamp = temporizador_leer();
 				aux = (Id_Evento & 0xFF000000);
 				//1(0x1) porque es periodico y 100(0X000064) de periodo -> (0X800064): 24 bits y quedan los 8 de id 
@@ -28,13 +28,13 @@ void Gestor_Pulsacion_Control(uint32_t Id_Evento){
 			}
 		break;
 		case pulsado:
-			if(Id_Evento == 0){//LLega alarma para ver si sigue pulsado el botón
+			if(Id_Evento == ID_Alarma){//LLega alarma para ver si sigue pulsado el botón
 				switch(Boton){ 
 					case 1:
 						EXTINT |= 0x2;
 						if((EXTINT & 0x00000002)!= 2){// El botón ya no sigue pulsado
 							eint1_clear_nueva_pulsacion();	// Reseteamos la pulsacion
-							Pulsacion_alarma.idEvento = 0;
+							Pulsacion_alarma.idEvento = ID_Alarma;
 							Pulsacion_alarma.timeStamp = temporizador_leer();
 							Pulsacion_alarma.auxData = 0x01000000;
 							gestor_alarmas_control_cola(Pulsacion_alarma); //parar la alarma introduciendo 0 en el retardo
@@ -45,7 +45,7 @@ void Gestor_Pulsacion_Control(uint32_t Id_Evento){
 						EXTINT |= 0x4;
 						if((EXTINT & 0x00000004)!= 4){// El botón ya no sigue pulsado
 							eint2_clear_nueva_pulsacion();
-							Pulsacion_alarma.idEvento = 0;
+							Pulsacion_alarma.idEvento = ID_Alarma;
 							Pulsacion_alarma.timeStamp = temporizador_leer();
 							Pulsacion_alarma.auxData = 0x02000000;
 							gestor_alarmas_control_cola(Pulsacion_alarma); //parar la alarma introduciendo 0 en el retardo

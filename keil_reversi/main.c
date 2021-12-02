@@ -46,52 +46,52 @@ int main (void) {
 	struct EventInfo Evento;
 	//int t1,t2;				// Variables de medición de tiempo
 	//int tot;
-	int SD = 0;					// Flag para salir de power down
+	int PD_Flag = 0;					// Flag para salir de power down
 	iniciar();
 	while(1){		
 		if(cola_nuevos_eventos()){
 				cola_leer_evevento_antiguo(&Evento);
 				switch(Evento.idEvento){
-					case 0:	// Alarma pulsacion para comprobar si el boton pulsado lo sigue estando
-						Gestor_Pulsacion_Control(Evento.idEvento);
+					case ID_Alarma:	// Alarma pulsacion para comprobar si el boton pulsado lo sigue estando
+						sudoku(ID_Alarma);
 					break;						
-					case 1:	// Nueva pulsacion EINT1
+					case ID_EINT1:	// Nueva pulsacion EINT1
 						introducir_alarma_power();		// Se resetea la alarma de power down
-					  Gestor_Pulsacion_Control(Evento.idEvento);	//Pasa a pulsado y pone la alarma
-						if(SD == 1){					// Si vienes de power down no haces nada
-							SD = 0;						// SD se pone a 0 para indicar que no estamos en power down
-						} else {
-							gestor_IO_nueva_jugada();
-						}					
+						Gestor_Pulsacion_Control(Evento.idEvento);	//Pasa a pulsado y pone la alarma; Control pulsacion
+						if(PD_Flag == 1){					// Si vienes de power down no haces nada
+							PD_Flag = 0;						// SD se pone a 0 para indicar que no estamos en power down
+						}else{
+							sudoku(ID_EINT1);
+						}
 					break;
-					case 2:																			// Nueva pulsacion EINT2
+					case ID_EINT2:																			// Nueva pulsacion EINT2
 						introducir_alarma_power();													// Se resetea la alarma de power down
-						Gestor_Pulsacion_Control(Evento.idEvento);									//Cambias a pulsado y pones la alarma de comprobación de pulsación
-						if(SD == 1){																// Si vienes de power down no haces nada
-							SD = 0;
-						}else {
-							gestor_IO_jugada_de_borrar();
+						Gestor_Pulsacion_Control(Evento.idEvento);//Cambias a pulsado y pones la alarma de comprobación de pulsación
+						if(PD_Flag == 1){					// Si vienes de power down no haces nada
+							PD_Flag = 0;						// SD se pone a 0 para indicar que no estamos en power down
+						}else{
+							sudoku(ID_EINT2);
 						}					
 					break;
-					case 3:											// Alarma Visualizacion
-						gestor_IO_visualizacion();
+					case ID_Alarma_visualizacion:											// Alarma Visualizacion
+						sudoku(ID_Alarma_visualizacion);
 					break;
-					case 4:																			// Mostrar visualizacion
-							gestor_IO_mostrar_visualizacion(Evento);
+					case ID_mostrar_vis:																			// Mostrar visualizacion
+							sudoku_mostrar_visualizacion(Evento);
 					break;
-					case 5:											// Poner el bit de validación a 1 durante 1 segundo
-						gestor_IO_validacion_1s();
+					case ID_bit_val:											// Poner el bit de validación a 1 durante 1 segundo
+						sudoku(ID_bit_val);
 					break;
-					case 6:						//Acaba la alarma de 1s y ponemos validar a 0 otra vez
-						gestor_IO_escribir_bit_validar();
+					case ID_fin_val:						//Acaba la alarma de 1s y ponemos validar a 0 otra vez
+						sudoku(ID_fin_val);
 					break;
-					case 7:							// Acaba la alarma y entra en powerdown
+					case ID_power_down:							// Acaba la alarma y entra en powerdown
 						gestor_IO_escribir_bit_powerdown();
-						SD = 1;						// Actualizamos el flag de powerdown 
+						PD_Flag = 1;						// Actualizamos el flag de powerdown 
 						PM_power_down();
 						gestor_IO_apagar_bit_powerdown(); 
 					break;
-					case 8:	//Llega timer
+					case ID_timer_0:	//Llega timer
 						gestor_alarmas_control_alarma();
 					break;
 				}

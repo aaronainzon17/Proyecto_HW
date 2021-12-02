@@ -2,6 +2,7 @@
 #define TABLEROS_H
 
 #include "celda.h"
+//#include "sudoku_2021.h"
 
 static CELDA
 cuadricula_C_C[NUM_FILAS][NUM_COLUMNAS] =
