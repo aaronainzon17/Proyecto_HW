@@ -22,6 +22,9 @@
 extern int candidatos_actualizar_arm_c(CELDA cuadricula[NUM_FILAS][NUM_COLUMNAS]);
 extern int candidatos_actualizar_arm_arm(CELDA cuadricula[NUM_FILAS][NUM_COLUMNAS]);
 
+static volatile int entradas_anterior = 0x0000FC0;
+static volatile int entradas_nuevo;
+
 static volatile CELDA
 cuadricula[NUM_FILAS][NUM_COLUMNAS] =
 {
@@ -242,8 +245,8 @@ void sudoku_jugada_borrar(void){
 	struct EventInfo led_val2;	// Evento que se genera cuando se ha introducido una entrada que corresponde a una pista y se activa el bit 13 de la GPIO
 	int fila;
 	int columna;
-	fila = GPIO_leer(16,4);
-	columna = GPIO_leer(20,4);
+	fila = gestor_IO_leer_de_gpio(16,4);
+	columna = gestor_IO_leer_de_gpio(20,4);
 	if(((cuadricula_C_C[fila][columna] >> 4) & 0x00000001) != 0x00000001){	// Comprobamos que la casilla no es pista por lo que no se podría borrar
 		cuadricula_C_C[fila][columna] = 0x00000000;							// Eliminamos el valor de la casilla
 		candidatos_actualizar_c(cuadricula_C_C);							// Actualizamos los candidatos
@@ -253,6 +256,22 @@ void sudoku_jugada_borrar(void){
 	}
 }
 
+void sudoku_programar_visualizacion(void){
+	struct EventInfo Most_Vis;	// Evento que se genera para mostrarla visualización una vez a habido cambios en la entrada
+	entradas_nuevo = GPIO_leer(16,12);			// Lees las entradas de la GPIO
+	if (entradas_anterior != entradas_nuevo){	// Si la entrada ha cambiado
+		introducir_alarma_power();				// Reseteas la alarma de power_down
+		Most_Vis.idEvento = ID_mostrar_vis;					// Generamos evento de visualización si ha cambiado la entrada para actualizar los candidatos y el valor
+		Most_Vis.auxData = entradas_nuevo;	
+		//Antes de encolar habría que inhabilitar las interrupciones pero lo haremos en la 3 con softirq
+		cola_guardar_eventos(Most_Vis.idEvento,Most_Vis.auxData);						
+	}	//Sino no haces nada
+}
+
+void sudoku_validacion_1s (void){
+		gestor_IO_escribir_en_gpio(13,1,1);
+		gestor_alarma_visualizacion_1s();
+}
 
 void sudoku (int Evento){
     switch(Evento){
@@ -260,17 +279,16 @@ void sudoku (int Evento){
 						Gestor_Pulsacion_Control(Evento);
 					break;
 					case ID_EINT1:						
-						//sudoku_jugada();
-						gestor_IO_nueva_jugada();
+						sudoku_jugada();
 					break;
-					case ID_EINT2:							
-						gestor_IO_jugada_de_borrar();	//Nueva jugada de borrar
+					case ID_EINT2:	
+						sudoku_jugada_borrar();
 					break;
 					case ID_Alarma_visualizacion:	
-						gestor_IO_visualizacion();
+						sudoku_programar_visualizacion();
 					break;
 					case ID_bit_val:	
-						gestor_IO_validacion_1s();
+						sudoku_validacion_1s();
 					break;
 					case ID_fin_val:	
 						gestor_IO_escribir_bit_validar();
@@ -279,7 +297,24 @@ void sudoku (int Evento){
 }
 
 void sudoku_mostrar_visualizacion(struct EventInfo Evento){
-	gestor_IO_mostrar_visualizacion(Evento);
+	int fila;
+	int columna;
+	int valor_celda;
+	int candidatos;
+	fila = gestor_IO_leer_de_gpio(16,4); 												// Se lee la fila de la GPIO
+	columna = gestor_IO_leer_de_gpio(20,4);												// Se lee la fila de la GPIO
+	if(((cuadricula_C_C[fila][columna] >> 4) & 0x00000001) == 0x00000001){	// Si la casilla es una pista enciende el bit de validar hasta que se deselecciona
+		gestor_IO_escribir_en_gpio(13,1,1); 												//Bit de validar permanente
+	}else{
+		gestor_IO_escribir_en_gpio(13,1,0);												// Sino quitamos el bit de validar permanente
+	}
+	valor_celda = celda_leer_valor(cuadricula_C_C[fila][columna]);			// Sacamos el valor de la celda
+	GPIO_escribir(0,4,valor_celda);											// Escribimos el valor de la celda
+	candidatos = ((cuadricula_C_C[fila][columna] >> 7));					// calculamos los candidatos
+	candidatos = ~candidatos;
+	candidatos = candidatos & 0x1FF;
+	gestor_IO_escribir_en_gpio(4,9,candidatos);											// Escribimos los candidatos
+	entradas_anterior = Evento.auxData;										// Actualizamos la entrada para la siguiente pasada
 }
 
 void sudoku_iniciar_tablero(void){

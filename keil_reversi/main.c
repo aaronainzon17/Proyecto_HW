@@ -21,9 +21,6 @@ extern int candidatos_actualizar_arm_arm(CELDA cuadricula[NUM_FILAS][NUM_COLUMNA
 
 //static volatile struct EventInfo alarma_visualizacion;
 
-static volatile int entradas_anterior = 0x0000FC0;
-static volatile int entradas_nuevo;
-
 extern int gestor_SC_in(void);
 extern int gestor_SC_out(void);
 

@@ -11,3 +11,4 @@ void gestor_IO_escribir_bit_powerdown(void);
 void gestor_IO_apagar_bit_powerdown(void);
 void gestor_IO_validacion_1s_2(void);
 int gestor_IO_leer_de_gpio(int inicio, int fin);
+void gestor_IO_escribir_en_gpio(int inicio, int fin, int valor);

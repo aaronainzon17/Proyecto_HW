@@ -87,4 +87,12 @@ void introducir_alarma_viualizacion(void){
 	gestor_alarmas_control_cola(alarma_visualizacion);		// La introducimos al gestor de alarmas
 }
 
+void gestor_alarma_visualizacion_1s(void){
+	struct EventInfo led_alrm;	// Evento que se genera cuando se ha introducido una entradavalida y se activa el bit 13 de la GPIO durante 1 s
+	led_alrm.idEvento = ID_fin_val;						
+	//led_alrm.timeStamp = temporizador_leer();
+	led_alrm.auxData = 0x00000064;				// Ponemos la alarma  de 1 segundo
+	gestor_alarmas_control_cola(led_alrm);
+}
+
 
