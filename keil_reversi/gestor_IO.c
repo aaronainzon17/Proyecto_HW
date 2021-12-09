@@ -57,6 +57,7 @@ void iniciar(void){
 	temporizador_periodo(1);								// Se configura el timer para que salte cada 1ms
 	introducir_alarma_viualizacion();
 	introducir_alarma_power();								// Introducimos la alarma de 15 s para el powerdown
+	introducir_alarma_iddle();
 } 
 
 void gestor_IO_escribir_bit_validar(void){

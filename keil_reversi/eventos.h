@@ -17,7 +17,8 @@ enum {
 	ID_bit_val,	//5
 	ID_fin_val,	//6
 	ID_power_down,	//7
-	ID_timer_0 //8
+	ID_timer_0, //8
+	ID_iddle	//9
 };
 
 #endif // EVENTOS_H

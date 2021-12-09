@@ -84,3 +84,9 @@ void timer0_ISR (void) __irq {
     T0IR = 1;                              			// Clear interrupt flag
     VICVectAddr = 0;                            // Acknowledge Interrupt
 }
+
+uint32_t __swi(0) clock_gettime(void);
+
+uint32_t __SWI_0 (void) {
+	return temporizador_leer();
+}

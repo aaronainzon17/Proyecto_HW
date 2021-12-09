@@ -576,6 +576,36 @@
               <FileType>1</FileType>
               <FilePath>.\sudoku_2021.c</FilePath>
             </File>
+            <File>
+              <FileName>gestor_RTC.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\gestor_RTC.c</FilePath>
+            </File>
+            <File>
+              <FileName>gestor_RTC.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>.\gestor_RTC.h</FilePath>
+            </File>
+            <File>
+              <FileName>gestor_WD.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\gestor_WD.c</FilePath>
+            </File>
+            <File>
+              <FileName>gestor_WD.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>.\gestor_WD.h</FilePath>
+            </File>
+            <File>
+              <FileName>SWI.s</FileName>
+              <FileType>2</FileType>
+              <FilePath>.\SWI.s</FilePath>
+            </File>
+            <File>
+              <FileName>SWI_functions.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>.\SWI_functions.h</FilePath>
+            </File>
           </Files>
         </Group>
         <Group>

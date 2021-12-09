@@ -13,6 +13,7 @@
 #include "eventos.h"
 #include "gestor_IO.h"
 #include "tableros.h"
+#include "SWI_functions.h"
 
 // Nota: wait es una espera activa. Se puede eliminar poniendo el procesador en modo iddle. Probad a hacerlo
 
@@ -38,13 +39,18 @@ cuadricula[NUM_FILAS][NUM_COLUMNAS] =
 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0012, 0x0000, 0x0000, 0x0011, 0, 0, 0, 0, 0, 0, 0
 };
 
+
+
 // MAIN 
 int main (void) {
+	
 	struct EventInfo Evento;
 	//int t1,t2;				// Variables de medición de tiempo
 	//int tot;
 	int PD_Flag = 0;					// Flag para salir de power down
+	int iddle_bit_flag = 0;
 	iniciar();
+	disable_isr();
 	while(1){		
 		if(cola_nuevos_eventos()){
 				cola_leer_evevento_antiguo(&Evento);
@@ -76,20 +82,29 @@ int main (void) {
 					case ID_mostrar_vis:																			// Mostrar visualizacion
 							sudoku_mostrar_visualizacion(Evento);
 					break;
-					case ID_bit_val:											// Poner el bit de validación a 1 durante 1 segundo
+					case ID_bit_val:											// Poner el bit de validación a 1 durante 1 segundo; Jugada exitosa
 						sudoku(ID_bit_val);
 					break;
-					case ID_fin_val:						//Acaba la alarma de 1s y ponemos validar a 0 otra vez
+					case ID_fin_val:						//Acaba la alarma de 1s y ponemos validar a 0 otra vez; Fin bit
 						sudoku(ID_fin_val);
 					break;
-					case ID_power_down:							// Acaba la alarma y entra en powerdown
-						gestor_IO_escribir_bit_powerdown();
+					case ID_power_down:							// Acaba la alarma y entra en powerdown		
+						apagar_alarma_iddle();
 						PD_Flag = 1;						// Actualizamos el flag de powerdown 
-						PM_power_down();
-						gestor_IO_apagar_bit_powerdown(); 
+						PM_power_down(); 
+						introducir_alarma_iddle();
 					break;
 					case ID_timer_0:	//Llega timer
 						gestor_alarmas_control_alarma();
+					break;
+					case ID_iddle:
+						if(iddle_bit_flag == 0){
+							gestor_IO_escribir_bit_powerdown();
+							iddle_bit_flag = 1;
+						}else{
+							gestor_IO_apagar_bit_powerdown();
+							iddle_bit_flag = 0;
+						}
 					break;
 				}
 		}else{

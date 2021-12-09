@@ -161,9 +161,11 @@ Vectors         LDR     PC, Reset_Addr
                 LDR     PC, [PC, #-0x0FF0]     ; Vector from VicVectAddr
                 LDR     PC, FIQ_Addr
 
+                IMPORT SWI_Handler2
+
 Reset_Addr      DCD     Reset_Handler
 Undef_Addr      DCD     Undef_Handler
-SWI_Addr        DCD     SWI_Handler
+SWI_Addr        DCD     SWI_Handler2
 PAbt_Addr       DCD     PAbt_Handler
 DAbt_Addr       DCD     DAbt_Handler
                 DCD     0                      ; Reserved Address 
@@ -171,11 +173,13 @@ IRQ_Addr        DCD     IRQ_Handler
 FIQ_Addr        DCD     FIQ_Handler
 
 Undef_Handler   B       Undef_Handler
+; SWI_Handler     B       SWI_Handler
 SWI_Handler     B       SWI_Handler
 PAbt_Handler    B       PAbt_Handler
 DAbt_Handler    B       DAbt_Handler
 IRQ_Handler     B       IRQ_Handler
 FIQ_Handler     B       FIQ_Handler
+
 
 
 ; Reset Handler
@@ -269,16 +273,18 @@ MEMMAP          EQU     0xE01FC040      ; Memory Mapping Control
                 MSR     CPSR_c, #Mode_IRQ:OR:I_Bit:OR:F_Bit
                 MOV     SP, R0
                 SUB     R0, R0, #IRQ_Stack_Size
+				
+;  Enter Supervisor Mode and set its Stack Pointer
+                MSR     CPSR_c, #Mode_SVC:OR:I_Bit:OR:F_Bit
+                MOV     SP, R0
+                SUB     R0, R0, #SVC_Stack_Size
 
 ;  Enter User Mode and set its Stack Pointer
                 MSR     CPSR_c, #Mode_USR
                 MOV     SP, R0
                 SUB     SL, SP, #USR_Stack_Size
 
-;  Enter Supervisor Mode and set its Stack Pointer
-                MSR     CPSR_c, #Mode_SVC:OR:I_Bit:OR:F_Bit
-                MOV     SP, R0
-                SUB     R0, R0, #SVC_Stack_Size
+
 
 
 ; Enter the C code

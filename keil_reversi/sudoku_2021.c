@@ -202,8 +202,13 @@ sudoku9x9(CELDA cuadricula_C_C[NUM_FILAS][NUM_COLUMNAS],
     return correcto;
 }
 
+void sudoku_validacion_1s (void){
+		gestor_IO_escribir_en_gpio(13,1,1);
+		gestor_alarma_visualizacion_1s();
+}
+
 void sudoku_jugada (void){
-		struct EventInfo led_val;	// Evento que se genera cuando se ha introducido una entrada que corresponde a una pista y se activa el bit 13 de la GPIO
+//		struct EventInfo led_val;	// Evento que se genera cuando se ha introducido una entrada que corresponde a una pista y se activa el bit 13 de la GPIO
 		int fila;
 		int columna;
 		int nuevo_valor;
@@ -233,16 +238,18 @@ void sudoku_jugada (void){
 					//Parar tiempo
 					//t2 = temporizador_leer();
 					//tot = t2-t1;	//Tiempo total
-					led_val.idEvento = ID_bit_val;	// Poner el bit de validación a 1 durante 1 segundo mediante la generación de 1 evento
+					//led_val.idEvento = ID_bit_val;	// Poner el bit de validación a 1 durante 1 segundo mediante la generación de 1 evento
 					//Antes de encolar habría que inhabilitar las interrupciones pero lo haremos en la 3 con softirq
-					cola_guardar_eventos(led_val.idEvento,led_val.auxData);
+					//cola_guardar_eventos(led_val.idEvento,led_val.auxData);
+					sudoku_validacion_1s();
+					
 				}
 			}
 		}
 }
 
 void sudoku_jugada_borrar(void){
-	struct EventInfo led_val2;	// Evento que se genera cuando se ha introducido una entrada que corresponde a una pista y se activa el bit 13 de la GPIO
+//	struct EventInfo led_val2;	// Evento que se genera cuando se ha introducido una entrada que corresponde a una pista y se activa el bit 13 de la GPIO
 	int fila;
 	int columna;
 	fila = gestor_IO_leer_de_gpio(16,4);
@@ -250,9 +257,10 @@ void sudoku_jugada_borrar(void){
 	if(((cuadricula_C_C[fila][columna] >> 4) & 0x00000001) != 0x00000001){	// Comprobamos que la casilla no es pista por lo que no se podría borrar
 		cuadricula_C_C[fila][columna] = 0x00000000;							// Eliminamos el valor de la casilla
 		candidatos_actualizar_c(cuadricula_C_C);							// Actualizamos los candidatos
-		led_val2.idEvento = ID_bit_val;												// Poner el bit de validación a 1 durante 1 segundo mediante la generación de 1 evento
+		//led_val2.idEvento = ID_bit_val;												// Poner el bit de validación a 1 durante 1 segundo mediante la generación de 1 evento
 		//Antes de encolar habría que inhabilitar las interrupciones pero lo haremos en la 3 con softirq
-		cola_guardar_eventos(led_val2.idEvento,led_val2.auxData);
+		//cola_guardar_eventos(led_val2.idEvento,led_val2.auxData);
+		sudoku_validacion_1s();
 	}
 }
 
@@ -266,11 +274,6 @@ void sudoku_programar_visualizacion(void){
 		//Antes de encolar habría que inhabilitar las interrupciones pero lo haremos en la 3 con softirq
 		cola_guardar_eventos(Most_Vis.idEvento,Most_Vis.auxData);						
 	}	//Sino no haces nada
-}
-
-void sudoku_validacion_1s (void){
-		gestor_IO_escribir_en_gpio(13,1,1);
-		gestor_alarma_visualizacion_1s();
 }
 
 void sudoku (int Evento){

@@ -6,16 +6,16 @@
 #include "timer.h"
 #include "eventos.h"
 
-static volatile struct EventInfo alarm_queue[9];  	// Vector de alarmas de eventos; cada índice corresponde a un tipo de alarma
-static volatile uint8_t bit_activa[9];				// Vector que indica si la alarma de cada tipo esta activa o no
-static volatile uint8_t bit_perio[9]; 				// Vector que indica si la alarma de cada tipo es periódica o no
-static volatile uint32_t periodo[9]; 				// Vector que indica el periodo de cada tipo de alarma
-static volatile uint32_t periodicas_restaurar[9];	// Vector que almacena el periodo original de cada alarma
+static volatile struct EventInfo alarm_queue[13];  	// Vector de alarmas de eventos; cada índice corresponde a un tipo de alarma
+static volatile uint8_t bit_activa[13];				// Vector que indica si la alarma de cada tipo esta activa o no
+static volatile uint8_t bit_perio[13]; 				// Vector que indica si la alarma de cada tipo es periódica o no
+static volatile uint32_t periodo[13]; 				// Vector que indica el periodo de cada tipo de alarma
+static volatile uint32_t periodicas_restaurar[13];	// Vector que almacena el periodo original de cada alarma
 
 // Inicializar las alarmas
 void iniciar_alarmas(void){
 	int i=0;
-	while (i<9){
+	while (i<13){
 		bit_activa[i] = 0;
 		i++;
 	}
@@ -53,7 +53,7 @@ void gestor_alarmas_control_cola(struct EventInfo nueva_alarma){
 */
 void gestor_alarmas_control_alarma(void){
 	int i = 0;
-	while (i<9){
+	while (i<13){
 		if(bit_activa[i] != 0){	// Si la alarma esta activa
 			periodo[i] --;
 			if(periodo[i] == 0){ // Si el periodo es 0 significa que ha acabado la alarma 
@@ -91,8 +91,22 @@ void gestor_alarma_visualizacion_1s(void){
 	struct EventInfo led_alrm;	// Evento que se genera cuando se ha introducido una entradavalida y se activa el bit 13 de la GPIO durante 1 s
 	led_alrm.idEvento = ID_fin_val;						
 	//led_alrm.timeStamp = temporizador_leer();
-	led_alrm.auxData = 0x00000064;				// Ponemos la alarma  de 1 segundo
+	led_alrm.auxData = 0x000000A4;				// Ponemos la alarma  de 1 segundo
 	gestor_alarmas_control_cola(led_alrm);
+}
+
+void introducir_alarma_iddle(void){
+	struct EventInfo iddle_alarm;
+	iddle_alarm.idEvento = ID_iddle;
+	iddle_alarm.auxData = 0x00800030;
+	gestor_alarmas_control_cola(iddle_alarm);
+}
+
+void apagar_alarma_iddle(void){
+	struct EventInfo iddle_alarm;
+	iddle_alarm.idEvento = ID_iddle;
+	iddle_alarm.auxData = 0x00000000;
+	gestor_alarmas_control_cola(iddle_alarm);
 }
 
 
