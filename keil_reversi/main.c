@@ -14,6 +14,9 @@
 #include "gestor_IO.h"
 #include "tableros.h"
 #include "SWI_functions.h"
+#include "gestor_UART.h"
+#include "funciones_escritura.h"
+#include "serial_port.h"
 
 // Nota: wait es una espera activa. Se puede eliminar poniendo el procesador en modo iddle. Probad a hacerlo
 
@@ -25,34 +28,21 @@ extern int candidatos_actualizar_arm_arm(CELDA cuadricula[NUM_FILAS][NUM_COLUMNA
 extern int gestor_SC_in(void);
 extern int gestor_SC_out(void);
 
-static volatile CELDA
-cuadricula[NUM_FILAS][NUM_COLUMNAS] =
-{
-0x0015, 0x0000, 0x0000, 0x0013, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0, 0, 0, 0, 0, 0, 0,
-0x0000, 0x0000, 0x0000, 0x0000, 0x0019, 0x0000, 0x0000, 0x0000, 0x0015, 0, 0, 0, 0, 0, 0, 0,
-0x0000, 0x0019, 0x0016, 0x0017, 0x0000, 0x0015, 0x0000, 0x0013, 0x0000, 0, 0, 0, 0, 0, 0, 0,
-0x0000, 0x0018, 0x0000, 0x0019, 0x0000, 0x0000, 0x0016, 0x0000, 0x0000, 0, 0, 0, 0, 0, 0, 0,
-0x0000, 0x0000, 0x0015, 0x0018, 0x0016, 0x0011, 0x0014, 0x0000, 0x0000, 0, 0, 0, 0, 0, 0, 0,
-0x0000, 0x0000, 0x0014, 0x0012, 0x0000, 0x0013, 0x0000, 0x0017, 0x0000, 0, 0, 0, 0, 0, 0, 0,
-0x0000, 0x0017, 0x0000, 0x0015, 0x0000, 0x0019, 0x0012, 0x0016, 0x0000, 0, 0, 0, 0, 0, 0, 0,
-0x0016, 0x0000, 0x0000, 0x0000, 0x0018, 0x0000, 0x0000, 0x0000, 0x0000, 0, 0, 0, 0, 0, 0, 0,
-0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0012, 0x0000, 0x0000, 0x0011, 0, 0, 0, 0, 0, 0, 0
-};
-
 
 
 // MAIN 
 int main (void) {
-	
 	struct EventInfo Evento;
 	//int t1,t2;				// Variables de medición de tiempo
 	//int tot;
 	int PD_Flag = 0;					// Flag para salir de power down
+	int Reset = 0;
 	int iddle_bit_flag = 0;
 	iniciar();
-	disable_isr();
+	mostrar_tablero();
+	mostrar_candidatos();
 	while(1){		
-		if(cola_nuevos_eventos()){
+		if(cola_nuevos_eventos() && Reset == 0){
 				cola_leer_evevento_antiguo(&Evento);
 				switch(Evento.idEvento){
 					case ID_Alarma:	// Alarma pulsacion para comprobar si el boton pulsado lo sigue estando
@@ -105,6 +95,22 @@ int main (void) {
 							gestor_IO_apagar_bit_powerdown();
 							iddle_bit_flag = 0;
 						}
+					break;
+					case ID_UART0:
+						introducir_alarma_power();
+						gestor_UART(Evento.auxData);
+					break;
+					case ID_RST:
+						sudoku_reset();
+					break;
+					case ID_NEW:
+						Reset = 0;
+					break;
+					case ID_Evento_RDY:
+						resume_write();
+					break;
+					case ID_JUGADA:
+						sudoku_jugada_UART(Evento.auxData);
 					break;
 				}
 		}else{

@@ -53,7 +53,7 @@ F_Bit           EQU     0x40            ; when F bit is set, FIQ is disabled
 UND_Stack_Size  EQU     0x00000000
 SVC_Stack_Size  EQU     0x00000400
 ABT_Stack_Size  EQU     0x00000000
-FIQ_Stack_Size  EQU     0x00000000
+FIQ_Stack_Size  EQU     0x00000080
 IRQ_Stack_Size  EQU     0x00000080
 USR_Stack_Size  EQU     0x00000400
 
@@ -161,6 +161,8 @@ Vectors         LDR     PC, Reset_Addr
                 LDR     PC, [PC, #-0x0FF0]     ; Vector from VicVectAddr
                 LDR     PC, FIQ_Addr
 
+				PRESERVE8 {TRUE}
+				IMPORT timer0_ISR
                 IMPORT SWI_Handler2
 
 Reset_Addr      DCD     Reset_Handler
@@ -170,7 +172,7 @@ PAbt_Addr       DCD     PAbt_Handler
 DAbt_Addr       DCD     DAbt_Handler
                 DCD     0                      ; Reserved Address 
 IRQ_Addr        DCD     IRQ_Handler
-FIQ_Addr        DCD     FIQ_Handler
+FIQ_Addr        DCD     timer0_ISR
 
 Undef_Handler   B       Undef_Handler
 ; SWI_Handler     B       SWI_Handler
@@ -178,7 +180,7 @@ SWI_Handler     B       SWI_Handler
 PAbt_Handler    B       PAbt_Handler
 DAbt_Handler    B       DAbt_Handler
 IRQ_Handler     B       IRQ_Handler
-FIQ_Handler     B       FIQ_Handler
+; FIQ_Handler     B       FIQ_Handler
 
 
 

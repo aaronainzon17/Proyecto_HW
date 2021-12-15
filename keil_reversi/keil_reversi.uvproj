@@ -351,7 +351,7 @@
           </ArmAdsMisc>
           <Cads>
             <interw>0</interw>
-            <Optim>4</Optim>
+            <Optim>1</Optim>
             <oTime>1</oTime>
             <SplitLS>0</SplitLS>
             <OneElfS>0</OneElfS>
@@ -605,6 +605,36 @@
               <FileName>SWI_functions.h</FileName>
               <FileType>5</FileType>
               <FilePath>.\SWI_functions.h</FilePath>
+            </File>
+            <File>
+              <FileName>serial_port.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\serial_port.c</FilePath>
+            </File>
+            <File>
+              <FileName>serial_port.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>.\serial_port.h</FilePath>
+            </File>
+            <File>
+              <FileName>gestor_UART.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\gestor_UART.c</FilePath>
+            </File>
+            <File>
+              <FileName>gestor_UART.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>.\gestor_UART.h</FilePath>
+            </File>
+            <File>
+              <FileName>funciones_escritura.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\funciones_escritura.c</FilePath>
+            </File>
+            <File>
+              <FileName>funciones_escritura.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>.\funciones_escritura.h</FilePath>
             </File>
           </Files>
         </Group>

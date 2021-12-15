@@ -18,7 +18,12 @@ enum {
 	ID_fin_val,	//6
 	ID_power_down,	//7
 	ID_timer_0, //8
-	ID_iddle	//9
+	ID_iddle,	//9
+	ID_UART0,
+	ID_RST,
+	ID_NEW,
+	ID_Evento_RDY,
+	ID_JUGADA
 };
 
 #endif // EVENTOS_H

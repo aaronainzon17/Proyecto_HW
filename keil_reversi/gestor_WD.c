@@ -1,6 +1,7 @@
 #include <LPC210x.H>                      
 #include <inttypes.h>
 #include "gestor_WD.h"
+#include "SWI_functions.h"
 
 void WT_init(int sec){
 	// first, it checks for a previous watchdog time out  
@@ -18,6 +19,8 @@ void WD_feed (void) {				   /* Reload the watchdog timer       */
 // esta es la secuencia necesaria para que el watchdog se reinicialice. Si no se alimenta al WT antes de que termine la cuenta resetear? el sistema (si est? habilitado para ello)
 // aunque se active el watchdog, este no har? nada hasta que no se le alimente por primera vez
 //Important! Interrupts must be disabled during the feed sequence. An abort condition will occur if an interrupt happens during the feed sequence
-  WDFEED = 0xAA;						   
-  WDFEED = 0x55;  
+  disable_isr();
+	WDFEED = 0xAA;						   
+  WDFEED = 0x55; 
+	enable_isr();
 }

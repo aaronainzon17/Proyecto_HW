@@ -16,6 +16,10 @@
 #include "gestor_pulsacion.h"
 #include "eventos.h"
 #include "tableros.h"
+#include "funciones_escritura.h"
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
 
 
 
@@ -24,6 +28,8 @@ extern int candidatos_actualizar_arm_arm(CELDA cuadricula[NUM_FILAS][NUM_COLUMNA
 
 static volatile int entradas_anterior = 0x0000FC0;
 static volatile int entradas_nuevo;
+char buffer[25];
+char total[200];
 
 static volatile CELDA
 cuadricula[NUM_FILAS][NUM_COLUMNAS] =
@@ -207,25 +213,94 @@ void sudoku_validacion_1s (void){
 		gestor_alarma_visualizacion_1s();
 }
 
-void sudoku_jugada (void){
-//		struct EventInfo led_val;	// Evento que se genera cuando se ha introducido una entrada que corresponde a una pista y se activa el bit 13 de la GPIO
-		int fila;
-		int columna;
-		int nuevo_valor;
-		int j,k, guarda;
-		fila = gestor_IO_leer_de_gpio(16,4);
-		columna = gestor_IO_leer_de_gpio(20,4);
-		nuevo_valor = gestor_IO_leer_de_gpio(24,4);
+void itoa(int numero,char letra[]){
+	if(numero==1){letra[0] = '1';}
+	else if(numero==2){letra[0] = '2';}
+	else if(numero==3){letra[0] = '3';}
+	else if(numero==4){letra[0] = '4';}
+	else if(numero==5){letra[0] = '5';}
+	else if(numero==6){letra[0] = '6';}
+	else if(numero==7){letra[0] = '7';}
+	else if(numero==8){letra[0] = '8';}
+	else if(numero==9){letra[0] = '9';}
+	else if(numero==0){letra[0] = '0';}
+}
+
+void get_candidatos(int fila, int columna,char can[]){
+		int candidatos;
+		
+		candidatos = ((cuadricula_C_C[fila][columna] >> 7));					// calculamos los candidatos
+		candidatos = candidatos & 0x1FF;
+		if((candidatos & 0x001) == 0){
+			write_string("1");
+		}
+		if((candidatos & 0x002) == 0){
+			write_string("2");
+		}
+		if((candidatos & 0x004) == 0){
+			write_string("3");
+		}
+		if((candidatos & 0x008) == 0){
+			write_string("4");
+		}
+		if((candidatos & 0x010) == 0){
+			write_string("5");
+		}
+		if((candidatos & 0x020) == 0){
+			write_string("6");
+		}
+		if((candidatos & 0x040) == 0){
+			write_string("7");
+		}
+		if((candidatos & 0x080) == 0){
+			write_string("8");
+		}
+		if((candidatos & 0x100) == 0){
+			write_string("9");
+		}
+		write_string("\n");
+}
+
+void mostrar_candidatos(void){
+	int fila, columna;
+	char can[]="";
+	char fila2 []= "";
+	char columna2 [] = "";
+	write_string("Candidatos:\n");
+	for(fila=0;fila<9;fila++){
+		for(columna=0;columna<9;columna++){
+			itoa(fila,fila2);
+			itoa(columna,columna2);
+			write_string(fila2);
+			write_string(columna2);
+			write_string(":");
+			get_candidatos(fila,columna,can);
+		}
+	}
+		
+}
+
+void sudoku_reset (void){
+	int j,k;
+	for(j=0;j<9;j++){
+		for(k=0;k<16;k++){
+				cuadricula_C_C[j][k] = cuadricula[j][k];	// Reiniciamos cada casilla
+		}
+	}
+	candidatos_actualizar_c(cuadricula_C_C);	// Actualizamos candidatos
+	mostrar_tablero();
+	mostrar_candidatos();
+}
+
+
+
+void sudoku_jugada_principal (int fila, int columna, int nuevo_valor){
+		int guarda;
 		// La casilla introducida no es pista y no se ha introducido fila = 0, columna = 0, valor = 0
 		if((((cuadricula_C_C[fila][columna] >> 4) & 0x00000001) != 0x00000001) || (fila == 0 && columna == 0 && nuevo_valor ==0)){	
 			if(fila == 0 && columna == 0 && nuevo_valor ==0){
 				//Reiniciamos el juego
-				for(j=0;j<9;j++){
-					for(k=0;k<16;k++){
-						cuadricula_C_C[j][k] = cuadricula[j][k];	// Reiniciamos cada casilla
-					}
-				}
-				candidatos_actualizar_c(cuadricula_C_C);	// Actualizamos candidatos
+				sudoku_reset();
 			}else{	// Se puede escribir en esa casilla porque no es pista
 				guarda = (cuadricula_C_C[fila][columna] >> 6);	
 				guarda = guarda >> nuevo_valor;	// Compruebas que el valor a introducir esta como candidato
@@ -235,6 +310,9 @@ void sudoku_jugada (void){
 					//Iniciar tiempo
 					//t1 = temporizador_leer();
 					candidatos_propagar_c(cuadricula_C_C,fila,columna);	// Propagas el nuevo valor
+					mostrar_tablero();
+					mostrar_candidatos();
+					
 					//Parar tiempo
 					//t2 = temporizador_leer();
 					//tot = t2-t1;	//Tiempo total
@@ -247,6 +325,32 @@ void sudoku_jugada (void){
 			}
 		}
 }
+
+void sudoku_jugada (void){
+//		struct EventInfo led_val;	// Evento que se genera cuando se ha introducido una entrada que corresponde a una pista y se activa el bit 13 de la GPIO
+		int fila;
+		int columna;
+		int nuevo_valor;
+		//int guarda;
+		fila = gestor_IO_leer_de_gpio(16,4);
+		columna = gestor_IO_leer_de_gpio(20,4);
+		nuevo_valor = gestor_IO_leer_de_gpio(24,4);
+		sudoku_jugada_principal (fila,columna,nuevo_valor);
+}
+
+void sudoku_jugada_UART (int auxdata){
+//		struct EventInfo led_val;	// Evento que se genera cuando se ha introducido una entrada que corresponde a una pista y se activa el bit 13 de la GPIO
+		int fila;
+		int columna;
+		int nuevo_valor;
+		//int guarda;
+		fila = auxdata/100;
+		columna = (auxdata/10)%((auxdata/100)*10);
+		nuevo_valor = auxdata%((auxdata/10)*10);
+		sudoku_jugada_principal (fila,columna,nuevo_valor);
+}
+
+
 
 void sudoku_jugada_borrar(void){
 //	struct EventInfo led_val2;	// Evento que se genera cuando se ha introducido una entrada que corresponde a una pista y se activa el bit 13 de la GPIO
@@ -275,6 +379,45 @@ void sudoku_programar_visualizacion(void){
 		cola_guardar_eventos(Most_Vis.idEvento,Most_Vis.auxData);						
 	}	//Sino no haces nada
 }
+
+
+void mostrar_tablero(void){
+	int k,s,val,col,fil;
+	char linea[] ="+-+-+-+-+-+-+-+-+-+\n";
+	char letra[] = "";
+	write_string("\n\n");
+	
+	for(k=0;k<19;k++){//fila
+		if(k%2==0){
+			write_string(linea);
+		}else{
+			for(s=0;s<19;s++){//columna
+				if(s==0||s==6||s==12||s==18){
+					write_string("|");
+				}else if(s==2||s==4||s==8||s==10||s==14||s==16){
+					write_string(".");
+				}else{
+					fil=k/2;
+					col=s/2;
+					if(((cuadricula_C_C[fil][col] >> 4) & 0x00000001) == 0x00000001){
+						write_string("P");
+					}else if (((cuadricula_C_C[fil][col] >> 5) & 0x00000001) == 0x00000001){
+						write_string("E");
+					}else if((cuadricula_C_C[fil][col] & 0x0000000F) != 0x00000000){
+						val = cuadricula_C_C[fil][col] & 0x0000000F;
+						itoa(val,letra);
+						write_string(letra);
+					}else{
+						write_string(" ");
+					}
+				}
+			}
+			write_string("\n");
+		}
+	}
+}
+
+
 
 void sudoku (int Evento){
     switch(Evento){
@@ -323,5 +466,3 @@ void sudoku_mostrar_visualizacion(struct EventInfo Evento){
 void sudoku_iniciar_tablero(void){
 	candidatos_actualizar_c(cuadricula_C_C);
 }
-
-

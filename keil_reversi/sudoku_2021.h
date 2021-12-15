@@ -50,3 +50,11 @@ candidatos_propagar_arm(CELDA cuadricula[NUM_FILAS][NUM_COLUMNAS],
 void sudoku_mostrar_visualizacion(struct EventInfo Evento);
 
 void sudoku_iniciar_tablero(void);
+
+void sudoku_reset (void);
+
+void sudoku_jugada_UART (int auxdata);
+
+void mostrar_tablero(void);
+
+void mostrar_candidatos(void);

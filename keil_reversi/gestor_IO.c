@@ -13,6 +13,7 @@
 #include "eventos.h"
 //#include "gestor_IO.h"
 #include "tableros.h"
+#include "serial_port.h"
 
 static int candidatos_actualizar_c(CELDA cuadricula[NUM_FILAS][NUM_COLUMNAS])
 {
@@ -52,6 +53,7 @@ void iniciar(void){
 	eint0_init();											// Inicializamos botones
 	gestor_IO_init();										// Inicializamos GPIO
 	cola_ini();												// Inicializamos cola
+	init_serial();
 	sudoku_iniciar_tablero();
 	candidatos_actualizar_c(cuadricula_C_C); 				// Se actualizan los candidatos de cada celda
 	temporizador_periodo(1);								// Se configura el timer para que salte cada 1ms
