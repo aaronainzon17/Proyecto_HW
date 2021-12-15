@@ -31,7 +31,7 @@ void gestor_UART(uint32_t entrada){
 				}else if(buffer[0]=='N' && buffer[1]=='E' && buffer[2]=='W'){
 					write_string("\n");
 					cola_guardar_eventos(ID_NEW,0);
-				}else if((buffer[0]+buffer[1]+buffer[2])%0x90 == (buffer[3]%0x30)){
+				}else if(((buffer[0]-0x30)+(buffer[1]-0x30)+(buffer[2]-0x30))% 0x8 == (buffer[3]-0x30)){
 					write_string("\n");
 					cola_guardar_eventos(ID_JUGADA,(buffer[0]%0x30)*100+(buffer[1]%0x30)*10+(buffer[2]%0x30));
 				}
