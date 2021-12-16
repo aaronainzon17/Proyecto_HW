@@ -17,6 +17,8 @@
 #include "gestor_UART.h"
 #include "funciones_escritura.h"
 #include "serial_port.h"
+#include "gestor_WD.h"
+
 
 // Nota: wait es una espera activa. Se puede eliminar poniendo el procesador en modo iddle. Probad a hacerlo
 
@@ -37,11 +39,12 @@ int main (void) {
 	//int tot;
 	int PD_Flag = 0;					// Flag para salir de power down
 	int Reset = 0;
+	uint32_t volatile buffer;
 	int iddle_bit_flag = 0;
 	iniciar();
-	mostrar_tablero();
-	mostrar_candidatos();
-	while(1){		
+	WT_init(15);
+	while(1){	
+		WD_feed();
 		if(cola_nuevos_eventos() && Reset == 0){
 				cola_leer_evevento_antiguo(&Evento);
 				switch(Evento.idEvento){
@@ -109,9 +112,13 @@ int main (void) {
 					case ID_Evento_RDY:
 						resume_write();
 					break;
-					case ID_JUGADA:
-						sudoku_jugada_UART(Evento.auxData);
+					case ID_ESPERAR_CONFIRMACION:
+						buffer=Evento.auxData;
+						introducir_alarma_aceptar();
 					break;
+					case ID_FIN_ACEPTAR	:
+						sudoku_jugada_UART(buffer);
+					break;										
 				}
 		}else{
 			PM_idle();	

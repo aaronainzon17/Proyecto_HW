@@ -60,6 +60,7 @@ void iniciar(void){
 	introducir_alarma_viualizacion();
 	introducir_alarma_power();								// Introducimos la alarma de 15 s para el powerdown
 	introducir_alarma_iddle();
+	sudoku_inicio();
 } 
 
 void gestor_IO_escribir_bit_validar(void){

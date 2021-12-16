@@ -58,3 +58,6 @@ void sudoku_jugada_UART (int auxdata);
 void mostrar_tablero(void);
 
 void mostrar_candidatos(void);
+
+void sudoku_inicio(void);
+

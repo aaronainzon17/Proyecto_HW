@@ -4,6 +4,7 @@
 #include "cola.h"
 #include "gestor_UART.h"
 #include "funciones_escritura.h"
+#include "SWI_functions.h"
 
 static volatile unsigned int ESTADO = inicio;
 static volatile int buffer[10];
@@ -27,13 +28,19 @@ void gestor_UART(uint32_t entrada){
 			if(entrada == '!'){
 				if(buffer[0]=='R' && buffer[1]=='S' && buffer[2]=='T'){
 					write_string("\n");
+					disable_isr();
 					cola_guardar_eventos(ID_RST,0);
+					enable_isr();
 				}else if(buffer[0]=='N' && buffer[1]=='E' && buffer[2]=='W'){
 					write_string("\n");
+					disable_isr();
 					cola_guardar_eventos(ID_NEW,0);
+					enable_isr();
 				}else if(((buffer[0]-0x30)+(buffer[1]-0x30)+(buffer[2]-0x30))% 0x8 == (buffer[3]-0x30)){
 					write_string("\n");
-					cola_guardar_eventos(ID_JUGADA,(buffer[0]%0x30)*100+(buffer[1]%0x30)*10+(buffer[2]%0x30));
+					disable_isr();
+					cola_guardar_eventos(ID_ESPERAR_CONFIRMACION,(buffer[0]%0x30)*100+(buffer[1]%0x30)*10+(buffer[2]%0x30));
+					enable_isr();
 				}
 				ESTADO=inicio;
 			}else{

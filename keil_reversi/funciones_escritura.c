@@ -6,7 +6,7 @@
 #include "gestor_UART.h"
 #include "serial_port.h"
 
-#define MAX_STRING_SIZE 1000
+#define MAX_STRING_SIZE 3000
 
 static volatile unsigned int cursorEscritura=0;
 static volatile unsigned int lastPos=0;

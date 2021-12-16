@@ -5,17 +5,18 @@
 #include "cola.h"
 #include "timer.h"
 #include "eventos.h"
+#include "SWI_functions.h"
 
-static volatile struct EventInfo alarm_queue[13];  	// Vector de alarmas de eventos; cada índice corresponde a un tipo de alarma
-static volatile uint8_t bit_activa[13];				// Vector que indica si la alarma de cada tipo esta activa o no
-static volatile uint8_t bit_perio[13]; 				// Vector que indica si la alarma de cada tipo es periódica o no
-static volatile uint32_t periodo[13]; 				// Vector que indica el periodo de cada tipo de alarma
-static volatile uint32_t periodicas_restaurar[13];	// Vector que almacena el periodo original de cada alarma
+static volatile struct EventInfo alarm_queue[20];  	// Vector de alarmas de eventos; cada índice corresponde a un tipo de alarma
+static volatile uint8_t bit_activa[20];				// Vector que indica si la alarma de cada tipo esta activa o no
+static volatile uint8_t bit_perio[20]; 				// Vector que indica si la alarma de cada tipo es periódica o no
+static volatile uint32_t periodo[20]; 				// Vector que indica el periodo de cada tipo de alarma
+static volatile uint32_t periodicas_restaurar[20];	// Vector que almacena el periodo original de cada alarma
 
 // Inicializar las alarmas
 void iniciar_alarmas(void){
 	int i=0;
-	while (i<13){
+	while (i<20){
 		bit_activa[i] = 0;
 		i++;
 	}
@@ -53,12 +54,14 @@ void gestor_alarmas_control_cola(struct EventInfo nueva_alarma){
 */
 void gestor_alarmas_control_alarma(void){
 	int i = 0;
-	while (i<13){
+	while (i<20){
 		if(bit_activa[i] != 0){	// Si la alarma esta activa
 			periodo[i] --;
 			if(periodo[i] == 0){ // Si el periodo es 0 significa que ha acabado la alarma 
 				//Se encola un evento del tipo de esa alarma  
+				disable_isr();
 				cola_guardar_eventos(alarm_queue[i].idEvento, alarm_queue[i].auxData);
+				enable_isr();
 				if(bit_perio[i] != 1){	// si la alarma no es periódica pones el bit de activa a 0 y acaba
 					bit_activa[i] = 0;
 				}
@@ -75,7 +78,7 @@ void introducir_alarma_power(void){
 	struct EventInfo Power_down;
 	Power_down.idEvento = ID_power_down;
 	//Power_down.timeStamp = temporizador_leer();
-	Power_down.auxData = 0x0000FFC8;				// Ponemos la alarma 15 segundos para el powerdown
+	Power_down.auxData = 0x000FFFC8;				// Ponemos la alarma 15 segundos para el powerdown
 	gestor_alarmas_control_cola(Power_down);
 }
 
@@ -107,6 +110,20 @@ void apagar_alarma_iddle(void){
 	iddle_alarm.idEvento = ID_iddle;
 	iddle_alarm.auxData = 0x00000000;
 	gestor_alarmas_control_cola(iddle_alarm);
+}
+
+void introducir_alarma_aceptar(void){
+	struct EventInfo accept_alarm;
+	accept_alarm.idEvento = ID_FIN_ACEPTAR;
+	accept_alarm.auxData = 0x0000F1EC;
+	gestor_alarmas_control_cola(accept_alarm);
+}
+
+void quitar_alarma_aceptar(void){
+	struct EventInfo accept_alarm;
+	accept_alarm.idEvento = ID_FIN_ACEPTAR;
+	accept_alarm.auxData = 0x00000000;
+	gestor_alarmas_control_cola(accept_alarm);
 }
 
 

@@ -11,7 +11,7 @@ void WT_init(int sec){
   }
 	// Interval timeout Pclk*WDTC*4
 	// valor minimo WDTC= 256; valor maximo 2^32 (si escribes algo menos que FF, se escribe FF)
-  WDTC  = sec*1000000*4;						   			// Set watchdog time out value
+  WDTC  = sec*1500000;						   			// Set watchdog time out value
   WDMOD = 0x03;                            //Bit de Enable y bit de reset 
 }
 

@@ -23,7 +23,9 @@ enum {
 	ID_RST,
 	ID_NEW,
 	ID_Evento_RDY,
-	ID_JUGADA
+	ID_JUGADA,
+	ID_ESPERAR_CONFIRMACION,
+	ID_FIN_ACEPTAR
 };
 
 #endif // EVENTOS_H

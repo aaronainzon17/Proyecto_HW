@@ -20,6 +20,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include "SWI_functions.h"
 
 
 
@@ -288,8 +289,10 @@ void sudoku_reset (void){
 		}
 	}
 	candidatos_actualizar_c(cuadricula_C_C);	// Actualizamos candidatos
+	write_string("Nueva Partida\n----------------------------");
 	mostrar_tablero();
 	mostrar_candidatos();
+	write_string("Comando:");
 }
 
 
@@ -304,26 +307,42 @@ void sudoku_jugada_principal (int fila, int columna, int nuevo_valor){
 			}else{	// Se puede escribir en esa casilla porque no es pista
 				guarda = (cuadricula_C_C[fila][columna] >> 6);	
 				guarda = guarda >> nuevo_valor;	// Compruebas que el valor a introducir esta como candidato
+				
+				cuadricula_C_C[fila][columna]&= 0xFFFFFFF0;
+				cuadricula_C_C[fila][columna] += nuevo_valor;	// Escribes el nuevo valor
 				if( (guarda & 0x00000001) == 0 ){	// Si el bit esta a uno puedes escribir
-					cuadricula_C_C[fila][columna]&= 0xFFFFFFF0;
-					cuadricula_C_C[fila][columna] += nuevo_valor;	// Escribes el nuevo valor
-					//Iniciar tiempo
-					//t1 = temporizador_leer();
-					candidatos_propagar_c(cuadricula_C_C,fila,columna);	// Propagas el nuevo valor
-					mostrar_tablero();
-					mostrar_candidatos();
-					
-					//Parar tiempo
-					//t2 = temporizador_leer();
-					//tot = t2-t1;	//Tiempo total
-					//led_val.idEvento = ID_bit_val;	// Poner el bit de validación a 1 durante 1 segundo mediante la generación de 1 evento
-					//Antes de encolar habría que inhabilitar las interrupciones pero lo haremos en la 3 con softirq
-					//cola_guardar_eventos(led_val.idEvento,led_val.auxData);
-					sudoku_validacion_1s();
-					
+					cuadricula_C_C[fila][columna]&=0xFFFFFFDF;
+				}else{
+					cuadricula_C_C[fila][columna]+=0x00000020;
 				}
+				//Iniciar tiempo
+				//t1 = temporizador_leer();
+				candidatos_propagar_c(cuadricula_C_C,fila,columna);	// Propagas el nuevo valor
+				mostrar_tablero();
+				mostrar_candidatos();
+				
+				//Parar tiempo
+				//t2 = temporizador_leer();
+				//tot = t2-t1;	//Tiempo total
+				//led_val.idEvento = ID_bit_val;	// Poner el bit de validación a 1 durante 1 segundo mediante la generación de 1 evento
+				//Antes de encolar habría que inhabilitar las interrupciones pero lo haremos en la 3 con softirq
+				//cola_guardar_eventos(led_val.idEvento,led_val.auxData);
+				sudoku_validacion_1s();
 			}
 		}
+}
+
+void sudoku_aceptar_jugada(void){
+	quitar_alarma_aceptar();
+	disable_isr();
+	cola_guardar_eventos(ID_FIN_ACEPTAR,0);
+	enable_isr();
+}
+
+void sudoku_cancelar_jugada(void){
+	quitar_alarma_aceptar();
+	mostrar_tablero();
+	mostrar_candidatos();
 }
 
 void sudoku_jugada (void){
@@ -376,14 +395,16 @@ void sudoku_programar_visualizacion(void){
 		Most_Vis.idEvento = ID_mostrar_vis;					// Generamos evento de visualización si ha cambiado la entrada para actualizar los candidatos y el valor
 		Most_Vis.auxData = entradas_nuevo;	
 		//Antes de encolar habría que inhabilitar las interrupciones pero lo haremos en la 3 con softirq
-		cola_guardar_eventos(Most_Vis.idEvento,Most_Vis.auxData);						
+		disable_isr();
+		cola_guardar_eventos(Most_Vis.idEvento,Most_Vis.auxData);		
+		enable_isr();
 	}	//Sino no haces nada
 }
 
 
 void mostrar_tablero(void){
 	int k,s,val,col,fil;
-	char linea[] ="+-+-+-+-+-+-+-+-+-+\n";
+	char linea[] ="+-+-+-+-+-+-+-+-+-+-+-+-+-+-\n";
 	char letra[] = "";
 	write_string("\n\n");
 	
@@ -395,20 +416,32 @@ void mostrar_tablero(void){
 				if(s==0||s==6||s==12||s==18){
 					write_string("|");
 				}else if(s==2||s==4||s==8||s==10||s==14||s==16){
-					write_string(".");
+					write_string("!");
 				}else{
 					fil=k/2;
 					col=s/2;
 					if(((cuadricula_C_C[fil][col] >> 4) & 0x00000001) == 0x00000001){
+						val = cuadricula_C_C[fil][col] & 0x0000000F;
+						itoa(val,letra);
 						write_string("P");
+						write_string(letra);
+					}else if ((((cuadricula_C_C[fil][col] >> 5) & 0x00000001) == 0x00000001)&&(((cuadricula_C_C[fil][col] >> 5) & 0x00000001) == 0x00000001)){
+						val = cuadricula_C_C[fil][col] & 0x0000000F;
+						itoa(val,letra);
+						write_string("X");
+						write_string(letra);
 					}else if (((cuadricula_C_C[fil][col] >> 5) & 0x00000001) == 0x00000001){
+						val = cuadricula_C_C[fil][col] & 0x0000000F;
+						itoa(val,letra);
 						write_string("E");
+						write_string(letra);
 					}else if((cuadricula_C_C[fil][col] & 0x0000000F) != 0x00000000){
 						val = cuadricula_C_C[fil][col] & 0x0000000F;
 						itoa(val,letra);
 						write_string(letra);
-					}else{
 						write_string(" ");
+					}else{
+						write_string("  ");
 					}
 				}
 			}
@@ -425,10 +458,10 @@ void sudoku (int Evento){
 						Gestor_Pulsacion_Control(Evento);
 					break;
 					case ID_EINT1:						
-						sudoku_jugada();
+						sudoku_aceptar_jugada();
 					break;
 					case ID_EINT2:	
-						sudoku_jugada_borrar();
+						sudoku_cancelar_jugada();
 					break;
 					case ID_Alarma_visualizacion:	
 						sudoku_programar_visualizacion();
@@ -465,4 +498,12 @@ void sudoku_mostrar_visualizacion(struct EventInfo Evento){
 
 void sudoku_iniciar_tablero(void){
 	candidatos_actualizar_c(cuadricula_C_C);
+}
+
+void sudoku_inicio(void){
+	write_string("Leyenda\n#RST!: Parar juego.\n#NEW!: Nueva partida.\n#fcvs!: f(fila), c(columna), v(nuevo valor)\n");
+	write_string("Nueva Partida\n----------------------------");
+	mostrar_tablero();
+	mostrar_candidatos();
+	write_string("Comando:");
 }
