@@ -14,6 +14,7 @@
 //#include "gestor_IO.h"
 #include "tableros.h"
 #include "serial_port.h"
+#include "gestor_RTC.h"
 
 static int candidatos_actualizar_c(CELDA cuadricula[NUM_FILAS][NUM_COLUMNAS])
 {
@@ -50,6 +51,7 @@ void gestor_IO_init(void){	// Inicia la GPIO y marca los pines que van a ser ent
 void iniciar(void){
 	temporizador_iniciar();									// Inicializamos timers
 	temporizador_empezar();
+	RTC_init();
 	eint0_init();											// Inicializamos botones
 	gestor_IO_init();										// Inicializamos GPIO
 	cola_ini();												// Inicializamos cola

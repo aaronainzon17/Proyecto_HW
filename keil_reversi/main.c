@@ -45,7 +45,7 @@ int main (void) {
 	WT_init(15);
 	while(1){	
 		WD_feed();
-		if(cola_nuevos_eventos() && Reset == 0){
+		if(cola_nuevos_eventos()){
 				cola_leer_evevento_antiguo(&Evento);
 				switch(Evento.idEvento){
 					case ID_Alarma:	// Alarma pulsacion para comprobar si el boton pulsado lo sigue estando
@@ -57,7 +57,11 @@ int main (void) {
 						if(PD_Flag == 1){					// Si vienes de power down no haces nada
 							PD_Flag = 0;						// SD se pone a 0 para indicar que no estamos en power down
 						}else{
-							sudoku(ID_EINT1);
+							if(Reset==0){
+								Reset=1;
+								sudoku_jugar();
+							}else{
+								sudoku(ID_EINT1);}
 						}
 					break;
 					case ID_EINT2:																			// Nueva pulsacion EINT2
@@ -66,7 +70,11 @@ int main (void) {
 						if(PD_Flag == 1){					// Si vienes de power down no haces nada
 							PD_Flag = 0;						// SD se pone a 0 para indicar que no estamos en power down
 						}else{
-							sudoku(ID_EINT2);
+							if(Reset==0){
+								Reset=1;
+								sudoku_jugar();
+							}else{
+								sudoku(ID_EINT2);}
 						}					
 					break;
 					case ID_Alarma_visualizacion:											// Alarma Visualizacion
@@ -104,16 +112,19 @@ int main (void) {
 						gestor_UART(Evento.auxData);
 					break;
 					case ID_RST:
+						Reset=0;
 						sudoku_reset();
 					break;
 					case ID_NEW:
-						Reset = 0;
+						Reset=1;
+						sudoku_jugar();
 					break;
 					case ID_Evento_RDY:
 						resume_write();
 					break;
 					case ID_ESPERAR_CONFIRMACION:
 						buffer=Evento.auxData;
+						sudoku_mostrar_vista_previa(buffer);
 						introducir_alarma_aceptar();
 					break;
 					case ID_FIN_ACEPTAR	:

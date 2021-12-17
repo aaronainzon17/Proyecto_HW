@@ -61,3 +61,7 @@ void mostrar_candidatos(void);
 
 void sudoku_inicio(void);
 
+void sudoku_jugar(void);
+
+void sudoku_mostrar_vista_previa(int buffer);
+	
