@@ -12,12 +12,12 @@ void cola_ini(void){
 }
 
 int cola_llena(void){
-	if((cola.sig == 0 && cola.ult == SIZE - 1) || (cola.sig == cola.ult + 1)){
-		GPIO_marcar_salida(30,1);
+	if((cola.sig == 0 && cola.ult == SIZE - 1) || (cola.sig == cola.ult + 1)){ //If que te dice si si metes un evento algun evento se va a quedar sin tartar
+		GPIO_marcar_salida(30,1);	//Ponemos a 1 el bit 30 de la gpio
 		GPIO_escribir(30,1,1);
 		return 1;
-	}else{
-		GPIO_marcar_salida(30,1);
+	}else{//LA cola no esta llena
+		GPIO_marcar_salida(30,1);//Ponemos a 0 el bit 30 de la gpio
 		GPIO_escribir(30,1,0);
 		return 0;
 	}

@@ -60,7 +60,7 @@ cuadricula[NUM_FILAS][NUM_COLUMNAS] =
 void candidatos_propagar_c(CELDA cuadricula[NUM_FILAS][NUM_COLUMNAS],
 	uint8_t fila, uint8_t columna)
 {
-    uint8_t j, i , init_i, init_j, end_i, end_j;
+    uint8_t j, i , init_i, init_j, end_i, end_j, error;
     /* puede ayudar esta "look up table" a mejorar el rendimiento */
     const uint8_t init_region[NUM_FILAS] = {0, 0, 0, 3, 3, 3, 6, 6, 6};
 
@@ -69,15 +69,20 @@ void candidatos_propagar_c(CELDA cuadricula[NUM_FILAS][NUM_COLUMNAS],
 
     /* recorrer fila descartando valor de listas candidatos */
     for (j=0;j<NUM_FILAS;j++){
-			
+				error=cuadricula[fila][j]&0x00000020;
 				if(hay_error==0){celda_eliminar_candidato(&cuadricula[fila][j],valor);}
 				if(hay_error==1 && valor_error == celda_leer_valor(cuadricula[fila][j])){celda_introducir_bit_error(&cuadricula[fila][j]);}
+				if(hay_error==0 && valor_error != celda_leer_valor(cuadricula[fila][j])){celda_quitar_bit_error(&cuadricula[fila][j]);}
+				if(hay_error==0 && (error ==0x00000020) && (celda_leer_valor(cuadricula[fila][j])!=celda_leer_valor(cuadricula[fila][columna]))){celda_introducir_bit_error(&cuadricula[fila][j]);}
 		}
 
     /* recorrer columna descartando valor de listas candidatos */
     for (i=0;i<NUM_FILAS;i++){
+				error=cuadricula[i][columna]&0x00000020;
 				if(hay_error==0){celda_eliminar_candidato(&cuadricula[i][columna],valor);}
 				if(hay_error==1 && valor_error == celda_leer_valor(cuadricula[i][columna])){celda_introducir_bit_error(&cuadricula[i][columna]);}
+				if(hay_error==0 && valor_error != celda_leer_valor(cuadricula[i][columna])){celda_quitar_bit_error(&cuadricula[i][columna]);}
+				if(hay_error==0 && (error ==0x00000020) && (celda_leer_valor(cuadricula[i][columna])!=celda_leer_valor(cuadricula[fila][columna]))){celda_introducir_bit_error(&cuadricula[i][columna]);}
 		}
 
     /* determinar fronteras región */
@@ -89,8 +94,11 @@ void candidatos_propagar_c(CELDA cuadricula[NUM_FILAS][NUM_COLUMNAS],
     /* recorrer region descartando valor de listas candidatos */
     for (i=init_i; i<end_i; i++) {
       for(j=init_j; j<end_j; j++) {
+					error=cuadricula[i][j]&0x00000020;
 					if(hay_error==0){celda_eliminar_candidato(&cuadricula[i][j],valor);}
 					if(hay_error==1 && valor_error == celda_leer_valor(cuadricula[i][j])){celda_introducir_bit_error(&cuadricula[i][j]);}
+					if(hay_error==0 && valor_error != celda_leer_valor(cuadricula[i][j])){celda_quitar_bit_error(&cuadricula[i][j]);}
+					if(hay_error==0 && (error ==0x00000020) && (celda_leer_valor(cuadricula[i][j])!=celda_leer_valor(cuadricula[fila][columna]))){celda_introducir_bit_error(&cuadricula[i][j]);}
 	    }
     }
 }
@@ -301,19 +309,34 @@ void itoa(int numero,char letra[]){
 	else if(numero==0){letra[0] = '0';}
 }
 
-void itoa_varios(int i,char p[]){
-	int j=0;
-	int n=i;
-	while (n>0){
-		n/=10;
-		j++;
-	}
-	n=i;
-	p[j+1]='\0';
-	while (j>=0){
-		p[j] = '0' + n%10;
-		j--;
-		n/=10;
+void itoa_varios(int numero,char letra[]){
+	if(numero==0){letra[0]='0';letra[1]='\0';}
+	else{
+		int resto = numero;
+		int num = numero;
+		int len = 0;
+		while (num > 0){
+			num = num/10;
+			len++;
+		}
+		num = numero;
+		letra[len] = '\0';
+		len--;
+		while(num > 0 && len >= 0){
+			resto = num%10;
+			num = num/10;
+			if(resto==1){letra[len] = '1';}
+			else if(resto==2){letra[len] = '2';}
+			else if(resto==3){letra[len] = '3';}
+			else if(resto==4){letra[len] = '4';}
+			else if(resto==5){letra[len] = '5';}
+			else if(resto==6){letra[len] = '6';}
+			else if(resto==7){letra[len] = '7';}
+			else if(resto==8){letra[len] = '8';}
+			else if(resto==9){letra[len] = '9';}
+			else if(resto==0){letra[len] = '0';}
+		len--;
+		}
 	}
 }
 
@@ -375,24 +398,29 @@ void sudoku_reset (void){
 	int j,k,minutos,segundos;
 	char minutos_letra []= "";
 	char segundos_letra []= "";
+	char total_actualizar_letra []= "";
 	for(j=0;j<9;j++){
 		for(k=0;k<16;k++){
 				cuadricula_C_C[j][k] = cuadricula[j][k];	// Reiniciamos cada casilla
 		}
 	}
 	candidatos_actualizar_c(cuadricula_C_C);	// Actualizamos candidatos
-	tiempo_actualizar = 0;
 	hay_error=0;
+	tot=0;
 	minutos =RTC_leer_minutos();
 	segundos= RTC_leer_segundos();
 	itoa_varios(minutos,minutos_letra);
 	itoa_varios(segundos,segundos_letra);
+	itoa_varios(tiempo_actualizar,total_actualizar_letra);
+	tiempo_actualizar = 0;
 	write_string("Se han jugado ");
 	write_string(minutos_letra);
 	write_string(" minutos y ");
 	write_string(segundos_letra);
-	write_string("segundos.\n");
+	write_string(" segundos.\n");
 	write_string("Tiempo de Actualizar:");
+	write_string(total_actualizar_letra);
+	write_string("\n");
 	write_string("Nueva Partida\n----------------------------\n");
 }
 
@@ -643,5 +671,8 @@ void sudoku_jugar(void){
 }
 
 void sudoku_nueva_partida(void){
+	t1=temporizador_leer();
 	candidatos_actualizar_c(cuadricula_C_C);
+	t2 =temporizador_leer();
+	tot = t2-t1;
 }

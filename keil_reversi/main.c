@@ -99,7 +99,7 @@ int main (void) {
 					case ID_timer_0:	//Llega timer
 						gestor_alarmas_control_alarma();
 					break;
-					case ID_iddle:
+					case ID_iddle:	//Bit de iddle
 						if(iddle_bit_flag == 0){
 							gestor_IO_escribir_bit_powerdown();
 							iddle_bit_flag = 1;

@@ -19,7 +19,7 @@ void timer1_ISR (void) __irq;    // Generate Interrupt
 void temporizador_iniciar(void){
 		timer0_int_count = 0;
 		// configuration of Timer 0
-		T0MR0 = 1499;                        		// Interrumpe cada 0,1 ms = 1.500-1 counts
+		T0MR0 = 1499;                        		// Interrumpe cada 1 ms = 1.500-1 counts
     T0MCR = 3;                     							// Generates an interrupt and resets the count when the value of MR0 is reached
 
     // configuration of the IRQ slot number 0 of the VIC for Timer 0 Interrupt
@@ -28,7 +28,7 @@ void temporizador_iniciar(void){
 		// 4 is the number of the interrupt assigned. Number 4 is the Timer 0 (see table 40 of the LPC2105 user manual  
 		VICVectCntl0 = 0x20 | 4;                   
     VICIntEnable = VICIntEnable | 0x00000010;                  // Enable Timer0 Interrupt
-		VICIntSelect = VICIntSelect | 0x00000010;	
+		VICIntSelect = VICIntSelect | 0x00000010;										//Enable Fiq for Timer0
 	
 		timer1_int_count = 0;	
 	// configuration of Timer 0
@@ -60,7 +60,7 @@ int temporizador_parar(void){
 }
 
 void timer1_ISR (void) __irq {
-    timer1_int_count++;
+    timer1_int_count++;											//Suma 1 al contador de ticks de timer1
     T1IR = 1;                              // Clear interrupt flag
     VICVectAddr = 0;                            // Acknowledge Interrupt
 }
@@ -74,11 +74,10 @@ void temporizador_periodo(int periodo){
 /* Timer Counter 0 Interrupt executes each 10ms @ 60 MHz CPU Clock */
 
 void timer0_ISR (void) __irq {
-    timer0_int_count++;
+    timer0_int_count++;					//Suma 1 al contador de ticks de timer0
 		if (timer0_int_count != 0 && timer0_int_count == siguiente_periodo){	// Cuando llega al final controlamos las alarmas
-				//gestor_alarmas_control_alarma();
 				struct EventInfo timer_event;
-				timer_event.idEvento = 8;
+				timer_event.idEvento = ID_timer_0;
 				cola_guardar_eventos(timer_event.idEvento,timer_event.auxData);
 				siguiente_periodo = timer0_int_count + periodo_alarm;
 		}
