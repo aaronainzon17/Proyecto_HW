@@ -71,15 +71,13 @@ void candidatos_propagar_c(CELDA cuadricula[NUM_FILAS][NUM_COLUMNAS],
     for (j=0;j<NUM_FILAS;j++){
 			
 				if(hay_error==0){celda_eliminar_candidato(&cuadricula[fila][j],valor);}
+				//if(hay_error==1 && valor_error == celda_leer_valor(cuadricula[fila][j])){celda_introducir_bit_error(&cuadricula[fila][j]);}
 		}
 
     /* recorrer columna descartando valor de listas candidatos */
     for (i=0;i<NUM_FILAS;i++){
-		//	if(celda_leer_valor(cuadricula[i][columna])== valor_error){
-			//	cuadricula_C_C[i][columna]+=0x00000020;
-			//}else{
 				if(hay_error==0){celda_eliminar_candidato(&cuadricula[i][columna],valor);}
-			//}
+				//if(hay_error==1 && valor_error == celda_leer_valor(cuadricula[i][columna])){celda_introducir_bit_error(&cuadricula[i][columna]);}
 		}
 
     /* determinar fronteras región */
@@ -91,11 +89,73 @@ void candidatos_propagar_c(CELDA cuadricula[NUM_FILAS][NUM_COLUMNAS],
     /* recorrer region descartando valor de listas candidatos */
     for (i=init_i; i<end_i; i++) {
       for(j=init_j; j<end_j; j++) {
-	   //   if(celda_leer_valor(cuadricula[i][j])== valor_error){
-			//	cuadricula_C_C[i][j]+=0x00000020;
-			//	}else{
 					if(hay_error==0){celda_eliminar_candidato(&cuadricula[i][j],valor);}
-			//	}
+					//if(hay_error==1 && valor_error == celda_leer_valor(cuadricula[i][j])){celda_introducir_bit_error(&cuadricula[i][j]);}
+	    }
+    }
+}
+
+void sudoku_propagar_error(CELDA cuadricula[NUM_FILAS][NUM_COLUMNAS],
+	uint8_t fila, uint8_t columna, int valor){
+		uint8_t j, i , init_i, init_j, end_i, end_j;
+		const uint8_t init_region[9] = {0, 0, 0, 3, 3, 3, 6, 6, 6};
+   
+
+    /* recorrer fila descartando valor de listas candidatos */
+    for (j=0;j<9;j++){
+			if(valor == celda_leer_valor(cuadricula[fila][j])){
+				celda_introducir_bit_error(&cuadricula[fila][j]);
+			}
+		}
+
+    /* recorrer columna descartando valor de listas candidatos */
+    for (i=0;i<9;i++){
+				if(valor == celda_leer_valor(cuadricula[i][columna])){
+					celda_introducir_bit_error(&cuadricula[i][columna]);
+				}
+		}
+
+    /* determinar fronteras región */
+    init_i = init_region[fila];
+    init_j = init_region[columna];
+    end_i = init_i + 3;
+    end_j = init_j + 3;
+
+    /* recorrer region descartando valor de listas candidatos */
+    for (i=init_i; i<end_i; i++) {
+      for(j=init_j; j<end_j; j++) {
+				if(valor == celda_leer_valor(cuadricula[i][j])){
+					celda_introducir_bit_error(&cuadricula[i][j]);
+				}
+	    }
+    }
+}
+
+void sudoku_introducir_candidatos(int valor,int fila,int columna){
+		uint8_t j, i , init_i, init_j, end_i, end_j;
+		const uint8_t init_region[9] = {0, 0, 0, 3, 3, 3, 6, 6, 6};
+   
+
+    /* recorrer fila descartando valor de listas candidatos */
+    for (j=0;j<9;j++){
+			celda_introducir_candidatos(&cuadricula_C_C[fila][j],valor);
+		}
+
+    /* recorrer columna descartando valor de listas candidatos */
+    for (i=0;i<9;i++){
+				celda_introducir_candidatos(&cuadricula_C_C[i][columna],valor);
+		}
+
+    /* determinar fronteras región */
+    init_i = init_region[fila];
+    init_j = init_region[columna];
+    end_i = init_i + 3;
+    end_j = init_j + 3;
+
+    /* recorrer region descartando valor de listas candidatos */
+    for (i=init_i; i<end_i; i++) {
+      for(j=init_j; j<end_j; j++) {
+				celda_introducir_candidatos(&cuadricula_C_C[i][j],valor);
 	    }
     }
 }
@@ -333,20 +393,21 @@ void sudoku_jugada_principal (int fila, int columna, int nuevo_valor){
 				guarda = guarda >> nuevo_valor;	// Compruebas que el valor a introducir esta como candidato
 				
 				if( (guarda & 0x00000001) == 0 ){	// Si el bit esta a uno quitas bit de error
-					cuadricula_C_C[fila][columna]&=0xFFFFFFDF;
+					celda_quitar_bit_error(&cuadricula_C_C[fila][columna]);
 					hay_error=0;
 				}else{
-					cuadricula_C_C[fila][columna]+=0x00000020;// Si no pones bit de error
+					celda_introducir_bit_error(&cuadricula_C_C[fila][columna]);// Si no pones bit de error
 					hay_error=1;
+					valor_error=nuevo_valor;
+					//sudoku_propagar_error(cuadricula_C_C,fila,columna,nuevo_valor);
 				}
 				valor= cuadricula_C_C[fila][columna] & 0x0000000F;
 				if((hay_error==1) && (valor  != 0)){
-					celda_introducir_candidatos(&cuadricula_C_C[fila][columna],antiguo_valor);
+					sudoku_introducir_candidatos(antiguo_valor,fila,columna);
 				}
 				
-				cuadricula_C_C[fila][columna]&= 0xFFFFFFF0;
-				cuadricula_C_C[fila][columna] += nuevo_valor;	// Escribes el nuevo valor
-
+				celda_poner_valor(&cuadricula_C_C[fila][columna],nuevo_valor);	// Escribes el nuevo valor
+				if(cuadricula_candidatos_verificar(cuadricula_C_C,solucion) == 1){cola_guardar_eventos(ID_FINAL_JUEGO,0);}
 				valor_error=nuevo_valor;
 				candidatos_propagar_c(cuadricula_C_C,fila,columna);	// Propagas el nuevo valor
 				sudoku_jugar();
@@ -373,6 +434,7 @@ void sudoku_mostrar_vista_previa(int buffer){
 }
 
 void sudoku_aceptar_jugada(void){
+	quitar_alarma_parpadeo_aceptar();
 	quitar_alarma_aceptar();
 	disable_isr();
 	cola_guardar_eventos(ID_FIN_ACEPTAR,0);
@@ -385,6 +447,7 @@ void sudoku_restaurar_estado(){
 }
 
 void sudoku_cancelar_jugada(void){
+	quitar_alarma_parpadeo_aceptar();
 	quitar_alarma_aceptar();
 	sudoku_restaurar_estado();
 	sudoku_jugar();

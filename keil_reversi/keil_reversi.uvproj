@@ -351,7 +351,7 @@
           </ArmAdsMisc>
           <Cads>
             <interw>0</interw>
-            <Optim>1</Optim>
+            <Optim>4</Optim>
             <oTime>1</oTime>
             <SplitLS>0</SplitLS>
             <OneElfS>0</OneElfS>
@@ -547,6 +547,11 @@
               <FilePath>.\propagar.s</FilePath>
             </File>
             <File>
+              <FileName>gestor_RTC.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>.\gestor_RTC.h</FilePath>
+            </File>
+            <File>
               <FileName>celda.h</FileName>
               <FileType>5</FileType>
               <FilePath>.\celda.h</FilePath>
@@ -580,11 +585,6 @@
               <FileName>gestor_RTC.c</FileName>
               <FileType>1</FileType>
               <FilePath>.\gestor_RTC.c</FilePath>
-            </File>
-            <File>
-              <FileName>gestor_RTC.h</FileName>
-              <FileType>5</FileType>
-              <FilePath>.\gestor_RTC.h</FilePath>
             </File>
             <File>
               <FileName>gestor_WD.c</FileName>

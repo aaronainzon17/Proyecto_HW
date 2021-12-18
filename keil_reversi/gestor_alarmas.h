@@ -9,3 +9,5 @@ void introducir_alarma_iddle(void);
 void apagar_alarma_iddle(void);
 void introducir_alarma_aceptar(void);
 void quitar_alarma_aceptar(void);
+void introducir_alarma_parpadeo_aceptar(void);
+void quitar_alarma_parpadeo_aceptar(void);

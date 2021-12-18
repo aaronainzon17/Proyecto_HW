@@ -126,4 +126,18 @@ void quitar_alarma_aceptar(void){
 	gestor_alarmas_control_cola(accept_alarm);
 }
 
+void introducir_alarma_parpadeo_aceptar(void){
+	struct EventInfo accept_alarm;
+	accept_alarm.idEvento = ID_PARPADEO_ACEPTAR;
+	accept_alarm.auxData = 0x008001EC;
+	gestor_alarmas_control_cola(accept_alarm);
+}
+
+void quitar_alarma_parpadeo_aceptar(void){
+	struct EventInfo accept_alarm;
+	accept_alarm.idEvento = ID_PARPADEO_ACEPTAR;
+	accept_alarm.auxData = 0x00000000;
+	gestor_alarmas_control_cola(accept_alarm);
+}
+
 

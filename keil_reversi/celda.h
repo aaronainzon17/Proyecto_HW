@@ -54,8 +54,20 @@ __inline static void celda_introducir_candidatos(CELDA *celdaptr, uint8_t candid
 		int num;
 		num = 1 << (7 + candidato -1);
 		num = ~num;
+
+		*celdaptr = *celdaptr & num;
+}
+
+__inline static void celda_introducir_bit_error(CELDA *celdaptr)
+{
     //Se ponen todos los candidatos a 0 por la logica negada son candidatos
-   *celdaptr = *celdaptr & num;
+   *celdaptr = *celdaptr+=0x00000020;
+}
+
+__inline static void celda_quitar_bit_error(CELDA *celdaptr)
+{
+    //Se ponen todos los candidatos a 0 por la logica negada son candidatos
+   *celdaptr = *celdaptr&=0xFFFFFFDF;
 }
 
 #endif // CELDA_H

@@ -39,6 +39,7 @@ int main (void) {
 	//int tot;
 	int PD_Flag = 0;					// Flag para salir de power down
 	int Reset = 0;
+	int Parpadeo=0;
 	uint32_t volatile buffer;
 	int iddle_bit_flag = 0;
 	iniciar();
@@ -126,10 +127,20 @@ int main (void) {
 						buffer=Evento.auxData;
 						sudoku_mostrar_vista_previa(buffer);
 						introducir_alarma_aceptar();
+						introducir_alarma_parpadeo_aceptar();
 					break;
 					case ID_FIN_ACEPTAR	:
+						quitar_alarma_parpadeo_aceptar();
 						sudoku_jugada_UART(buffer);
-					break;										
+					break;
+					case ID_FINAL_JUEGO	:
+						Reset=0;
+						sudoku_reset();
+					break;
+					case ID_PARPADEO_ACEPTAR	:
+						if(Parpadeo==0){Parpadeo=1;gestor_IO_escribir_en_gpio(13,1,1);}else{Parpadeo=0;gestor_IO_escribir_en_gpio(13,1,0);}
+						
+					break;
 				}
 		}else{
 			PM_idle();	
