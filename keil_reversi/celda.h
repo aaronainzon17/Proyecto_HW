@@ -61,6 +61,7 @@ __inline static void celda_introducir_candidatos(CELDA *celdaptr, uint8_t candid
 __inline static void celda_introducir_bit_error(CELDA *celdaptr)
 {
     //Se ponen todos los candidatos a 0 por la logica negada son candidatos
+	 *celdaptr = *celdaptr&=0xFFFFFFDF;
    *celdaptr = *celdaptr+=0x00000020;
 }
 

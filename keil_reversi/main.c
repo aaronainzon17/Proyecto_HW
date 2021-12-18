@@ -118,6 +118,7 @@ int main (void) {
 					break;
 					case ID_NEW:
 						Reset=1;
+						sudoku_nueva_partida();
 						sudoku_jugar();
 					break;
 					case ID_Evento_RDY:

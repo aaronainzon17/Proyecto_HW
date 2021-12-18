@@ -71,13 +71,13 @@ void candidatos_propagar_c(CELDA cuadricula[NUM_FILAS][NUM_COLUMNAS],
     for (j=0;j<NUM_FILAS;j++){
 			
 				if(hay_error==0){celda_eliminar_candidato(&cuadricula[fila][j],valor);}
-				//if(hay_error==1 && valor_error == celda_leer_valor(cuadricula[fila][j])){celda_introducir_bit_error(&cuadricula[fila][j]);}
+				if(hay_error==1 && valor_error == celda_leer_valor(cuadricula[fila][j])){celda_introducir_bit_error(&cuadricula[fila][j]);}
 		}
 
     /* recorrer columna descartando valor de listas candidatos */
     for (i=0;i<NUM_FILAS;i++){
 				if(hay_error==0){celda_eliminar_candidato(&cuadricula[i][columna],valor);}
-				//if(hay_error==1 && valor_error == celda_leer_valor(cuadricula[i][columna])){celda_introducir_bit_error(&cuadricula[i][columna]);}
+				if(hay_error==1 && valor_error == celda_leer_valor(cuadricula[i][columna])){celda_introducir_bit_error(&cuadricula[i][columna]);}
 		}
 
     /* determinar fronteras región */
@@ -90,7 +90,7 @@ void candidatos_propagar_c(CELDA cuadricula[NUM_FILAS][NUM_COLUMNAS],
     for (i=init_i; i<end_i; i++) {
       for(j=init_j; j<end_j; j++) {
 					if(hay_error==0){celda_eliminar_candidato(&cuadricula[i][j],valor);}
-					//if(hay_error==1 && valor_error == celda_leer_valor(cuadricula[i][j])){celda_introducir_bit_error(&cuadricula[i][j]);}
+					if(hay_error==1 && valor_error == celda_leer_valor(cuadricula[i][j])){celda_introducir_bit_error(&cuadricula[i][j]);}
 	    }
     }
 }
@@ -301,6 +301,22 @@ void itoa(int numero,char letra[]){
 	else if(numero==0){letra[0] = '0';}
 }
 
+void itoa_varios(int i,char p[]){
+	int j=0;
+	int n=i;
+	while (n>0){
+		n/=10;
+		j++;
+	}
+	n=i;
+	p[j+1]='\0';
+	while (j>=0){
+		p[j] = '0' + n%10;
+		j--;
+		n/=10;
+	}
+}
+
 void get_candidatos(int fila, int columna,char can[]){
 		int candidatos;
 		
@@ -366,10 +382,11 @@ void sudoku_reset (void){
 	}
 	candidatos_actualizar_c(cuadricula_C_C);	// Actualizamos candidatos
 	tiempo_actualizar = 0;
+	hay_error=0;
 	minutos =RTC_leer_minutos();
 	segundos= RTC_leer_segundos();
-	itoa(minutos,minutos_letra);
-	itoa(segundos,segundos_letra);
+	itoa_varios(minutos,minutos_letra);
+	itoa_varios(segundos,segundos_letra);
 	write_string("Se han jugado ");
 	write_string(minutos_letra);
 	write_string(" minutos y ");
@@ -398,7 +415,7 @@ void sudoku_jugada_principal (int fila, int columna, int nuevo_valor){
 				}else{
 					celda_introducir_bit_error(&cuadricula_C_C[fila][columna]);// Si no pones bit de error
 					hay_error=1;
-					valor_error=nuevo_valor;
+					valor_error=celda_leer_valor(cuadricula_C_C[fila][columna]);
 					//sudoku_propagar_error(cuadricula_C_C,fila,columna,nuevo_valor);
 				}
 				valor= cuadricula_C_C[fila][columna] & 0x0000000F;
@@ -434,8 +451,8 @@ void sudoku_mostrar_vista_previa(int buffer){
 }
 
 void sudoku_aceptar_jugada(void){
-	quitar_alarma_parpadeo_aceptar();
 	quitar_alarma_aceptar();
+	quitar_alarma_parpadeo_aceptar();
 	disable_isr();
 	cola_guardar_eventos(ID_FIN_ACEPTAR,0);
 	enable_isr();
@@ -623,4 +640,8 @@ void sudoku_jugar(void){
 	mostrar_tablero();
 	mostrar_candidatos();
 	write_string("Comando:");
+}
+
+void sudoku_nueva_partida(void){
+	candidatos_actualizar_c(cuadricula_C_C);
 }
