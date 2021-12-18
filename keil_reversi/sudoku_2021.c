@@ -70,7 +70,7 @@ void candidatos_propagar_c(CELDA cuadricula[NUM_FILAS][NUM_COLUMNAS],
     /* recorrer fila descartando valor de listas candidatos */
     for (j=0;j<NUM_FILAS;j++){
 			
-				celda_eliminar_candidato(&cuadricula[fila][j],valor);
+				if(hay_error==0){celda_eliminar_candidato(&cuadricula[fila][j],valor);}
 		}
 
     /* recorrer columna descartando valor de listas candidatos */
@@ -78,7 +78,7 @@ void candidatos_propagar_c(CELDA cuadricula[NUM_FILAS][NUM_COLUMNAS],
 		//	if(celda_leer_valor(cuadricula[i][columna])== valor_error){
 			//	cuadricula_C_C[i][columna]+=0x00000020;
 			//}else{
-				celda_eliminar_candidato(&cuadricula[i][columna],valor);
+				if(hay_error==0){celda_eliminar_candidato(&cuadricula[i][columna],valor);}
 			//}
 		}
 
@@ -94,7 +94,7 @@ void candidatos_propagar_c(CELDA cuadricula[NUM_FILAS][NUM_COLUMNAS],
 	   //   if(celda_leer_valor(cuadricula[i][j])== valor_error){
 			//	cuadricula_C_C[i][j]+=0x00000020;
 			//	}else{
-					celda_eliminar_candidato(&cuadricula[i][j],valor);
+					if(hay_error==0){celda_eliminar_candidato(&cuadricula[i][j],valor);}
 			//	}
 	    }
     }
@@ -322,7 +322,7 @@ void sudoku_reset (void){
 
 
 void sudoku_jugada_principal (int fila, int columna, int nuevo_valor){
-		int guarda;
+		int guarda,valor;
 		// La casilla introducida no es pista y no se ha introducido fila = 0, columna = 0, valor = 0
 		if((((cuadricula_C_C[fila][columna] >> 4) & 0x00000001) != 0x00000001) || (fila == 0 && columna == 0 && nuevo_valor ==0)){	
 			if(fila == 0 && columna == 0 && nuevo_valor ==0){
@@ -332,8 +332,6 @@ void sudoku_jugada_principal (int fila, int columna, int nuevo_valor){
 				guarda = (cuadricula_C_C[fila][columna] >> 6);	
 				guarda = guarda >> nuevo_valor;	// Compruebas que el valor a introducir esta como candidato
 				
-				cuadricula_C_C[fila][columna]&= 0xFFFFFFF0;
-				cuadricula_C_C[fila][columna] += nuevo_valor;	// Escribes el nuevo valor
 				if( (guarda & 0x00000001) == 0 ){	// Si el bit esta a uno quitas bit de error
 					cuadricula_C_C[fila][columna]&=0xFFFFFFDF;
 					hay_error=0;
@@ -341,6 +339,14 @@ void sudoku_jugada_principal (int fila, int columna, int nuevo_valor){
 					cuadricula_C_C[fila][columna]+=0x00000020;// Si no pones bit de error
 					hay_error=1;
 				}
+				valor= cuadricula_C_C[fila][columna] & 0x0000000F;
+				if((hay_error==1) && (valor  != 0)){
+					celda_introducir_candidatos(&cuadricula_C_C[fila][columna],antiguo_valor);
+				}
+				
+				cuadricula_C_C[fila][columna]&= 0xFFFFFFF0;
+				cuadricula_C_C[fila][columna] += nuevo_valor;	// Escribes el nuevo valor
+
 				valor_error=nuevo_valor;
 				candidatos_propagar_c(cuadricula_C_C,fila,columna);	// Propagas el nuevo valor
 				sudoku_jugar();

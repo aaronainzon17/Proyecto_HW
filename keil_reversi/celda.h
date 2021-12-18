@@ -49,4 +49,13 @@ __inline static void celda_establecer_todos_candidatos(CELDA *celdaptr)
    *celdaptr = *celdaptr & (0x007F);
 }
 
+__inline static void celda_introducir_candidatos(CELDA *celdaptr, uint8_t candidato)
+{
+		int num;
+		num = 1 << (7 + candidato -1);
+		num = ~num;
+    //Se ponen todos los candidatos a 0 por la logica negada son candidatos
+   *celdaptr = *celdaptr & num;
+}
+
 #endif // CELDA_H
