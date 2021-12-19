@@ -12,16 +12,14 @@ void init_serial (void)  {               /* Initialize Serial Interface       */
   U0DLL = 200;                            /* 9600 Baud Rate @ 15MHz VPB Clock  */
   U0LCR = 0x03;                          /* DLAB = 0       										*/
 	U0IER = U0IER | 0x7;
-	VICVectAddr7 = (unsigned long)RSI_uart0;       // set interrupt vector in 0
-	// 0x20 bit 5 enables vectored IRQs. 
-	// 4 is the number of the interrupt assigned. Number 4 is the Timer 0 (see table 40 of the LPC2105 user manual  
+	VICVectAddr7 = (unsigned long)RSI_uart0;       //Configuramos el vector de interrupciones
+	  
 	VICVectCntl7 = 0x20 | 6; 
 	VICIntEnable = VICIntEnable | (1<<6);	
 }
 
 
 /* implementation of putchar (also used by printf function to output data)    */
-// Revisar THRE IE
 void sendchar (int ch)  {                 /* Write character to Serial Port    */
   U0THR = ch;
 }
@@ -33,23 +31,19 @@ int getchar (void)  {                     /* Read character from Serial Port   *
   return (U0RBR);
 }
 
-
-void RSI_uart0 (void) __irq{                     /* Read character from Serial Port   */
-	switch(U0IIR & 0x00000007){ //sacar bits del 3 al 1
-		// Hay datos que leer
+//RSI de la UART
+void RSI_uart0 (void) __irq{             
+	switch(U0IIR & 0x00000007){ //Miramos en U0IIR los bits que nos interesan
+		// Se ha terminado de enviar un caracter
+		case 0x2 : 
+			cola_guardar_eventos(ID_Continuar,0);//Encolamos evento para continuar escribiendo
+		break;
+		//Se a recibido un caracter por la UART
 		case 0x4 : 
-			// Guarda el evento de pulsacion de una tecla junto con el valor de
-			// la tecla que se ha pulsado
-			cola_guardar_eventos(ID_UART0,U0RBR);		/* Save character*/
+			cola_guardar_eventos(ID_UART,U0RBR);		//llamaremos al gestor con lo que hemos recibido de la interrupcion de la UART
 		break;
 		
-		// Listo para una nueva escritura
-		case 0x2 : 
-			// Guarda el evento que indica que la uart esta de nuevo lista para recibir 
-			// una nueva escritura
-			cola_guardar_eventos(ID_Evento_RDY,0);
-		break;
+		
 	}
-	// Acknowledge Interrupt
-	VICVectAddr = 2;
+	VICVectAddr = 2;// Acknowledge Interrupt
 }

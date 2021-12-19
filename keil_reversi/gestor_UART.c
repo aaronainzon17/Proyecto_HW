@@ -10,20 +10,17 @@ static volatile unsigned int ESTADO = inicio;
 static volatile int buffer_UART[10];
 static volatile unsigned int len_buffer;
 
-
-//Maquina de estados del gestor de comandos.
-//Devuelve un entero para indicar si est? esperando un evento 
+//Gestor de los comandos introducidos por la UART
 void gestor_UART(uint32_t cadena){
-	int buffer = U0RBR;
+	int buffer = U0RBR;//Leemos el contenido de U0RBR
 	U0THR = buffer;
 	switch(ESTADO){
 		case inicio:
-				if (cadena == '#'){
-					ESTADO=esperando_fin;
+				if (cadena == '#'){//Comenzamos a escuchar
 					len_buffer = 0;
+					ESTADO=esperando_fin;
 				}
 		break;
-		
 		case esperando_fin:
 			if(cadena == '!'){
 				if(buffer_UART[0]=='R' && buffer_UART[1]=='S' && buffer_UART[2]=='T'){

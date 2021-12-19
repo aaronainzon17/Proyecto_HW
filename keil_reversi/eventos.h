@@ -19,10 +19,10 @@ enum {
 	ID_power_down,	//7
 	ID_timer_0, //8
 	ID_iddle,	//9
-	ID_UART0,
+	ID_UART,
 	ID_RST,
 	ID_NEW,
-	ID_Evento_RDY,
+	ID_Continuar,
 	ID_JUGADA,
 	ID_ESPERAR_CONFIRMACION,
 	ID_FIN_ACEPTAR,

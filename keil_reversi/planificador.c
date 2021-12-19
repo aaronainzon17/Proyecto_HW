@@ -47,7 +47,7 @@ void planificador (void) {
 	iniciar();
 	WT_init(15);
 	while(1){	
-		WD_feed();//Activamos el watchdog para que detecte bucles infinitos
+		feed_watchdog();//Activamos el watchdog para que detecte bucles infinitos
 		if(cola_nuevos_eventos()){//Si hay nuevos eventos en la cola
 				cola_leer_evevento_antiguo(&Evento);//Desencolamos
 				switch(Evento.idEvento){
@@ -110,7 +110,7 @@ void planificador (void) {
 							iddle_bit_flag = 0;
 						}
 					break;
-					case ID_UART0://Llega una interrupcion por linea serie
+					case ID_UART://Llega una interrupcion por linea serie
 						introducir_alarma_power();//Reseteamos la alarma de powerdown porque el usuario sigue interaccionando
 						gestor_UART(Evento.auxData);//Llamamos al gestor de linea serie
 					break;
@@ -123,7 +123,7 @@ void planificador (void) {
 						sudoku_nueva_partida();//Se actualizan los candidatos
 						sudoku_jugar();//Mostrar tablero y candidatos
 					break;
-					case ID_Evento_RDY://Llega evento de continuar escribiendo en la UART
+					case ID_Continuar://Llega evento de continuar escribiendo en la UART
 						resume_write();
 					break;
 					case ID_ESPERAR_CONFIRMACION://Llega evento para esperar el aceptar la jugada o el rechazarla
