@@ -7,6 +7,7 @@
 ".\timer0.o"
 ".\gestor_pulsacion.o"
 ".\cola.o"
+".\planificador.o"
 ".\gestor_alarmas.o"
 ".\gestor_sc.o"
 ".\gestor_io.o"
