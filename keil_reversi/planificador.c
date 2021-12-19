@@ -43,12 +43,13 @@ void planificador (void) {
 	int Parpadeo=0;
 	uint32_t volatile buffer;
 	int iddle_bit_flag = 0;
+	//Iniciamos los componentes
 	iniciar();
 	WT_init(15);
 	while(1){	
-		WD_feed();
-		if(cola_nuevos_eventos()){
-				cola_leer_evevento_antiguo(&Evento);
+		WD_feed();//Activamos el watchdog para que detecte bucles infinitos
+		if(cola_nuevos_eventos()){//Si hay nuevos eventos en la cola
+				cola_leer_evevento_antiguo(&Evento);//Desencolamos
 				switch(Evento.idEvento){
 					case ID_Alarma:	// Alarma pulsacion para comprobar si el boton pulsado lo sigue estando
 						sudoku(ID_Alarma);
@@ -59,11 +60,11 @@ void planificador (void) {
 						if(PD_Flag == 1){					// Si vienes de power down no haces nada
 							PD_Flag = 0;						// SD se pone a 0 para indicar que no estamos en power down
 						}else{
-							if(Reset==0){
+							if(Reset==0){						//Si vienes de reset muestras el tablero y permites jugar
 								Reset=1;
 								sudoku_jugar();
 							}else{
-								sudoku(ID_EINT1);}
+								sudoku(ID_EINT1);}		//Aceptas la jugada
 						}
 					break;
 					case ID_EINT2:																			// Nueva pulsacion EINT2
@@ -72,60 +73,60 @@ void planificador (void) {
 						if(PD_Flag == 1){					// Si vienes de power down no haces nada
 							PD_Flag = 0;						// SD se pone a 0 para indicar que no estamos en power down
 						}else{
-							if(Reset==0){
+							if(Reset==0){						//Si vienes de reset muestras el tablero y permites jugar
 								Reset=1;
 								sudoku_jugar();
 							}else{
-								sudoku(ID_EINT2);}
+								sudoku(ID_EINT2);}		//Cancelas la jugada
 						}					
 					break;
 					case ID_Alarma_visualizacion:											// Alarma Visualizacion
 						sudoku(ID_Alarma_visualizacion);
 					break;
-					case ID_mostrar_vis:																			// Mostrar visualizacion
+					case ID_mostrar_vis:																			// Mostrar visualizacion de la GPIO
 							sudoku_mostrar_visualizacion(Evento);
 					break;
-					case ID_bit_val:											// Poner el bit de validación a 1 durante 1 segundo; Jugada exitosa
+					case ID_bit_val:											// Poner el bit de validación a 1 durante 1 segundo; Jugada exitosa; Practica2
 						sudoku(ID_bit_val);
 					break;
-					case ID_fin_val:						//Acaba la alarma de 1s y ponemos validar a 0 otra vez; Fin bit
+					case ID_fin_val:						//Acaba la alarma de 1s y ponemos validar a 0 otra vez; Fin bit; Practica2
 						sudoku(ID_fin_val);
 					break;
 					case ID_power_down:							// Acaba la alarma y entra en powerdown		
 						apagar_alarma_iddle();
 						PD_Flag = 1;						// Actualizamos el flag de powerdown 
-						PM_power_down(); 
-						introducir_alarma_iddle();
+						PM_power_down(); 				//Entramos en powerdown
+						introducir_alarma_iddle();	//Al salir ponemos la alarma del latido de iddle
 					break;
-					case ID_timer_0:	//Llega timer
-						gestor_alarmas_control_alarma();
+					case ID_timer_0:	//Llega timer 0
+						gestor_alarmas_control_alarma();//Se resta 1 a cada periodo de las alarmas activas
 					break;
 					case ID_iddle:	//Bit de iddle
 						if(iddle_bit_flag == 0){
-							gestor_IO_escribir_bit_powerdown();
+							gestor_IO_escribir_bit_powerdown();//Enciende el bit de latido de iddle
 							iddle_bit_flag = 1;
 						}else{
-							gestor_IO_apagar_bit_powerdown();
+							gestor_IO_apagar_bit_powerdown();//Apaga el bit de latido de iddle
 							iddle_bit_flag = 0;
 						}
 					break;
-					case ID_UART0:
-						introducir_alarma_power();
-						gestor_UART(Evento.auxData);
+					case ID_UART0://Llega una interrupcion por linea serie
+						introducir_alarma_power();//Reseteamos la alarma de powerdown porque el usuario sigue interaccionando
+						gestor_UART(Evento.auxData);//Llamamos al gestor de linea serie
 					break;
-					case ID_RST:
+					case ID_RST://Llega el evento de reset por linea serie
 						Reset=0;
-						sudoku_reset();
+						sudoku_reset();//Ejecutamos el reset
 					break;
-					case ID_NEW:
+					case ID_NEW://Llega el evento de nueva partida
 						Reset=1;
-						sudoku_nueva_partida();
-						sudoku_jugar();
+						sudoku_nueva_partida();//Se actualizan los candidatos
+						sudoku_jugar();//Mostrar tablero y candidatos
 					break;
-					case ID_Evento_RDY:
+					case ID_Evento_RDY://Llega evento de continuar escribiendo en la UART
 						resume_write();
 					break;
-					case ID_ESPERAR_CONFIRMACION:
+					case ID_ESPERAR_CONFIRMACION://Llega evento para esperar 
 						buffer=Evento.auxData;
 						sudoku_mostrar_vista_previa(buffer);
 						introducir_alarma_aceptar();

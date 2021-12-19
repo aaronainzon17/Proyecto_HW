@@ -3,5 +3,6 @@
 
 // MAIN 
 int main (void) {
+	//Llama al planificador
 	planificador();
 }

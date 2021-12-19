@@ -14,7 +14,7 @@ static volatile int BIT_EINT2 = 16;
 void eint1_ISR (void) __irq;
 void eint2_ISR (void) __irq;
 
-
+//RSI de eint1
 void eint1_ISR (void) __irq {
 	eint1_count++;
 	EXTINT |= 0x2;        // clear interrupt flag        
@@ -24,6 +24,7 @@ void eint1_ISR (void) __irq {
 	VICIntEnClr |= (1<< BIT_EINT1);			// Inhabilitamos las interrupciones
 	VICIntEnable &= ~(1<< BIT_EINT1);			// Inhabilitamos las interrupciones
 }
+//RSI de eint2
 void eint2_ISR (void) __irq {
 	eint2_count++;
 	EXTINT |= 0x4;        // clear interrupt flag        
@@ -33,41 +34,42 @@ void eint2_ISR (void) __irq {
 	VICIntEnClr |= (1<< BIT_EINT2);			// Inhabilitamos las interrupciones
 	VICIntEnable &= ~(1<< BIT_EINT2);
 }
-
+//Función que vuelve a habilitar las interrupciones de eint1
 void eint1_clear_nueva_pulsacion(void){
 	eint1_nueva_pulsacion = 0;
 	EXTINT |= 0x2;        // clear interrupt flag
 	VICIntEnClr &= ~(1<< BIT_EINT1);			// habilitamos las interrupciones
-	VICIntEnable = VICIntEnable | 0x00008000;                  // Enable EXTINT0 Interrupt
+	VICIntEnable = VICIntEnable | 0x00008000;                  // Enable EXTINT1 Interrupt
 };
 
+//Función que vuelve a habilitar las interrupciones de eint2
 void eint2_clear_nueva_pulsacion(void){
 	eint2_nueva_pulsacion = 0;
 	EXTINT |= 0x4;        // clear interrupt flag   
 	VICIntEnClr &= ~(1<< BIT_EINT2);			// habilitamos las interrupciones
-	VICIntEnable = VICIntEnable | 0x00010000;                  // Enable EXTINT0 Interrupt
+	VICIntEnable = VICIntEnable | 0x00010000;                  // Enable EXTINT2 Interrupt
 };
-
+//Devuelve el valor del flag de nueva pulsacion de eint1
 unsigned int eint1_read_nueva_pulsacion(void){
 	return eint1_nueva_pulsacion;
 };
-
+//Devuelve el valor del flag de nueva pulsacion de eint2
 unsigned int eint2_read_nueva_pulsacion(void){
 	return eint2_nueva_pulsacion;
 };
-
+//Devuelve el número de interrupciones ocasionadas po eint1
 unsigned int eint1_read_count(void){
 	return eint1_count;
 };
-
+//Devuelve el número de interrupciones ocasionadas po eint2
 unsigned int eint2_read_count(void){
 	return eint2_count;
 };
 
 void eint0_init (void) {
-// NOTA: seg�n el manual se puede configurar c�mo se activan las interrupciones: por flanco o nivel, alta o baja. 
-// Se usar�an los registros EXTMODE y EXTPOLAR. 
-// Sin embargo parece que el simulador los ignora y no aparecen en la ventana de ocnfiguraci�n de EXT Interrupts
+// NOTA: segun el manual se puede configurar como se activan las interrupciones: por flanco o nivel, alta o baja. 
+// Se usaran los registros EXTMODE y EXTPOLAR. 
+// Sin embargo parece que el simulador los ignora y no aparecen en la ventana de ocnfiguracion de EXT Interrupts
 // configure EXTINT0 active if a rising-edge is detected
 //	EXTMODE 	=	1; //1 edge, 0 level
 //	EXTPOLAR	=	1; // 1 high, rising-edge; 0 low, falling-edge

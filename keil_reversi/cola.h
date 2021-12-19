@@ -8,8 +8,8 @@
 
 struct Cola {
 	struct EventInfo elementos[SIZE];
-	int sig;
-	int ult;
+	int siguiente_tratar;
+	int siguiente_encolar;
 };
 
 //Se crea una nueva cola
