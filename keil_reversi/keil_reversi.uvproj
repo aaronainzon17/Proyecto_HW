@@ -502,6 +502,11 @@
               <FilePath>.\cola.h</FilePath>
             </File>
             <File>
+              <FileName>planificador.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\planificador.c</FilePath>
+            </File>
+            <File>
               <FileName>planificador.h</FileName>
               <FileType>5</FileType>
               <FilePath>.\planificador.h</FilePath>

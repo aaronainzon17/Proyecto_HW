@@ -1,1 +1,1 @@
-void Planificador_Control(void);
+void planificador (void);
