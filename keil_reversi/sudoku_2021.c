@@ -28,14 +28,14 @@
 extern int candidatos_actualizar_arm_c(CELDA cuadricula[NUM_FILAS][NUM_COLUMNAS]);
 extern int candidatos_actualizar_arm_arm(CELDA cuadricula[NUM_FILAS][NUM_COLUMNAS]);
 
-static volatile int entradas_anterior = 0x0000FC0;
-static volatile int entradas_nuevo,tiempo_actualizar = 0,t1,t2,tot;
-static volatile int antiguo_valor,fila_cancelar,columna_cancelar;
-static volatile int valor_error,hay_error=0;
-char buffer[25];
+static volatile int entradas_anterior = 0x0000FC0;	//Entrada anterior útil para recordar en la visualización la entrada que había antes para comprobar si ha cambiado o no
+static volatile int entradas_nuevo,tiempo_actualizar = 0,t1,t2,tot;//Variables útiles para el cálculo de tiempos
+static volatile int antiguo_valor,fila_cancelar,columna_cancelar;//Variables útiles para cálculo y propagacion de los errores
+static volatile int valor_error,hay_error=0;//VAriables para los errores
+char buffer[25];//Buffers para las strings provenientes de la UART (funcion mostrar tablero)
 char total[200];
 
-static volatile CELDA
+static volatile CELDA//Cuadricula para cuando reseteamos.
 cuadricula[NUM_FILAS][NUM_COLUMNAS] =
 {
 0x0015, 0x0000, 0x0000, 0x0013, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0, 0, 0, 0, 0, 0, 0,
@@ -53,7 +53,7 @@ cuadricula[NUM_FILAS][NUM_COLUMNAS] =
 /* *****************************************************************************
  * propaga el valor de una determinada celda en C
  * para actualizar las listas de candidatos
- * de las celdas en su su fila, columna y región */
+ * de las celdas en su su fila, columna y región y propaga los errores mostrando las celdas que causan el error*/
 /* Recibe como parametro la cuadricula, y la fila y columna de
  * la celda a propagar; no devuelve nada
  */
@@ -75,7 +75,7 @@ void candidatos_propagar_c(CELDA cuadricula[NUM_FILAS][NUM_COLUMNAS],
 				if(hay_error==1 && valor_error == celda_leer_valor(cuadricula[fila][j])){celda_introducir_bit_error(&cuadricula[fila][j]);}//SI hay error ponemos error en la causa
 				if(hay_error==0 && error ==0x00000020 && antiguo_valor==celda_leer_valor(cuadricula[fila][j])){celda_quitar_bit_error(&cuadricula[fila][j]);}//Si se a corregido el valor quita error de la causa
 				if(hay_error==1 && error ==0x00000020 && valor_error!=celda_leer_valor(cuadricula[fila][j]) && antiguo_valor==celda_leer_valor(cuadricula[fila][j]) && j!=columna){
-						celda_quitar_bit_error(&cuadricula[fila][j]);}
+						celda_quitar_bit_error(&cuadricula[fila][j]);}//Si introduces un nuevo error que lo causa una casilla diferente cambiar los bits de error de las causantes
 		}
 
     /* recorrer columna descartando valor de listas candidatos */
@@ -108,6 +108,8 @@ void candidatos_propagar_c(CELDA cuadricula[NUM_FILAS][NUM_COLUMNAS],
 			}
     }
 }
+
+//Funcion auxiliar que calcula cuantos candidatos tiene una celda
 int sudoku_numero_candidatos(int fila, int columna){
 	int candidatos;		
 	candidatos = ((cuadricula_C_C[fila][columna] >> 7));					// calculamos los candidatos
@@ -115,17 +117,20 @@ int sudoku_numero_candidatos(int fila, int columna){
 	return candidatos;
 }
 
+//SI tras introducir un número valido, el usuario introduce un número erroneo en la misma celda
+//el número anterior debe volver a aparecer como candidato, esta función vuelve a añadirlo como candidatos
+//a las celdas correspondientes
 void sudoku_introducir_candidatos(int valor,int fila,int columna){
 		uint8_t j, i , init_i, init_j, end_i, end_j;
 		const uint8_t init_region[9] = {0, 0, 0, 3, 3, 3, 6, 6, 6};
    
 
-    /* recorrer fila descartando valor de listas candidatos */
+    /* recorrer fila introduciendo valor de listas candidatos */
     for (j=0;j<9;j++){
 			celda_introducir_candidatos(&cuadricula_C_C[fila][j],valor);
 		}
 
-    /* recorrer columna descartando valor de listas candidatos */
+    /* recorrer columna introduciendo valor de listas candidatos */
     for (i=0;i<9;i++){
 				celda_introducir_candidatos(&cuadricula_C_C[i][columna],valor);
 		}
@@ -136,7 +141,7 @@ void sudoku_introducir_candidatos(int valor,int fila,int columna){
     end_i = init_i + 3;
     end_j = init_j + 3;
 
-    /* recorrer region descartando valor de listas candidatos */
+    /* recorrer region introduciendo valor de listas candidatos */
     for (i=init_i; i<end_i; i++) {
       for(j=init_j; j<end_j; j++) {
 				celda_introducir_candidatos(&cuadricula_C_C[i][j],valor);
@@ -266,12 +271,13 @@ sudoku9x9(CELDA cuadricula_C_C[NUM_FILAS][NUM_COLUMNAS],
     correcto += cuadricula_candidatos_verificar(cuadricula_ARM_C,solucion);
     return correcto;
 }
-
+/*Función practica 2 que ponía el bit 13 a 1 durante un segundo cuando la jugada era valida*/
 void sudoku_validacion_1s (void){
 		gestor_IO_escribir_en_gpio(13,1,1);
 		gestor_alarma_visualizacion_1s();
 }
 
+/*Funcion que transforma un entero de una cifra en un char []*/
 void itoa(int numero,char letra[]){
 	if(numero==1){letra[0] = '1';}
 	else if(numero==2){letra[0] = '2';}
@@ -285,6 +291,7 @@ void itoa(int numero,char letra[]){
 	else if(numero==0){letra[0] = '0';}
 }
 
+/*Funcion que transforma un entero de más de una cifra en un char []*/
 void itoa_varios(int numero,char letra[]){
 	if(numero==0){letra[0]='0';letra[1]='\0';}
 	else{
@@ -315,7 +322,7 @@ void itoa_varios(int numero,char letra[]){
 		}
 	}
 }
-
+/*Función que escribe en la UART los candidatos de una celda*/
 void get_candidatos(int fila, int columna,char can[]){
 		int candidatos;
 		
@@ -350,7 +357,7 @@ void get_candidatos(int fila, int columna,char can[]){
 		}
 		write_string("\n");
 }
-
+//Función que escribe en la UART los candidatos de cada celda
 void mostrar_candidatos(void){
 	int fila, columna;
 	char can[]="";
@@ -369,26 +376,33 @@ void mostrar_candidatos(void){
 	}
 		
 }
-
+/*Función que se ejecuta cuando llega al planificador la orden de reset la cual puede llegar 
+  cuando se introduce #RST! por la UART o cuando finaliza la partida de forma exitosa*/
 void sudoku_reset (void){
 	int j,k,minutos,segundos;
 	char minutos_letra []= "";
 	char segundos_letra []= "";
 	char total_actualizar_letra []= "";
+	//Reseteamos el tablero
 	for(j=0;j<9;j++){
 		for(k=0;k<16;k++){
 				cuadricula_C_C[j][k] = cuadricula[j][k];	// Reiniciamos cada casilla
 		}
 	}
+	//Actualizamos los candidatos de nuevo
 	candidatos_actualizar_c(cuadricula_C_C);	// Actualizamos candidatos
+	//Reseteamos variable globales
 	hay_error=0;
 	tot=0;
+	tiempo_actualizar=0;
+	//convertimos los enteros a char
 	minutos =RTC_leer_minutos();
 	segundos= RTC_leer_segundos();
 	itoa_varios(minutos,minutos_letra);
 	itoa_varios(segundos,segundos_letra);
 	itoa_varios(tiempo_actualizar,total_actualizar_letra);
 	tiempo_actualizar = 0;
+	//Mostramos por la UART las estadisticas de la partida
 	write_string("Se han jugado ");
 	write_string(minutos_letra);
 	write_string(" minutos y ");
@@ -398,13 +412,14 @@ void sudoku_reset (void){
 	write_string(total_actualizar_letra);
 	write_string("\n");
 	write_string("Nueva Partida\n----------------------------\n");
+	//Dejamos al jugador iniciar una nueva partida
 }
 
 
-
+/*Función que ejecuta una jugada del sudoku*/
 void sudoku_jugada_principal (int fila, int columna, int nuevo_valor){
 		int guarda,valor;
-		// La casilla introducida no es pista y no se ha introducido fila = 0, columna = 0, valor = 0
+		// La casilla introducida no es pista o se ha introducido fila = 0, columna = 0, valor = 0
 		if((((cuadricula_C_C[fila][columna] >> 4) & 0x00000001) != 0x00000001) || (fila == 0 && columna == 0 && nuevo_valor ==0)){	
 			if(fila == 0 && columna == 0 && nuevo_valor ==0){
 				//Reiniciamos el juego
@@ -420,7 +435,6 @@ void sudoku_jugada_principal (int fila, int columna, int nuevo_valor){
 					celda_introducir_bit_error(&cuadricula_C_C[fila][columna]);// Si no pones bit de error
 					hay_error=1;
 					valor_error=celda_leer_valor(cuadricula_C_C[fila][columna]);
-					//sudoku_propagar_error(cuadricula_C_C,fila,columna,nuevo_valor);
 				}
 				valor= cuadricula_C_C[fila][columna] & 0x0000000F;
 				if((hay_error==1) && (valor  != 0)){

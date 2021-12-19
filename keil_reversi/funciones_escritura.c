@@ -15,7 +15,7 @@ static volatile char buffer[TAM_BUFFER];
 
 void resume_write(void){	
 	// Si aun quedan caracteres por escribir
-	if(cursor!=ultimo){	
+	if(ultimo!=cursor){	
 		// Envia un caracter a la uart0
 		sendchar(buffer[cursor]);		
 		// Avanza en una unidad el cursor de escritura

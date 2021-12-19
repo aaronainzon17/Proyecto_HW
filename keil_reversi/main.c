@@ -52,7 +52,7 @@ int main (void) {
 					case ID_Alarma:	// Alarma pulsacion para comprobar si el boton pulsado lo sigue estando
 						sudoku(ID_Alarma);
 					break;						
-					case ID_EINT1:	// Nueva pulsacion EINT1
+					case ID_EINT1:	// Nueva pulsacion EINT1, aceptar jugada
 						introducir_alarma_power();		// Se resetea la alarma de power down
 						Gestor_Pulsacion_Control(Evento.idEvento);	//Pasa a pulsado y pone la alarma; Control pulsacion
 						if(PD_Flag == 1){					// Si vienes de power down no haces nada
@@ -139,8 +139,7 @@ int main (void) {
 						sudoku_reset();
 					break;
 					case ID_PARPADEO_ACEPTAR	:
-						if(Parpadeo==0){Parpadeo=1;gestor_IO_escribir_en_gpio(13,1,1);}else{Parpadeo=0;gestor_IO_escribir_en_gpio(13,1,0);}
-						
+						if(Parpadeo==0){Parpadeo=1;gestor_IO_escribir_en_gpio(13,1,1);}else{Parpadeo=0;gestor_IO_escribir_en_gpio(13,1,0);}					
 					break;
 				}
 		}else{
