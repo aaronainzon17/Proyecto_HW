@@ -427,7 +427,7 @@ void sudoku_jugada_principal (int fila, int columna, int nuevo_valor){
 			}else{	// Se puede escribir en esa casilla porque no es pista
 				guarda = (cuadricula_C_C[fila][columna] >> 6);	
 				guarda = guarda >> nuevo_valor;	// Compruebas que el valor a introducir esta como candidato
-				fail=cuadricula[fila][columna]&0x00000020;
+				fail=cuadricula_C_C[fila][columna]&0x00000020;
 				if((hay_error==0) && (antiguo_valor  != 0) && (fail == 0x00000000)){
 					sudoku_introducir_candidatos(antiguo_valor,fila,columna);
 				}
@@ -441,7 +441,7 @@ void sudoku_jugada_principal (int fila, int columna, int nuevo_valor){
 					valor_error=celda_leer_valor(cuadricula_C_C[fila][columna]);
 				}
 				valor= cuadricula_C_C[fila][columna] & 0x0000000F;
-				if((hay_error==1) && (valor  != 0) && fail== 0x00000000){
+				if((hay_error==1) && (antiguo_valor  != 0) && (fail== 0x00000000)){
 					sudoku_introducir_candidatos(antiguo_valor,fila,columna);
 				}
 				
