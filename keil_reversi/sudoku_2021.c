@@ -418,7 +418,7 @@ void sudoku_reset (void){
 
 /*Función que ejecuta una jugada del sudoku*/
 void sudoku_jugada_principal (int fila, int columna, int nuevo_valor){
-		int guarda,valor;
+		int guarda,valor,fail;
 		// La casilla introducida no es pista o se ha introducido fila = 0, columna = 0, valor = 0
 		if((((cuadricula_C_C[fila][columna] >> 4) & 0x00000001) != 0x00000001) || (fila == 0 && columna == 0 && nuevo_valor ==0)){	
 			if(fila == 0 && columna == 0 && nuevo_valor ==0){
@@ -427,6 +427,10 @@ void sudoku_jugada_principal (int fila, int columna, int nuevo_valor){
 			}else{	// Se puede escribir en esa casilla porque no es pista
 				guarda = (cuadricula_C_C[fila][columna] >> 6);	
 				guarda = guarda >> nuevo_valor;	// Compruebas que el valor a introducir esta como candidato
+				fail=cuadricula[fila][columna]&0x00000020;
+				if((hay_error==0) && (antiguo_valor  != 0) && (fail == 0x00000000)){
+					sudoku_introducir_candidatos(antiguo_valor,fila,columna);
+				}
 				
 				if( (guarda & 0x00000001) == 0 ){	// Si el bit esta a uno quitas bit de error
 					celda_quitar_bit_error(&cuadricula_C_C[fila][columna]);
