@@ -22,30 +22,31 @@ void gestor_UART(uint32_t cadena){
 				}
 		break;
 		case esperando_fin:
-			if(cadena == '!'){
-				if(buffer_UART[0]=='R' && buffer_UART[1]=='S' && buffer_UART[2]=='T'){
+			if(cadena == '!'){//Interpretamos fin de la cadena
+				if(buffer_UART[0]=='R' && buffer_UART[1]=='S' && buffer_UART[2]=='T'){//Se ha escrito Reset
 					write_string("\n");
 					disable_isr();
-					cola_guardar_eventos(ID_RST,0);
+					cola_guardar_eventos(ID_RST,0);//Encolamos evento de tipo reset
 					enable_isr();
-				}else if(buffer_UART[0]=='N' && buffer_UART[1]=='E' && buffer_UART[2]=='W'){
+				}else if(buffer_UART[0]=='N' && buffer_UART[1]=='E' && buffer_UART[2]=='W'){//Se a escrito NEW; Nueva partida
 					write_string("\n");
 					disable_isr();
-					cola_guardar_eventos(ID_NEW,0);
+					cola_guardar_eventos(ID_NEW,0);//Encolamos evento de tipo NEW
 					enable_isr();
-				}else if(((buffer_UART[0]-0x30)+(buffer_UART[1]-0x30)+(buffer_UART[2]-0x30))% 0x8 == (buffer_UART[3]-0x30)){
+				}else if(((buffer_UART[0]-0x30)+(buffer_UART[1]-0x30)+(buffer_UART[2]-0x30))% 0x8 == (buffer_UART[3]-0x30)){//Se ha escrito una nueva jugada
 					write_string("\n");
 					disable_isr();
+					//Si la jugada es valida se encola un evento de Nueva Jugada
 					cola_guardar_eventos(ID_ESPERAR_CONFIRMACION,(buffer_UART[0]%0x30)*100+(buffer_UART[1]%0x30)*10+(buffer_UART[2]%0x30));
 					enable_isr();
 				}
-				ESTADO=inicio;
+				ESTADO=inicio;//Cambiamos el estado
 			}else{
-				if(len_buffer<4){
-					buffer_UART[len_buffer] = cadena;
+				if(len_buffer<4){//Si la cadena recibida es mayor de 4 volvemos a inicio puesto que no existen comandos tan largos
+					buffer_UART[len_buffer] = cadena;//Asignamos al buffer
 					len_buffer++;
 				}else{
-					ESTADO=inicio;
+					ESTADO=inicio;//Si nos hemos pasado volvemos a inicio
 				}
 			}
 		break;
