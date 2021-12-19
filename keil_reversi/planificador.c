@@ -126,26 +126,26 @@ void planificador (void) {
 					case ID_Evento_RDY://Llega evento de continuar escribiendo en la UART
 						resume_write();
 					break;
-					case ID_ESPERAR_CONFIRMACION://Llega evento para esperar 
-						buffer=Evento.auxData;
-						sudoku_mostrar_vista_previa(buffer);
-						introducir_alarma_aceptar();
-						introducir_alarma_parpadeo_aceptar();
+					case ID_ESPERAR_CONFIRMACION://Llega evento para esperar el aceptar la jugada o el rechazarla
+						buffer=Evento.auxData;//Guardamos el buffer que te viene de la UART
+						sudoku_mostrar_vista_previa(buffer);//Mostramos la vista previa de la jugada a introducir
+						introducir_alarma_aceptar();//Introducimos la alarma del tiempo que nos queda para aceptar
+						introducir_alarma_parpadeo_aceptar();//Introducimos la alarma del parpadeo durante el periodo en el que se puede aceptar
 					break;
-					case ID_FIN_ACEPTAR	:
+					case ID_FIN_ACEPTAR	://Llega la alarma de fin del periodo aceptar por lo que se acepta la jugada automáticamente
 						quitar_alarma_parpadeo_aceptar();
-						sudoku_jugada_UART(buffer);
+						sudoku_jugada_UART(buffer);//Se ejecuta la jugada
 					break;
-					case ID_FINAL_JUEGO	:
+					case ID_FINAL_JUEGO	://Llega un evento de que a finalizado el juego
 						Reset=0;
-						sudoku_reset();
+						sudoku_reset();//Se resetea la partida
 					break;
-					case ID_PARPADEO_ACEPTAR	:
+					case ID_PARPADEO_ACEPTAR	://Llega el evento de tratar el bit de parpadeo durante el tiempo de aceptar
 						if(Parpadeo==0){Parpadeo=1;gestor_IO_escribir_en_gpio(13,1,1);}else{Parpadeo=0;gestor_IO_escribir_en_gpio(13,1,0);}					
 					break;
 				}
 		}else{
-			PM_idle();	
+			PM_idle();	//Si no hay eventos en la cola el procesador va a modo iddle
 		}
 	}
 }

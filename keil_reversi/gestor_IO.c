@@ -54,14 +54,14 @@ void iniciar(void){
 	eint0_init();											// Inicializamos botones
 	gestor_IO_init();										// Inicializamos GPIO
 	cola_ini();												// Inicializamos cola
-	init_serial();
+	init_serial();										//Iniciamos la linea_serie
 	sudoku_iniciar_tablero();
 	candidatos_actualizar_c(cuadricula_C_C); 				// Se actualizan los candidatos de cada celda
 	temporizador_periodo(1);								// Se configura el timer para que salte cada 1ms
 	introducir_alarma_viualizacion();
 	introducir_alarma_power();								// Introducimos la alarma de 15 s para el powerdown
 	introducir_alarma_iddle();
-	sudoku_inicio();
+	sudoku_inicio();											//Iniciamos y mostramos leyenda y opciones
 } 
 
 void gestor_IO_escribir_bit_validar(void){
@@ -77,10 +77,10 @@ void gestor_IO_apagar_bit_powerdown(void){
 }
 
 int gestor_IO_leer_de_gpio(int inicio, int fin){
-	return GPIO_leer(inicio,fin);
+	return GPIO_leer(inicio,fin);	//Leemos de la GPIO desde inicio hasta inicio+fin
 }
 
 void gestor_IO_escribir_en_gpio(int inicio, int fin, int valor){
-	GPIO_escribir(inicio,fin,valor);
+	GPIO_escribir(inicio,fin,valor);//Escribimos valor en la GPIO desde inicio hasta inicio+fin
 }
 

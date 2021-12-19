@@ -73,7 +73,7 @@ void gestor_alarmas_control_alarma(void){
 		i++;
 	}
 }
-
+//Alarmas a introducir
 void introducir_alarma_power(void){
 	struct EventInfo Power_down;
 	Power_down.idEvento = ID_power_down;
