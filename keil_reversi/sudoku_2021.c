@@ -389,33 +389,33 @@ void get_candidatos(int fila, int columna,char can[]){
 		candidatos = candidatos & 0x1FF;
 		//Se escriben los candidatos
 		if((candidatos & 0x001) == 0){
-			write_string("1");
+			escritura_comenzar("1");
 		}
 		if((candidatos & 0x002) == 0){
-			write_string("2");
+			escritura_comenzar("2");
 		}
 		if((candidatos & 0x004) == 0){
-			write_string("3");
+			escritura_comenzar("3");
 		}
 		if((candidatos & 0x008) == 0){
-			write_string("4");
+			escritura_comenzar("4");
 		}
 		if((candidatos & 0x010) == 0){
-			write_string("5");
+			escritura_comenzar("5");
 		}
 		if((candidatos & 0x020) == 0){
-			write_string("6");
+			escritura_comenzar("6");
 		}
 		if((candidatos & 0x040) == 0){
-			write_string("7");
+			escritura_comenzar("7");
 		}
 		if((candidatos & 0x080) == 0){
-			write_string("8");
+			escritura_comenzar("8");
 		}
 		if((candidatos & 0x100) == 0){
-			write_string("9");
+			escritura_comenzar("9");
 		}
-		write_string("\n");
+		escritura_comenzar("\n");
 }
 //Función que escribe en la UART los candidatos de cada celda
 void mostrar_candidatos(void){
@@ -423,15 +423,15 @@ void mostrar_candidatos(void){
 	char can[]="";
 	char fila2 []= "";
 	char columna2 [] = "";
-	write_string("Candidatos:\n");
+	escritura_comenzar("Candidatos:\n");
 	for(fila=0;fila<9;fila++){
 		for(columna=0;columna<9;columna++){\
 			//Se escribe fila y columna
 			itoa(fila,fila2);
 			itoa(columna,columna2);
-			write_string(fila2);
-			write_string(columna2);
-			write_string(":");
+			escritura_comenzar(fila2);
+			escritura_comenzar(columna2);
+			escritura_comenzar(":");
 			//Se escriben los candidaros de la celda[fila][columna]
 			get_candidatos(fila,columna,can);
 		}
@@ -466,15 +466,15 @@ void sudoku_reset (void){
 	itoa_varios(tiempo_actualizar,total_actualizar_letra);
 	tiempo_actualizar = 0;
 	//Mostramos por la UART las estadisticas de la partida
-	write_string("Se han jugado ");
-	write_string(minutos_letra);
-	write_string(" minutos y ");
-	write_string(segundos_letra);
-	write_string(" segundos.\n");
-	write_string("Tiempo de Actualizar:");
-	write_string(total_actualizar_letra);
-	write_string("\n");
-	write_string("Nueva Partida\n----------------------------\n");
+	escritura_comenzar("Se han jugado ");
+	escritura_comenzar(minutos_letra);
+	escritura_comenzar(" minutos y ");
+	escritura_comenzar(segundos_letra);
+	escritura_comenzar(" segundos.\n");
+	escritura_comenzar("Tiempo de Actualizar:");
+	escritura_comenzar(total_actualizar_letra);
+	escritura_comenzar("\n");
+	escritura_comenzar("Nueva Partida\n----------------------------\n");
 	//Dejamos al jugador iniciar una nueva partida
 }
 
@@ -551,7 +551,7 @@ void sudoku_mostrar_vista_previa(int buffer){
 	cuadricula_C_C[fila][columna]&= 0xFFFFFFF0;
 	//Escribes el nuevo valor
 	cuadricula_C_C[fila][columna] += nuevo_valor;	
-	write_string("Vista Previa de la jugada\n");
+	escritura_comenzar("Vista Previa de la jugada\n");
 	mostrar_tablero();
 }
 
@@ -670,18 +670,18 @@ void mostrar_tablero(void){
 	int k,s,val,col,fil;
 	char linea[] ="+-+-+-+-+-+-+-+-+-+-+-+-+-+-\n";
 	char letra[] = "";
-	write_string("\n\n");
+	escritura_comenzar("\n\n");
 	//Se iteran filas
 	for(k=0;k<19;k++){
 		if(k%2==0){
-			write_string(linea);
+			escritura_comenzar(linea);
 		}else{
 			//Se iteran columnas
 			for(s=0;s<19;s++){
 				if(s==0||s==6||s==12||s==18){
-					write_string("|");
+					escritura_comenzar("|");
 				}else if(s==2||s==4||s==8||s==10||s==14||s==16){
-					write_string("!");
+					escritura_comenzar("!");
 				}else{
 					fil=k/2;
 					col=s/2;
@@ -690,36 +690,36 @@ void mostrar_tablero(void){
 						val = cuadricula_C_C[fil][col] & 0x0000000F;
 						itoa(val,letra);
 						//Se escribe una X en pista
-						write_string("X");
-						write_string(letra);
+						escritura_comenzar("X");
+						escritura_comenzar(letra);
 					}else if(((cuadricula_C_C[fil][col] >> 4) & 0x00000001) == 0x00000001){
 						//Si es pista
 						val = cuadricula_C_C[fil][col] & 0x0000000F;
 						itoa(val,letra);
 						//Se escribe una P
-						write_string("P");
-						write_string(letra);
+						escritura_comenzar("P");
+						escritura_comenzar(letra);
 					}else if (((cuadricula_C_C[fil][col] >> 5) & 0x00000001) == 0x00000001){
 						//Si solo es error 
 						val = cuadricula_C_C[fil][col] & 0x0000000F;
 						itoa(val,letra);
 						//Se escribe una E
-						write_string("E");
-						write_string(letra);
+						escritura_comenzar("E");
+						escritura_comenzar(letra);
 					}else if((cuadricula_C_C[fil][col] & 0x0000000F) != 0x00000000){
 						//Si hay valor 
 						val = cuadricula_C_C[fil][col] & 0x0000000F;
 						itoa(val,letra);
 						//Se escribe el valor 
-						write_string(letra);
-						write_string(" ");
+						escritura_comenzar(letra);
+						escritura_comenzar(" ");
 					}else{
 					//Sino espacio
-						write_string("  ");
+						escritura_comenzar("  ");
 					}
 				}
 			}
-			write_string("\n");
+			escritura_comenzar("\n");
 		}
 	}
 }
@@ -800,9 +800,9 @@ void sudoku_iniciar_tablero(void){
 * sudoku_inicio se muestra la leyenda y el mensaje de incio
 */
 void sudoku_inicio(void){
-	write_string("Leyenda\n#RST!: Parar juego.\n#NEW!: Nueva partida.\n#fcvs!: f(fila), c(columna), v(nuevo valor)\n");
-	write_string("Nueva Partida\n----------------------------\n");
-	write_string("Comando:");
+	escritura_comenzar("Leyenda\n#RST!: Parar juego.\n#NEW!: Nueva partida.\n#fcvs!: f(fila), c(columna), v(nuevo valor)\n");
+	escritura_comenzar("Nueva Partida\n----------------------------\n");
+	escritura_comenzar("Comando:");
 }
 
 /*
@@ -811,7 +811,7 @@ void sudoku_inicio(void){
 void sudoku_jugar(void){
 	mostrar_tablero();
 	mostrar_candidatos();
-	write_string("Comando:");
+	escritura_comenzar("Comando:");
 }
 
 /*

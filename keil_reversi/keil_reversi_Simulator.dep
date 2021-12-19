@@ -48,7 +48,7 @@ I (cola.h)(0x61BF7E22)
 I (eventos.h)(0x61BF8583)
 I (gpio.h)(0x618CE42A)
 F (.\cola.h)(0x61BF7E22)()
-F (.\planificador.c)(0x61BF858D)(-c --cpu ARM7TDMI -D__EVAL -g -O3 -Otime-IC:\Keil_v5\ARM\RV31\INC-IC:\Keil_v5\ARM\CMSIS\Include-IC:\Keil_v5\ARM\INC\Philips-D__UVISION_VERSION="526"-o .\planificador.o --omf_browse .\planificador.crf --depend .\planificador.d)
+F (.\planificador.c)(0x61BF8A19)(-c --cpu ARM7TDMI -D__EVAL -g -O3 -Otime-IC:\Keil_v5\ARM\RV31\INC-IC:\Keil_v5\ARM\CMSIS\Include-IC:\Keil_v5\ARM\INC\Philips-D__UVISION_VERSION="526"-o .\planificador.o --omf_browse .\planificador.crf --depend .\planificador.d)
 I (C:\Keil_v5\ARM\INC\Philips\LPC210x.H)(0x559D2F68)
 I (timer0.h)(0x618CE42A)
 I (Power_management.h)(0x619D27AC)
@@ -68,7 +68,7 @@ I (gestor_IO.h)(0x61A8FA42)
 I (tableros.h)(0x61BE152E)
 I (SWI_functions.h)(0x61B1DFED)
 I (gestor_UART.h)(0x61BF0C84)
-I (funciones_escritura.h)(0x61B87AEC)
+I (funciones_escritura.h)(0x61BF8A69)
 I (serial_port.h)(0x61B869B7)
 I (gestor_WD.h)(0x61BF844F)
 F (.\planificador.h)(0x61BF7624)()
@@ -118,7 +118,7 @@ I (gpio.h)(0x618CE42A)
 I (eventos.h)(0x61BF8583)
 F (.\gpio.h)(0x618CE42A)()
 F (.\sudoku_2021.h)(0x61BF27B5)()
-F (.\sudoku_2021.c)(0x61BF88E9)(-c --cpu ARM7TDMI -D__EVAL -g -O3 -Otime-IC:\Keil_v5\ARM\RV31\INC-IC:\Keil_v5\ARM\CMSIS\Include-IC:\Keil_v5\ARM\INC\Philips-D__UVISION_VERSION="526"-o .\sudoku_2021.o --omf_browse .\sudoku_2021.crf --depend .\sudoku_2021.d)
+F (.\sudoku_2021.c)(0x61BF8A69)(-c --cpu ARM7TDMI -D__EVAL -g -O3 -Otime-IC:\Keil_v5\ARM\RV31\INC-IC:\Keil_v5\ARM\CMSIS\Include-IC:\Keil_v5\ARM\INC\Philips-D__UVISION_VERSION="526"-o .\sudoku_2021.o --omf_browse .\sudoku_2021.crf --depend .\sudoku_2021.d)
 I (C:\Keil_v5\ARM\INC\Philips\LPC210x.H)(0x559D2F68)
 I (C:\Keil_v5\ARM\ARMCC\include\inttypes.h)(0x599F2F9E)
 I (C:\Keil_v5\ARM\ARMCC\include\stdint.h)(0x599F2F9E)
@@ -136,7 +136,7 @@ I (cola.h)(0x61BF7E22)
 I (planificador.h)(0x61BF7624)
 I (gestor_pulsacion.h)(0x618CE42A)
 I (tableros.h)(0x61BE152E)
-I (funciones_escritura.h)(0x61B87AEC)
+I (funciones_escritura.h)(0x61BF8A69)
 I (C:\Keil_v5\ARM\ARMCC\include\stdio.h)(0x599F2F9C)
 I (C:\Keil_v5\ARM\ARMCC\include\stdlib.h)(0x599F2F9C)
 I (C:\Keil_v5\ARM\ARMCC\include\string.h)(0x599F2F9C)
@@ -163,7 +163,7 @@ I (C:\Keil_v5\ARM\ARMCC\include\inttypes.h)(0x599F2F9E)
 I (C:\Keil_v5\ARM\ARMCC\include\stdint.h)(0x599F2F9E)
 I (eventos.h)(0x61BF8583)
 F (.\serial_port.h)(0x61B869B7)()
-F (.\gestor_UART.c)(0x61BF893B)(-c --cpu ARM7TDMI -D__EVAL -g -O3 -Otime-IC:\Keil_v5\ARM\RV31\INC-IC:\Keil_v5\ARM\CMSIS\Include-IC:\Keil_v5\ARM\INC\Philips-D__UVISION_VERSION="526"-o .\gestor_uart.o --omf_browse .\gestor_uart.crf --depend .\gestor_uart.d)
+F (.\gestor_UART.c)(0x61BF8A69)(-c --cpu ARM7TDMI -D__EVAL -g -O3 -Otime-IC:\Keil_v5\ARM\RV31\INC-IC:\Keil_v5\ARM\CMSIS\Include-IC:\Keil_v5\ARM\INC\Philips-D__UVISION_VERSION="526"-o .\gestor_uart.o --omf_browse .\gestor_uart.crf --depend .\gestor_uart.d)
 I (C:\Keil_v5\ARM\INC\Philips\LPC210X.H)(0x559D2F68)
 I (gpio.h)(0x618CE42A)
 I (C:\Keil_v5\ARM\ARMCC\include\inttypes.h)(0x599F2F9E)
@@ -171,10 +171,10 @@ I (C:\Keil_v5\ARM\ARMCC\include\stdint.h)(0x599F2F9E)
 I (eventos.h)(0x61BF8583)
 I (cola.h)(0x61BF7E22)
 I (gestor_UART.h)(0x61BF0C84)
-I (funciones_escritura.h)(0x61B87AEC)
+I (funciones_escritura.h)(0x61BF8A69)
 I (SWI_functions.h)(0x61B1DFED)
 F (.\gestor_UART.h)(0x61BF0C84)()
-F (.\funciones_escritura.c)(0x61BF64FB)(-c --cpu ARM7TDMI -D__EVAL -g -O3 -Otime-IC:\Keil_v5\ARM\RV31\INC-IC:\Keil_v5\ARM\CMSIS\Include-IC:\Keil_v5\ARM\INC\Philips-D__UVISION_VERSION="526"-o .\funciones_escritura.o --omf_browse .\funciones_escritura.crf --depend .\funciones_escritura.d)
+F (.\funciones_escritura.c)(0x61BF8BC4)(-c --cpu ARM7TDMI -D__EVAL -g -O3 -Otime-IC:\Keil_v5\ARM\RV31\INC-IC:\Keil_v5\ARM\CMSIS\Include-IC:\Keil_v5\ARM\INC\Philips-D__UVISION_VERSION="526"-o .\funciones_escritura.o --omf_browse .\funciones_escritura.crf --depend .\funciones_escritura.d)
 I (C:\Keil_v5\ARM\INC\Philips\LPC210X.H)(0x559D2F68)
 I (gpio.h)(0x618CE42A)
 I (C:\Keil_v5\ARM\ARMCC\include\inttypes.h)(0x599F2F9E)
@@ -184,4 +184,4 @@ I (cola.h)(0x61BF7E22)
 I (C:\Keil_v5\ARM\ARMCC\include\string.h)(0x599F2F9C)
 I (gestor_UART.h)(0x61BF0C84)
 I (serial_port.h)(0x61B869B7)
-F (.\funciones_escritura.h)(0x61B87AEC)()
+F (.\funciones_escritura.h)(0x61BF8A69)()

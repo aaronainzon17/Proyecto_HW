@@ -1,2 +1,2 @@
-void write_string(const char buff[]);
-void resume_write(void);
+void escritura_comenzar(const char buff[]);
+void escritura_continuar(void);

@@ -124,7 +124,7 @@ void planificador (void) {
 						sudoku_jugar();//Mostrar tablero y candidatos
 					break;
 					case ID_Continuar://Llega evento de continuar escribiendo en la UART
-						resume_write();
+						escritura_continuar();
 					break;
 					case ID_ESPERAR_CONFIRMACION://Llega evento para esperar el aceptar la jugada o el rechazarla
 						buffer=Evento.auxData;//Guardamos el buffer que te viene de la UART
