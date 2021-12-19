@@ -11,7 +11,6 @@
 #include "planificador.h"
 #include "gestor_pulsacion.h"
 #include "eventos.h"
-//#include "gestor_IO.h"
 #include "tableros.h"
 #include "serial_port.h"
 #include "gestor_RTC.h"

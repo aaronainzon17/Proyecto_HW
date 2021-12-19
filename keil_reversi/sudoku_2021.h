@@ -66,4 +66,6 @@ void sudoku_jugar(void);
 void sudoku_mostrar_vista_previa(int buffer);
 
 void sudoku_nueva_partida(void);
+
+int sudoku_numero_candidatos(int fila, int columna);
 	

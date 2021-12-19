@@ -70,19 +70,23 @@ void candidatos_propagar_c(CELDA cuadricula[NUM_FILAS][NUM_COLUMNAS],
     /* recorrer fila descartando valor de listas candidatos */
     for (j=0;j<NUM_FILAS;j++){
 				error=cuadricula[fila][j]&0x00000020;
-				if(hay_error==0){celda_eliminar_candidato(&cuadricula[fila][j],valor);}
-				if(hay_error==1 && valor_error == celda_leer_valor(cuadricula[fila][j])){celda_introducir_bit_error(&cuadricula[fila][j]);}
-				if(hay_error==0 && valor_error != celda_leer_valor(cuadricula[fila][j])){celda_quitar_bit_error(&cuadricula[fila][j]);}
-				if(hay_error==0 && (error ==0x00000020) && (celda_leer_valor(cuadricula[fila][j])!=celda_leer_valor(cuadricula[fila][columna]))){celda_introducir_bit_error(&cuadricula[fila][j]);}
+				if(hay_error==0){celda_eliminar_candidato(&cuadricula[fila][j],valor);}	//No quitar candidato
+				if(hay_error==0 && j==columna){celda_quitar_bit_error(&cuadricula[fila][j]);}//Si corrijes el error quitamos error
+				if(hay_error==1 && valor_error == celda_leer_valor(cuadricula[fila][j])){celda_introducir_bit_error(&cuadricula[fila][j]);}//SI hay error ponemos error en la causa
+				if(hay_error==0 && error ==0x00000020 && antiguo_valor==celda_leer_valor(cuadricula[fila][j])){celda_quitar_bit_error(&cuadricula[fila][j]);}//Si se a corregido el valor quita error de la causa
+				if(hay_error==1 && error ==0x00000020 && valor_error!=celda_leer_valor(cuadricula[fila][j]) && antiguo_valor==celda_leer_valor(cuadricula[fila][j]) && j!=columna){
+						celda_quitar_bit_error(&cuadricula[fila][j]);}
 		}
 
     /* recorrer columna descartando valor de listas candidatos */
     for (i=0;i<NUM_FILAS;i++){
 				error=cuadricula[i][columna]&0x00000020;
-				if(hay_error==0){celda_eliminar_candidato(&cuadricula[i][columna],valor);}
-				if(hay_error==1 && valor_error == celda_leer_valor(cuadricula[i][columna])){celda_introducir_bit_error(&cuadricula[i][columna]);}
-				if(hay_error==0 && valor_error != celda_leer_valor(cuadricula[i][columna])){celda_quitar_bit_error(&cuadricula[i][columna]);}
-				if(hay_error==0 && (error ==0x00000020) && (celda_leer_valor(cuadricula[i][columna])!=celda_leer_valor(cuadricula[fila][columna]))){celda_introducir_bit_error(&cuadricula[i][columna]);}
+				if(hay_error==0){celda_eliminar_candidato(&cuadricula[i][columna],valor);}	//No quitar candidato
+				if(hay_error==0 && i==fila){celda_quitar_bit_error(&cuadricula[i][columna]);}//Si corrijes el error quitamos error
+				if(hay_error==1 && valor_error == celda_leer_valor(cuadricula[i][columna])){celda_introducir_bit_error(&cuadricula[i][columna]);}//SI hay error ponemos error en la causa
+				if(hay_error==0 && error ==0x00000020 && antiguo_valor==celda_leer_valor(cuadricula[i][columna])){celda_quitar_bit_error(&cuadricula[i][columna]);}//Si se a corregido el valor quita error de la causa
+				if(hay_error==1 && error ==0x00000020 && valor_error!=celda_leer_valor(cuadricula[i][columna]) && antiguo_valor==celda_leer_valor(cuadricula[i][columna]) && i!=fila){
+						celda_quitar_bit_error(&cuadricula[i][columna]);}
 		}
 
     /* determinar fronteras región */
@@ -95,48 +99,20 @@ void candidatos_propagar_c(CELDA cuadricula[NUM_FILAS][NUM_COLUMNAS],
     for (i=init_i; i<end_i; i++) {
       for(j=init_j; j<end_j; j++) {
 					error=cuadricula[i][j]&0x00000020;
-					if(hay_error==0){celda_eliminar_candidato(&cuadricula[i][j],valor);}
-					if(hay_error==1 && valor_error == celda_leer_valor(cuadricula[i][j])){celda_introducir_bit_error(&cuadricula[i][j]);}
-					if(hay_error==0 && valor_error != celda_leer_valor(cuadricula[i][j])){celda_quitar_bit_error(&cuadricula[i][j]);}
-					if(hay_error==0 && (error ==0x00000020) && (celda_leer_valor(cuadricula[i][j])!=celda_leer_valor(cuadricula[fila][columna]))){celda_introducir_bit_error(&cuadricula[i][j]);}
-	    }
+					if(hay_error==0){celda_eliminar_candidato(&cuadricula[i][j],valor);}	//No quitar candidato
+					if(hay_error==0 && i==fila && j==columna){celda_quitar_bit_error(&cuadricula[i][j]);}//Si corrijes el error quitamos error
+					if(hay_error==1 && valor_error == celda_leer_valor(cuadricula[i][j])){celda_introducir_bit_error(&cuadricula[i][j]);}//SI hay error ponemos error en la causa
+					if(hay_error==0 && error ==0x00000020 && antiguo_valor==celda_leer_valor(cuadricula[i][j])){celda_quitar_bit_error(&cuadricula[i][j]);}//Si se a corregido el valor quita error de la causa
+					if(hay_error==1 && error ==0x00000020 && valor_error!=celda_leer_valor(cuadricula[i][j]) && antiguo_valor==celda_leer_valor(cuadricula[i][j]) && j!=columna && i!=fila){
+						celda_quitar_bit_error(&cuadricula[i][j]);}
+			}
     }
 }
-
-void sudoku_propagar_error(CELDA cuadricula[NUM_FILAS][NUM_COLUMNAS],
-	uint8_t fila, uint8_t columna, int valor){
-		uint8_t j, i , init_i, init_j, end_i, end_j;
-		const uint8_t init_region[9] = {0, 0, 0, 3, 3, 3, 6, 6, 6};
-   
-
-    /* recorrer fila descartando valor de listas candidatos */
-    for (j=0;j<9;j++){
-			if(valor == celda_leer_valor(cuadricula[fila][j])){
-				celda_introducir_bit_error(&cuadricula[fila][j]);
-			}
-		}
-
-    /* recorrer columna descartando valor de listas candidatos */
-    for (i=0;i<9;i++){
-				if(valor == celda_leer_valor(cuadricula[i][columna])){
-					celda_introducir_bit_error(&cuadricula[i][columna]);
-				}
-		}
-
-    /* determinar fronteras región */
-    init_i = init_region[fila];
-    init_j = init_region[columna];
-    end_i = init_i + 3;
-    end_j = init_j + 3;
-
-    /* recorrer region descartando valor de listas candidatos */
-    for (i=init_i; i<end_i; i++) {
-      for(j=init_j; j<end_j; j++) {
-				if(valor == celda_leer_valor(cuadricula[i][j])){
-					celda_introducir_bit_error(&cuadricula[i][j]);
-				}
-	    }
-    }
+int sudoku_numero_candidatos(int fila, int columna){
+	int candidatos;		
+	candidatos = ((cuadricula_C_C[fila][columna] >> 7));					// calculamos los candidatos
+	candidatos = candidatos & 0x1FF;
+	return candidatos;
 }
 
 void sudoku_introducir_candidatos(int valor,int fila,int columna){

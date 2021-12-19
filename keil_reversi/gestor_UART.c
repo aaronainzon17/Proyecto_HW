@@ -7,46 +7,46 @@
 #include "SWI_functions.h"
 
 static volatile unsigned int ESTADO = inicio;
-static volatile int buffer[10];
-static volatile unsigned int bufferLen;
+static volatile int buffer_UART[10];
+static volatile unsigned int len_buffer;
 
 
-//M?quina de estados del gestor de comandos.
+//Maquina de estados del gestor de comandos.
 //Devuelve un entero para indicar si est? esperando un evento 
-void gestor_UART(uint32_t entrada){
-	int ultimo = U0RBR;
-	U0THR = ultimo;
+void gestor_UART(uint32_t cadena){
+	int buffer = U0RBR;
+	U0THR = buffer;
 	switch(ESTADO){
 		case inicio:
-				if (entrada == '#'){
-					ESTADO=fin;
-					bufferLen = 0;
+				if (cadena == '#'){
+					ESTADO=esperando_fin;
+					len_buffer = 0;
 				}
 		break;
 		
-		case fin:
-			if(entrada == '!'){
-				if(buffer[0]=='R' && buffer[1]=='S' && buffer[2]=='T'){
+		case esperando_fin:
+			if(cadena == '!'){
+				if(buffer_UART[0]=='R' && buffer_UART[1]=='S' && buffer_UART[2]=='T'){
 					write_string("\n");
 					disable_isr();
 					cola_guardar_eventos(ID_RST,0);
 					enable_isr();
-				}else if(buffer[0]=='N' && buffer[1]=='E' && buffer[2]=='W'){
+				}else if(buffer_UART[0]=='N' && buffer_UART[1]=='E' && buffer_UART[2]=='W'){
 					write_string("\n");
 					disable_isr();
 					cola_guardar_eventos(ID_NEW,0);
 					enable_isr();
-				}else if(((buffer[0]-0x30)+(buffer[1]-0x30)+(buffer[2]-0x30))% 0x8 == (buffer[3]-0x30)){
+				}else if(((buffer_UART[0]-0x30)+(buffer_UART[1]-0x30)+(buffer_UART[2]-0x30))% 0x8 == (buffer_UART[3]-0x30)){
 					write_string("\n");
 					disable_isr();
-					cola_guardar_eventos(ID_ESPERAR_CONFIRMACION,(buffer[0]%0x30)*100+(buffer[1]%0x30)*10+(buffer[2]%0x30));
+					cola_guardar_eventos(ID_ESPERAR_CONFIRMACION,(buffer_UART[0]%0x30)*100+(buffer_UART[1]%0x30)*10+(buffer_UART[2]%0x30));
 					enable_isr();
 				}
 				ESTADO=inicio;
 			}else{
-				if(bufferLen<4){
-					buffer[bufferLen] = entrada;
-					bufferLen++;
+				if(len_buffer<4){
+					buffer_UART[len_buffer] = cadena;
+					len_buffer++;
 				}else{
 					ESTADO=inicio;
 				}

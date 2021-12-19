@@ -50,7 +50,7 @@ void temporizador_empezar(void){
 }
 
 int temporizador_leer(void){
-	return T1TC - TC_init;
+	return timer1_int_count*1000+((T1TC-TC_init)/15); //15 counts es un micro
 }
 
 int temporizador_parar(void){
