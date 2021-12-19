@@ -556,64 +556,83 @@ void sudoku_mostrar_vista_previa(int buffer){
 }
 
 /*
-* 
+* sudoku_aceptar_jugada acepta una jugada
 */
 void sudoku_aceptar_jugada(void){
+	//Se elimina la alarma de timeout jugada
 	quitar_alarma_aceptar();
+	//Se desactiva el parpadeo del bit 13
 	quitar_alarma_parpadeo_aceptar();
 	disable_isr();
+	//Se encola un evento de fin de periodo de aceptar jugada
 	cola_guardar_eventos(ID_FIN_ACEPTAR,0);
 	enable_isr();
 }
 
+/*
+* sudoku_restaurar_estado restaura el estado de la juagda anterior
+*/
 void sudoku_restaurar_estado(){
 	cuadricula_C_C[fila_cancelar][columna_cancelar]&= 0xFFFFFFF0;
 	cuadricula_C_C[fila_cancelar][columna_cancelar] += antiguo_valor;	// Escribes el valor antiguo
 }
 
+/*
+* sudoku_cancelar_jugada cancela la jugada introducida
+* restaurando el valor que tenia la celda anteriormente
+*/
 void sudoku_cancelar_jugada(void){
+	//Se elimina la alarma de timeout jugadav y el parpadeo
 	quitar_alarma_parpadeo_aceptar();
 	quitar_alarma_aceptar();
+	//Se restaura el valor anterior de la celda
 	sudoku_restaurar_estado();
 	sudoku_jugar();
 }
 
+/*
+* sudoku_jugada guarda la jugada (GPIO)
+*/
 void sudoku_jugada (void){
-//		struct EventInfo led_val;	// Evento que se genera cuando se ha introducido una entrada que corresponde a una pista y se activa el bit 13 de la GPIO
 		int fila;
 		int columna;
 		int nuevo_valor;
-		//int guarda;
 		fila = gestor_IO_leer_de_gpio(16,4);
 		columna = gestor_IO_leer_de_gpio(20,4);
 		nuevo_valor = gestor_IO_leer_de_gpio(24,4);
 		sudoku_jugada_principal (fila,columna,nuevo_valor);
 }
 
+/*
+* sudoku_jugada_UART la jugada (GPIO)
+*/
 void sudoku_jugada_UART (int auxdata){
-//		struct EventInfo led_val;	// Evento que se genera cuando se ha introducido una entrada que corresponde a una pista y se activa el bit 13 de la GPIO
 		int fila;
 		int columna;
 		int nuevo_valor;
-		//int guarda;
+		//Se calcula la fila, columna y valor
 		fila = auxdata/100;
 		columna = (auxdata/10)%((auxdata/100)*10);
 		nuevo_valor = auxdata%((auxdata/10)*10);
+		//Se almacena la jugada
 		sudoku_jugada_principal (fila,columna,nuevo_valor);
 }
 
-
-
+/*
+* sudoku_jugada_borrar elimina una jugada de una celda (GPIO)
+*/
 void sudoku_jugada_borrar(void){
-//	struct EventInfo led_val2;	// Evento que se genera cuando se ha introducido una entrada que corresponde a una pista y se activa el bit 13 de la GPIO
 	int fila;
 	int columna;
 	fila = gestor_IO_leer_de_gpio(16,4);
 	columna = gestor_IO_leer_de_gpio(20,4);
-	if(((cuadricula_C_C[fila][columna] >> 4) & 0x00000001) != 0x00000001){	// Comprobamos que la casilla no es pista por lo que no se podría borrar
-		cuadricula_C_C[fila][columna] = 0x00000000;							// Eliminamos el valor de la casilla
+	//Comprobamos que la casilla no es pista por lo que no se podría borrar
+	if(((cuadricula_C_C[fila][columna] >> 4) & 0x00000001) != 0x00000001){	
+		//Eliminamos el valor de la casilla
+		cuadricula_C_C[fila][columna] = 0x00000000;							
 		t1 =temporizador_leer();
-		candidatos_actualizar_c(cuadricula_C_C);							// Actualizamos los candidatos
+		//Actualizamos los candidatos
+		candidatos_actualizar_c(cuadricula_C_C);							
 		t2 =temporizador_leer();
 		tot = t2-t1;
 		tiempo_actualizar+= tot;
@@ -621,12 +640,20 @@ void sudoku_jugada_borrar(void){
 	}
 }
 
+/*
+* sudoku_programar_visualizacion visualizar candidatos (GPIO)
+*/
 void sudoku_programar_visualizacion(void){
-	struct EventInfo Most_Vis;	// Evento que se genera para mostrarla visualización una vez a habido cambios en la entrada
-	entradas_nuevo = GPIO_leer(16,12);			// Lees las entradas de la GPIO
-	if (entradas_anterior != entradas_nuevo){	// Si la entrada ha cambiado
-		introducir_alarma_power();				// Reseteas la alarma de power_down
-		Most_Vis.idEvento = ID_mostrar_vis;					// Generamos evento de visualización si ha cambiado la entrada para actualizar los candidatos y el valor
+	//Evento que se genera para mostrarla visualización una vez a habido cambios en la entrada
+	struct EventInfo Most_Vis;	
+	//Lees las entradas de la GPIO
+	entradas_nuevo = GPIO_leer(16,12);		
+	//Si la entrada ha cambiado	
+	if (entradas_anterior != entradas_nuevo){	
+		//Reseteas la alarma de power_down
+		introducir_alarma_power();		
+		//Generamos evento de visualización si ha cambiado la entrada para actualizar los candidatos y el valor		
+		Most_Vis.idEvento = ID_mostrar_vis;					
 		Most_Vis.auxData = entradas_nuevo;	
 		//Antes de encolar habría que inhabilitar las interrupciones pero lo haremos en la 3 con softirq
 		disable_isr();
@@ -635,18 +662,22 @@ void sudoku_programar_visualizacion(void){
 	}	//Sino no haces nada
 }
 
-
+/*
+* mostrar_tablero se muestra el tablero con todas las 
+* jugadas realizadas sobre el
+*/
 void mostrar_tablero(void){
 	int k,s,val,col,fil;
 	char linea[] ="+-+-+-+-+-+-+-+-+-+-+-+-+-+-\n";
 	char letra[] = "";
 	write_string("\n\n");
-	
-	for(k=0;k<19;k++){//fila
+	//Se iteran filas
+	for(k=0;k<19;k++){
 		if(k%2==0){
 			write_string(linea);
 		}else{
-			for(s=0;s<19;s++){//columna
+			//Se iteran columnas
+			for(s=0;s<19;s++){
 				if(s==0||s==6||s==12||s==18){
 					write_string("|");
 				}else if(s==2||s==4||s==8||s==10||s==14||s==16){
@@ -654,27 +685,36 @@ void mostrar_tablero(void){
 				}else{
 					fil=k/2;
 					col=s/2;
+					//Si hay error y es pista
 					if ((((cuadricula_C_C[fil][col] >> 5) & 0x00000001) == 0x00000001)&&(((cuadricula_C_C[fil][col] >> 4) & 0x00000001) == 0x00000001)){
 						val = cuadricula_C_C[fil][col] & 0x0000000F;
 						itoa(val,letra);
+						//Se escribe una X en pista
 						write_string("X");
 						write_string(letra);
 					}else if(((cuadricula_C_C[fil][col] >> 4) & 0x00000001) == 0x00000001){
+						//Si es pista
 						val = cuadricula_C_C[fil][col] & 0x0000000F;
 						itoa(val,letra);
+						//Se escribe una P
 						write_string("P");
 						write_string(letra);
 					}else if (((cuadricula_C_C[fil][col] >> 5) & 0x00000001) == 0x00000001){
+						//Si solo es error 
 						val = cuadricula_C_C[fil][col] & 0x0000000F;
 						itoa(val,letra);
+						//Se escribe una E
 						write_string("E");
 						write_string(letra);
 					}else if((cuadricula_C_C[fil][col] & 0x0000000F) != 0x00000000){
+						//Si hay valor 
 						val = cuadricula_C_C[fil][col] & 0x0000000F;
 						itoa(val,letra);
+						//Se escribe el valor 
 						write_string(letra);
 						write_string(" ");
 					}else{
+					//Sino espacio
 						write_string("  ");
 					}
 				}
@@ -685,30 +725,41 @@ void mostrar_tablero(void){
 }
 
 
-
+/*
+* sudoku gestor de eventos de sudoku
+*/
 void sudoku (int Evento){
     switch(Evento){
 					case ID_Alarma:	
+						//Alarma de pulsacion para comprobar si el boton sigue pulsado 
 						Gestor_Pulsacion_Control(Evento);
 					break;
-					case ID_EINT1:						
+					case ID_EINT1:	
+						//Alarma de pulsacion del boton 1					
 						sudoku_aceptar_jugada();
 					break;
 					case ID_EINT2:	
+						//Alarma de pulsacion del boton 2
 						sudoku_cancelar_jugada();
 					break;
 					case ID_Alarma_visualizacion:	
+						//Alarma de visualizacion
 						sudoku_programar_visualizacion();
 					break;
 					case ID_bit_val:	
+						//Poner el bit de validación a 1 durante 1 segundo; Jugada exitosa; Practica2
 						sudoku_validacion_1s();
 					break;
 					case ID_fin_val:	
+						//Acaba la alarma de 1s y ponemos validar a 0 otra vez; Fin bit; Practica2
 						gestor_IO_escribir_bit_validar();
 					break;
 		}		
 }
 
+/*
+* sudoku_mostrar_visualizacion muestra los candidatos (GPIO)
+*/
 void sudoku_mostrar_visualizacion(struct EventInfo Evento){
 	int fila;
 	int columna;
@@ -730,26 +781,42 @@ void sudoku_mostrar_visualizacion(struct EventInfo Evento){
 	entradas_anterior = Evento.auxData;										// Actualizamos la entrada para la siguiente pasada
 }
 
+/*
+* sudoku_iniciar_tablero establece los candidatos del tablero incial
+*/
 void sudoku_iniciar_tablero(void){
+	//Se inicia el temporizador
 	t1=temporizador_leer();
+	//Se inicializan los candidatos
 	candidatos_actualizar_c(cuadricula_C_C);
+	//Se mide el tiempo
 	t2 =temporizador_leer();
 	tot = t2-t1;
+	//Tiempo total de actualizar
 	tiempo_actualizar += tot;
 }
 
+/*
+* sudoku_inicio se muestra la leyenda y el mensaje de incio
+*/
 void sudoku_inicio(void){
 	write_string("Leyenda\n#RST!: Parar juego.\n#NEW!: Nueva partida.\n#fcvs!: f(fila), c(columna), v(nuevo valor)\n");
 	write_string("Nueva Partida\n----------------------------\n");
 	write_string("Comando:");
 }
 
+/*
+* sudoku_jugar se muestran por la uart el tablero y los candidatos 
+*/
 void sudoku_jugar(void){
 	mostrar_tablero();
 	mostrar_candidatos();
 	write_string("Comando:");
 }
 
+/*
+* sudoku_nueva_partida reincia la partida
+*/
 void sudoku_nueva_partida(void){
 	t1=temporizador_leer();
 	candidatos_actualizar_c(cuadricula_C_C);
