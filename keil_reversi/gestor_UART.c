@@ -23,6 +23,7 @@ void gestor_UART(uint32_t cadena){
 		break;
 		case esperando_fin:
 			if(cadena == '!'){//Interpretamos fin de la cadena
+				ESTADO=inicio;//Cambiamos el estado
 				if(buffer_UART[0]=='R' && buffer_UART[1]=='S' && buffer_UART[2]=='T'){//Se ha escrito Reset
 					write_string("\n");
 					disable_isr();
@@ -40,7 +41,6 @@ void gestor_UART(uint32_t cadena){
 					cola_guardar_eventos(ID_ESPERAR_CONFIRMACION,(buffer_UART[0]%0x30)*100+(buffer_UART[1]%0x30)*10+(buffer_UART[2]%0x30));
 					enable_isr();
 				}
-				ESTADO=inicio;//Cambiamos el estado
 			}else{
 				if(len_buffer<4){//Si la cadena recibida es mayor de 4 volvemos a inicio puesto que no existen comandos tan largos
 					buffer_UART[len_buffer] = cadena;//Asignamos al buffer
