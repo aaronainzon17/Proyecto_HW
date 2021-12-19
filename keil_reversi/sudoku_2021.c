@@ -394,7 +394,6 @@ void sudoku_reset (void){
 	//Reseteamos variable globales
 	hay_error=0;
 	tot=0;
-	tiempo_actualizar=0;
 	//convertimos los enteros a char
 	minutos =RTC_leer_minutos();
 	segundos= RTC_leer_segundos();
