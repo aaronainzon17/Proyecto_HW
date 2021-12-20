@@ -11,7 +11,7 @@ void init_serial (void)  {               /* Initialize Serial Interface       */
   U0LCR = 0x83;                          /* 8 bits, no Parity, 1 Stop bit     */
   U0DLL = 200;                            /* 9600 Baud Rate @ 15MHz VPB Clock  */
   U0LCR = 0x03;                          /* DLAB = 0       										*/
-	U0IER = U0IER | 0x7;
+	U0IER = U0IER | 0x7;														//Interrupt enable register
 	VICVectAddr7 = (unsigned long)RSI_uart0;       //Configuramos el vector de interrupciones
 	  
 	VICVectCntl7 = 0x20 | 6; 
@@ -21,7 +21,7 @@ void init_serial (void)  {               /* Initialize Serial Interface       */
 
 /* implementation of putchar (also used by printf function to output data)    */
 void sendchar (int ch)  {                 /* Write character to Serial Port    */
-  U0THR = ch;
+  U0THR = ch;																//Transmit holding register
 }
 
 int getchar (void)  {                     /* Read character from Serial Port   */

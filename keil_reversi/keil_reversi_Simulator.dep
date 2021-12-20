@@ -142,12 +142,12 @@ I (C:\Keil_v5\ARM\ARMCC\include\stdlib.h)(0x599F2F9C)
 I (C:\Keil_v5\ARM\ARMCC\include\string.h)(0x599F2F9C)
 I (SWI_functions.h)(0x61B1DFED)
 I (gestor_RTC.h)(0x61B1CE62)
-F (.\gestor_RTC.c)(0x61B8698F)(-c --cpu ARM7TDMI -D__EVAL -g -O3 -Otime-IC:\Keil_v5\ARM\RV31\INC-IC:\Keil_v5\ARM\CMSIS\Include-IC:\Keil_v5\ARM\INC\Philips-D__UVISION_VERSION="526"-o .\gestor_rtc.o --omf_browse .\gestor_rtc.crf --depend .\gestor_rtc.d)
+F (.\gestor_RTC.c)(0x61C0C31D)(-c --cpu ARM7TDMI -D__EVAL -g -O3 -Otime-IC:\Keil_v5\ARM\RV31\INC-IC:\Keil_v5\ARM\CMSIS\Include-IC:\Keil_v5\ARM\INC\Philips-D__UVISION_VERSION="526"-o .\gestor_rtc.o --omf_browse .\gestor_rtc.crf --depend .\gestor_rtc.d)
 I (C:\Keil_v5\ARM\INC\Philips\LPC210x.H)(0x559D2F68)
 I (C:\Keil_v5\ARM\ARMCC\include\inttypes.h)(0x599F2F9E)
 I (C:\Keil_v5\ARM\ARMCC\include\stdint.h)(0x599F2F9E)
 I (gestor_RTC.h)(0x61B1CE62)
-F (.\gestor_WD.c)(0x61BF8452)(-c --cpu ARM7TDMI -D__EVAL -g -O3 -Otime-IC:\Keil_v5\ARM\RV31\INC-IC:\Keil_v5\ARM\CMSIS\Include-IC:\Keil_v5\ARM\INC\Philips-D__UVISION_VERSION="526"-o .\gestor_wd.o --omf_browse .\gestor_wd.crf --depend .\gestor_wd.d)
+F (.\gestor_WD.c)(0x61C0C623)(-c --cpu ARM7TDMI -D__EVAL -g -O3 -Otime-IC:\Keil_v5\ARM\RV31\INC-IC:\Keil_v5\ARM\CMSIS\Include-IC:\Keil_v5\ARM\INC\Philips-D__UVISION_VERSION="526"-o .\gestor_wd.o --omf_browse .\gestor_wd.crf --depend .\gestor_wd.d)
 I (C:\Keil_v5\ARM\INC\Philips\LPC210x.H)(0x559D2F68)
 I (C:\Keil_v5\ARM\ARMCC\include\inttypes.h)(0x599F2F9E)
 I (C:\Keil_v5\ARM\ARMCC\include\stdint.h)(0x599F2F9E)

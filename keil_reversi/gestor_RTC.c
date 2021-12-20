@@ -3,8 +3,9 @@
 #include "gestor_RTC.h"
 
 void RTC_init(void){
-	PREINT = 90; //PREINT = int (PCLK / 32768) - 1; PCLK (3*10^6)
-	PREFRAC = 18112;// PREFRAC = PCLK - ([PREINT + 1] × 32768)
+	//Preescaler value
+	PREINT = 0x726; //PREINT = int (PCLK / 32768) - 1; PCLK (60MHZ)
+	PREFRAC = 0x700;// PREFRAC = PCLK - ([PREINT + 1] × 32768)
 	CCR=0x02; // CLKEN = 0,  CTCRST = 1
 	CCR=0x01; // CLKEN = 1,  CTCRST = 0
 }
