@@ -73,12 +73,12 @@ void gestor_alarmas_control_alarma(void){
 		i++;
 	}
 }
-//Alarmas a introducir
+//Alarmas a introducir o quitar
 void introducir_alarma_power(void){
 	struct EventInfo Power_down;
 	Power_down.idEvento = ID_power_down;
 	//Power_down.timeStamp = temporizador_leer();
-	Power_down.auxData = 0x0005FFC8;				// Ponemos la alarma 15 segundos para el powerdown
+	Power_down.auxData = 0x000249F0;				// Ponemos la alarma 15 segundos para el powerdown
 	gestor_alarmas_control_cola(Power_down);
 }
 
@@ -115,7 +115,7 @@ void apagar_alarma_iddle(void){
 void introducir_alarma_aceptar(void){
 	struct EventInfo accept_alarm;
 	accept_alarm.idEvento = ID_FIN_ACEPTAR;
-	accept_alarm.auxData = 0x0000F1EC;
+	accept_alarm.auxData = 0x00007530;
 	gestor_alarmas_control_cola(accept_alarm);
 }
 
