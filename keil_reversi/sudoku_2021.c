@@ -519,13 +519,13 @@ void sudoku_jugada_principal (int fila, int columna, int nuevo_valor){
 				}
 				//Se escribe almacena la jugada
 				celda_poner_valor(&cuadricula_C_C[fila][columna],nuevo_valor);	
+				valor_error = nuevo_valor;
+				//Propagas el nuevo valor
+				candidatos_propagar_c(cuadricula_C_C,fila,columna);
 				//Se comprueba si se ha acabado la partida
 				if(cuadricula_candidatos_verificar(cuadricula_C_C,solucion) == 1){
 					cola_guardar_eventos(ID_FINAL_JUEGO,0);
 				}
-				valor_error = nuevo_valor;
-				//Propagas el nuevo valor
-				candidatos_propagar_c(cuadricula_C_C,fila,columna);
 				sudoku_jugar();
 				sudoku_validacion_1s();
 			}
