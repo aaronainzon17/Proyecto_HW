@@ -526,10 +526,10 @@ void sudoku_jugada_principal (int fila, int columna, int nuevo_valor){
 				if(cuadricula_candidatos_verificar(cuadricula_C_C,solucion) == 1){
 					cola_guardar_eventos(ID_FINAL_JUEGO,0);
 				}
-				sudoku_jugar();
 				sudoku_validacion_1s();
 			}
 		}
+		sudoku_jugar();
 }
 
 /*
