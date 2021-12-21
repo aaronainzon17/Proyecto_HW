@@ -11,7 +11,7 @@ void WT_init(int sec){
   }
 	// Interval timeout Pclk*WDTC*4
 	// valor minimo WDTC= PCLK * 256 * 4; valor maximo PCLK * 2^32 * 4
-  WDTC  = sec*700000;						   			// Set watchdog time out value
+  WDTC  = sec*1500000;						   			// Set watchdog time out value
   WDMOD = 0x03;                            //Bit de Enable y bit de reset 
 }
 
@@ -20,7 +20,9 @@ void feed_watchdog (void) {				   /* Reload the watchdog timer       */
 // aunque se active el watchdog, este no har? nada hasta que no se le alimente por primera vez
 //Important! Interrupts must be disabled during the feed sequence. An abort condition will occur if an interrupt happens during the feed sequence
   disable_isr();
+	disable_isr_fiq();
 	WDFEED = 0xAA;						   
   WDFEED = 0x55; 
 	enable_isr();
+	enable_isr_fiq();
 }

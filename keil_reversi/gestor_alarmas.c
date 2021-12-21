@@ -60,8 +60,10 @@ void gestor_alarmas_control_alarma(void){
 			if(periodo[i] == 0){ // Si el periodo es 0 significa que ha acabado la alarma 
 				//Se encola un evento del tipo de esa alarma  
 				disable_isr();
+				disable_isr_fiq();
 				cola_guardar_eventos(alarm_queue[i].idEvento, alarm_queue[i].auxData);
 				enable_isr();
+				enable_isr_fiq();
 				if(bit_perio[i] != 1){	// si la alarma no es periódica pones el bit de activa a 0 y acaba
 					bit_activa[i] = 0;
 				}

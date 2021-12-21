@@ -45,7 +45,14 @@ void planificador (void) {
 	int iddle_bit_flag = 0;
 	//Iniciamos los componentes
 	iniciar();
-	WT_init(15);
+	WT_init(50);
+	/*feed_watchdog();
+	while(1){
+		cola_guardar_eventos(0,0);
+		cola_guardar_eventos(0,0);
+		cola_leer_evevento_antiguo(&Evento);
+		feed_watchdog();
+	}*/
 	while(1){	
 		feed_watchdog();//Activamos el watchdog para que detecte bucles infinitos
 		if(cola_nuevos_eventos()){//Si hay nuevos eventos en la cola

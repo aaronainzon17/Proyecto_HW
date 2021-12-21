@@ -564,9 +564,11 @@ void sudoku_aceptar_jugada(void){
 	//Se desactiva el parpadeo del bit 13
 	quitar_alarma_parpadeo_aceptar();
 	disable_isr();
+	disable_isr_fiq();
 	//Se encola un evento de fin de periodo de aceptar jugada
 	cola_guardar_eventos(ID_FIN_ACEPTAR,0);
 	enable_isr();
+	enable_isr_fiq();
 }
 
 /*
@@ -657,8 +659,10 @@ void sudoku_programar_visualizacion(void){
 		Most_Vis.auxData = entradas_nuevo;	
 		//Antes de encolar habría que inhabilitar las interrupciones pero lo haremos en la 3 con softirq
 		disable_isr();
+		disable_isr_fiq();
 		cola_guardar_eventos(Most_Vis.idEvento,Most_Vis.auxData);		
 		enable_isr();
+		enable_isr_fiq();
 	}	//Sino no haces nada
 }
 
