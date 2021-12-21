@@ -21,7 +21,7 @@ void init_serial (void)  {               /* Initialize Serial Interface       */
 
 /* implementation of putchar (also used by printf function to output data)    */
 void sendchar (int ch)  {                 /* Write character to Serial Port    */
-  U0THR = ch;																//Transmit holding register
+  U0THR = ch;																//Transmit holding register; Transmite los datos a la UART
 }
 
 int getchar (void)  {                     /* Read character from Serial Port   */
@@ -36,7 +36,7 @@ void RSI_uart0 (void) __irq{
 	switch(U0IIR & 0x00000007){ //Miramos en U0IIR los bits que nos interesan
 		// Se ha terminado de enviar un caracter
 		case 0x2 : 
-			cola_guardar_eventos(ID_Continuar,0);//Encolamos evento para continuar escribiendo
+			cola_guardar_eventos(ID_Continuar,0) ;//Encolamos evento para continuar escribiendo
 		break;
 		//Se a recibido un caracter por la UART
 		case 0x4 : 

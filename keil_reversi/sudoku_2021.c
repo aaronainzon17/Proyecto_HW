@@ -553,6 +553,8 @@ void sudoku_mostrar_vista_previa(int buffer){
 	cuadricula_C_C[fila][columna] += nuevo_valor;	
 	escritura_comenzar("Vista Previa de la jugada\n");
 	mostrar_tablero();
+	introducir_alarma_aceptar();//Introducimos la alarma del tiempo que nos queda para aceptar
+	introducir_alarma_parpadeo_aceptar();//Introducimos la alarma del parpadeo durante el periodo en el que se puede aceptar
 }
 
 /*

@@ -136,8 +136,6 @@ void planificador (void) {
 					case ID_ESPERAR_CONFIRMACION://Llega evento para esperar el aceptar la jugada o el rechazarla
 						buffer=Evento.auxData;//Guardamos el buffer que te viene de la UART
 						sudoku_mostrar_vista_previa(buffer);//Mostramos la vista previa de la jugada a introducir
-						introducir_alarma_aceptar();//Introducimos la alarma del tiempo que nos queda para aceptar
-						introducir_alarma_parpadeo_aceptar();//Introducimos la alarma del parpadeo durante el periodo en el que se puede aceptar
 					break;
 					case ID_FIN_ACEPTAR	://Llega la alarma de fin del periodo aceptar por lo que se acepta la jugada automáticamente
 						quitar_alarma_parpadeo_aceptar();
