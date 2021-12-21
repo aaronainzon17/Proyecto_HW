@@ -526,10 +526,13 @@ void sudoku_jugada_principal (int fila, int columna, int nuevo_valor){
 				if(cuadricula_candidatos_verificar(cuadricula_C_C,solucion) == 1){
 					cola_guardar_eventos(ID_FINAL_JUEGO,0);
 				}
+				sudoku_jugar();
 				sudoku_validacion_1s();
 			}
+		}else{
+			sudoku_restaurar_estado();
+			sudoku_jugar();
 		}
-		sudoku_jugar();
 }
 
 /*
@@ -576,7 +579,7 @@ void sudoku_aceptar_jugada(void){
 /*
 * sudoku_restaurar_estado restaura el estado de la juagda anterior
 */
-void sudoku_restaurar_estado(){
+void sudoku_restaurar_estado(void){
 	cuadricula_C_C[fila_cancelar][columna_cancelar]&= 0xFFFFFFF0;
 	cuadricula_C_C[fila_cancelar][columna_cancelar] += antiguo_valor;	// Escribes el valor antiguo
 }
