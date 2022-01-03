@@ -1,11 +1,11 @@
 #include <LPC210x.H>                       /* LPC210x definitions */
 #include "timer0.h"
-#include "Power_management.h"
-#include "boton_eint0.h"
+#include "gestor_energia.h"
+#include "eint_init.h"
 #include <stddef.h>
 #include "sudoku_2021.h"
 #include "gpio.h"
-#include "boton_eint0.h"
+#include "eint_init.h"
 #include "gestor_alarmas.h"
 #include "cola.h"
 #include "planificador.h"
@@ -33,11 +33,9 @@ extern int gestor_SC_out(void);
 
 
 
-// MAIN 
+//Planificador
 void planificador (void) {
 	struct EventInfo Evento;
-	//int t1,t2;				// Variables de medición de tiempo
-	//int tot;
 	int PD_Flag = 0;					// Flag para salir de power down
 	int Reset = 0;
 	int Parpadeo=0;

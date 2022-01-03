@@ -23,7 +23,7 @@ void iniciar_alarmas(void){
 }
 /*
 * Cuando se introduce una nueva alarma actualiza todos los vectores de ese tipo de alarma con
-* los datos de la alarma introducida
+* los datos de la alarma introducida. Recibe por parámetros la nueva alarma a gestionar.
 */
 void gestor_alarmas_control_cola(struct EventInfo nueva_alarma){
 	uint32_t periodo_alarma = nueva_alarma.auxData  & 0x007FFFFF; // Campo en el que se almacena el periodo de la alarma

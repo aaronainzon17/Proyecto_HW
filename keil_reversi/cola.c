@@ -3,6 +3,7 @@
 #include "cola.h"
 //#include "temporizador.h"
 #include "gpio.h"
+#include "timer0.h"
 //static
 struct Cola cola;
 //Funcion que inicia los campos de la cola
@@ -33,7 +34,6 @@ void cola_guardar_eventos(uint8_t  ID_evento,  uint32_t  auxData){
 		}
 		cola.elementos[cola.siguiente_encolar].idEvento = ID_evento;
 		cola.elementos[cola.siguiente_encolar].auxData = auxData;
-		//cola.elementos[cola.sig].timeStamp = temporizador_leer();
 }
 // Funcion que comprueba si la cola tiene nuevos eventos 
 int cola_nuevos_eventos (void) {
@@ -43,7 +43,7 @@ int cola_nuevos_eventos (void) {
         return 0;
     }
 }
-// Funcion que lee el evento mas antiguo sin procesar de la cola 
+// Funcion que lee el evento mas antiguo sin procesar de la cola y lo devuelve en elemento.
 void cola_leer_evevento_antiguo(struct EventInfo* elemento) {
 		if (cola.siguiente_tratar < SIZE - 1) {
 				cola.siguiente_tratar ++;

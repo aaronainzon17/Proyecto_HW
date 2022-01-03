@@ -34,7 +34,7 @@ int sudoku9x9(CELDA cuadricula_C_C[NUM_FILAS][NUM_COLUMNAS],
 void
 candidatos_propagar_c(CELDA cuadricula[NUM_FILAS][NUM_COLUMNAS],
                              uint8_t fila, uint8_t columna);
-
+int candidatos_actualizar_c(CELDA cuadricula[NUM_FILAS][NUM_COLUMNAS]);
 
 /* declaracion de funciones ARM a implementar */
 int

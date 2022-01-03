@@ -447,26 +447,6 @@
               <FilePath>.\main.c</FilePath>
             </File>
             <File>
-              <FileName>Power_management.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>.\Power_management.c</FilePath>
-            </File>
-            <File>
-              <FileName>Power_management.h</FileName>
-              <FileType>5</FileType>
-              <FilePath>.\Power_management.h</FilePath>
-            </File>
-            <File>
-              <FileName>boton_eint0.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>.\boton_eint0.c</FilePath>
-            </File>
-            <File>
-              <FileName>boton_eint0.h</FileName>
-              <FileType>5</FileType>
-              <FilePath>.\boton_eint0.h</FilePath>
-            </File>
-            <File>
               <FileName>timer0.c</FileName>
               <FileType>1</FileType>
               <FilePath>.\timer0.c</FilePath>
@@ -640,6 +620,26 @@
               <FileName>funciones_escritura.h</FileName>
               <FileType>5</FileType>
               <FilePath>.\funciones_escritura.h</FilePath>
+            </File>
+            <File>
+              <FileName>eint_init.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\eint_init.c</FilePath>
+            </File>
+            <File>
+              <FileName>eint_init.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>.\eint_init.h</FilePath>
+            </File>
+            <File>
+              <FileName>gestor_energia.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>.\gestor_energia.h</FilePath>
+            </File>
+            <File>
+              <FileName>gestor_energia.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\gestor_energia.c</FilePath>
             </File>
           </Files>
         </Group>

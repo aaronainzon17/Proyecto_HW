@@ -64,7 +64,7 @@ void timer1_ISR (void) __irq {
     T1IR = 1;                              // Clear interrupt flag
     VICVectAddr = 0;                            // Acknowledge Interrupt
 }
-//Funcion que establece el primer periodo de timer0
+//Funcion que establece el primer periodo de timer0. Recibe como parámetro el periodo del temporizador.
 void temporizador_periodo(int periodo){
 		T0TCR = 1;                             			// Timer0 Enable
 	  periodo_alarm = periodo;
@@ -84,9 +84,8 @@ void timer0_ISR (void) __irq {
     T0IR = 1;                              			// Clear interrupt flag
     VICVectAddr = 0;                            // Acknowledge Interrupt
 }
-//Funcion gettime por SWI
-uint32_t __swi(0) clock_gettime(void);
 
-uint32_t __SWI_0 (void) {
+int __SWI_0 (void) {
 	return temporizador_leer();
 }
+

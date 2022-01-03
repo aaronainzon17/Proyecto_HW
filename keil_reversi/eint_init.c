@@ -1,4 +1,4 @@
-#include "boton_eint0.h"
+#include "eint_init.h"
 #include "cola.h"
 #include <LPC210X.H>                            // LPC21XX Peripheral Registers
 

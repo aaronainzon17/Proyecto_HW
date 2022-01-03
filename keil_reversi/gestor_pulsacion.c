@@ -1,5 +1,5 @@
 #include <LPC210X.H>
-#include "boton_eint0.h"
+#include "eint_init.h"
 #include "gpio.h"
 #include "eventos.h"
 #include "gestor_pulsacion.h"
@@ -10,7 +10,7 @@ static volatile unsigned int ESTADO = no_pulsado;
 static volatile unsigned int Boton;
 static volatile struct EventInfo Pulsacion_alarma;
 
-//Maquina de estados de las pulsaciones
+//Maquina de estados de las pulsaciones. Recibe por parámetros el id del evento recibido.
 void Gestor_Pulsacion_Control(uint32_t Id_Evento){
 	uint32_t aux;
 	switch(ESTADO){ //Dos eventos posibles; Alarma o pulsacion

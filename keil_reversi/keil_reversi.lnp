@@ -2,8 +2,6 @@
 ".\startup.o"
 ".\retarget.o"
 ".\main.o"
-".\power_management.o"
-".\boton_eint0.o"
 ".\timer0.o"
 ".\gestor_pulsacion.o"
 ".\cola.o"
@@ -22,5 +20,7 @@
 ".\serial_port.o"
 ".\gestor_uart.o"
 ".\funciones_escritura.o"
+".\eint_init.o"
+".\gestor_energia.o"
 --strict --scatter ".\keil_reversi.sct"
 --summary_stderr --info summarysizes -o .\keil_reversi.axf

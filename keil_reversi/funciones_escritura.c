@@ -13,7 +13,7 @@ static volatile unsigned int ultimo=0;
 static volatile unsigned int PrimerCaracter=0;
 static volatile char buffer[TAM_BUFFER];
 
-//Funcion que escribe una nueva cadena
+//Funcion que escribe una nueva cadena. Recibe como parámertros la fila, columna y nuevo valor introducidos por la UART en buffer
 void escritura_comenzar(const char buffer2[]){
 	int i;
 	unsigned int bufferlen = strlen(buffer2);

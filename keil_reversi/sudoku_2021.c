@@ -4,12 +4,12 @@
 #include "eventos.h"
 #include "gestor_IO.h"
 #include "timer0.h"
-#include "Power_management.h"
-#include "boton_eint0.h"
+#include "gestor_energia.h"
+#include "eint_init.h"
 #include <stddef.h>
 #include "sudoku_2021.h"
 #include "gpio.h"
-#include "boton_eint0.h"
+#include "eint_init.h"
 #include "gestor_alarmas.h"
 #include "cola.h"
 #include "planificador.h"
@@ -207,7 +207,7 @@ void sudoku_introducir_candidatos(int valor,int fila,int columna){
  * Recibe la cuadricula como primer parametro
  * y devuelve en celdas_vacias el n�mero de celdas vacias
  */
-static int candidatos_actualizar_c(CELDA cuadricula[NUM_FILAS][NUM_COLUMNAS])
+int candidatos_actualizar_c(CELDA cuadricula[NUM_FILAS][NUM_COLUMNAS])
 {
     int celdas_vacias = 0;
     uint8_t i,j;
@@ -330,7 +330,7 @@ void sudoku_validacion_1s (void){
 		gestor_alarma_visualizacion_1s();
 }
 
-/*Funcion que transforma un entero de una cifra en un char []*/
+/*Funcion que transforma un entero de una cifra (numero) en un char [] (letra)*/
 void itoa(int numero,char letra[]){
 	if(numero==1){letra[0] = '1';}
 	else if(numero==2){letra[0] = '2';}
@@ -344,7 +344,7 @@ void itoa(int numero,char letra[]){
 	else if(numero==0){letra[0] = '0';}
 }
 
-/*Funcion que transforma un entero de más de una cifra en un char []*/
+/*Funcion que transforma un entero de más de una cifra (numero) en un char [] (letra)*/
 void itoa_varios(int numero,char letra[]){
 	if(numero==0){letra[0]='0';letra[1]='\0';}
 	else{
@@ -379,7 +379,7 @@ void itoa_varios(int numero,char letra[]){
 }
 /*
 * get_candidatos se encarga de escribir por la UART los
-* candidatos la celda que se pasa por parametro
+* candidatos la celda que se pasa por parametro. Recibe por parámetros la fila y columna de la celda a tratar
 */
 void get_candidatos(int fila, int columna,char can[]){
 		int candidatos;
@@ -480,7 +480,7 @@ void sudoku_reset (void){
 
 
 /*
-* sudoku_jugada_principal almacena una jugada en el sudoku
+* sudoku_jugada_principal almacena una jugada en el sudoku. Recibe como parámetros la fila, la columna y el nuevo valor.
 */
 void sudoku_jugada_principal (int fila, int columna, int nuevo_valor){
 		int guarda,fail;
@@ -537,7 +537,7 @@ void sudoku_jugada_principal (int fila, int columna, int nuevo_valor){
 
 /*
 * sudoku_mostrar_vista_previa muestra una vista previa de la jugada
-* antes de que esta sea aceptada o no
+* antes de que esta sea aceptada o no. Recibe como parámertros la fila, columna y nuevo valor introducidos por la UART
 */
 void sudoku_mostrar_vista_previa(int buffer){
 	int fila,val;
@@ -611,7 +611,7 @@ void sudoku_jugada (void){
 }
 
 /*
-* sudoku_jugada_UART la jugada (GPIO)
+* sudoku_jugada_UART la jugada (GPIO). Recibe como parámertros la fila, columna y nuevo valor introducidos por la UART
 */
 void sudoku_jugada_UART (int auxdata){
 		int fila;
@@ -735,7 +735,7 @@ void mostrar_tablero(void){
 
 
 /*
-* sudoku gestor de eventos de sudoku
+* sudoku gestor de eventos de sudoku. Recibe el id del evento tratado
 */
 void sudoku (int Evento){
     switch(Evento){
@@ -767,7 +767,7 @@ void sudoku (int Evento){
 }
 
 /*
-* sudoku_mostrar_visualizacion muestra los candidatos (GPIO)
+* sudoku_mostrar_visualizacion muestra los candidatos (GPIO). 
 */
 void sudoku_mostrar_visualizacion(struct EventInfo Evento){
 	int fila;
